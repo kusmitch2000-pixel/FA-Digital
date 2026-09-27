@@ -43,6 +43,26 @@ Mitgegeben: Veranstaltungsunterlage 1, HTML-Grundlagen, Fachkonzept, Technisches
 
 ---
 
+## 3 · 27.09.2026 · GitHub-Repository für die Gruppe
+
+**Wer:** Daniel
+
+**Prompt (gekürzt):**
+> Kannst du jetzt die Sachen, die du erstellt hast, ins GitHub laden, damit wir zusammen in der Gruppe damit arbeiten können?
+
+Danach: GitHub-Benutzernamen der Teammitglieder (edcWre, luca-wing).
+
+**Ergebnis:**
+- GitHub CLI installiert, Anmeldung über einen Einmalcode im Browser
+- Lokales Git-Repository mit `.gitignore` (Abgabe-ZIP wird nicht versioniert)
+- Privates Repository https://github.com/kusmitch2000-pixel/FA-Digital angelegt und hochgeladen
+- edcWre und luca-wing mit Schreibrecht eingeladen
+- README um eine Anleitung zur Zusammenarbeit ergänzt: jeder mit eigenem Konto committen, damit die Anteile nachweisbar sind
+
+**Unsere Entscheidungen:** privates Repository, GitHub CLI statt manueller Anlage
+
+---
+
 <!-- Vorlage für weitere Einträge:
 
 ## N · TT.MM.JJJJ · Thema

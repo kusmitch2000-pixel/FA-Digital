@@ -40,8 +40,10 @@ Jeder arbeitet mit seinem eigenen GitHub-Konto. So zeigt die Commit-Historie, we
 Einmalig das Repository klonen, z. B. in VS Code über „Git: Clone“ oder im Terminal:
 
 ```
-git clone <Adresse des Repositorys>
+git clone https://github.com/kusmitch2000-pixel/FA-Digital.git
 ```
+
+Das Repository ist privat. Vorher die Einladung auf GitHub annehmen (E-Mail oder https://github.com/kusmitch2000-pixel/FA-Digital/invitations).
 
 Bei jeder Arbeitssitzung:
 
