@@ -25,42 +25,6 @@ Mitgegeben: Veranstaltungsunterlage 1, HTML-Grundlagen, Fachkonzept, Technisches
 
 ---
 
-## 2 · 27.09.2026 · Klickbarer HTML-Prototyp
-
-**Prompt (gekürzt):**
-> Das kannst du runterladen: XAMPP und VS Code. Nochmal zur Info, das müssen wir morgen abgeben. (dazu ein Screenshot der Moodle-Einträge „HTML-Basis“ und „Präsentation 1. Veranstaltung“)
-
-**Ergebnis:**
-- VS Code per winget installiert. XAMPP abgebrochen, weil die Windows-Sicherheitsabfrage nicht bestätigt wurde
-- 11 statische HTML-Seiten und eine CSS-Datei in `prototyp/`: Anmeldung, Dashboard, Aufträge, Auftrag anlegen, Auftragsdetail, Werker-Terminal, Nachkalkulation, Auswertung, Artikel und Arbeitspläne, Arbeitsplätze, Benutzer
-- Beispieldaten über alle Seiten stimmig und nachgerechnet
-- Von der KI selbst gefundene und behobene Fehler:
-  - Tabellen haben auf schmalen Bildschirmen die Seite seitlich verbreitert. Ursache: Grid-Spalten schrumpfen nicht unter die Tabellenbreite. Lösung: `min-width: 0` für die Spalten
-  - Die Tabelle „Gerade in Arbeit“ war im Dashboard zu eng. Lösung: volle Breite, darunter Ereignisse und Liefertermine
-- Kurzkonzept als PDF in `doku/`
-
-**Geprüft:** alle Links, kein seitliches Überlaufen bei 375, 750, 1024 und 1366 px Breite
-
----
-
-## 3 · 27.09.2026 · GitHub-Repository für die Gruppe
-
-**Wer:** Daniel
-
-**Prompt (gekürzt):**
-> Kannst du jetzt die Sachen, die du erstellt hast, ins GitHub laden, damit wir zusammen in der Gruppe damit arbeiten können?
-
-Danach: GitHub-Benutzernamen der Teammitglieder (edcWre, luca-wing).
-
-**Ergebnis:**
-- GitHub CLI installiert, Anmeldung über einen Einmalcode im Browser
-- Lokales Git-Repository mit `.gitignore` (Abgabe-ZIP wird nicht versioniert)
-- Privates Repository https://github.com/kusmitch2000-pixel/FA-Digital angelegt und hochgeladen
-- edcWre und luca-wing mit Schreibrecht eingeladen
-- README um eine Anleitung zur Zusammenarbeit ergänzt: jeder mit eigenem Konto committen, damit die Anteile nachweisbar sind
-
-**Unsere Entscheidungen:** privates Repository, GitHub CLI statt manueller Anlage
-
 ---
 
 <!-- Vorlage für weitere Einträge:
