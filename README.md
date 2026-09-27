@@ -9,7 +9,9 @@ Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Pr
 | Ordner | Inhalt |
 |---|---|
 | `prototyp/` | Klickbarer HTML-Prototyp, 11 Seiten und `style.css`, noch ohne Datenbank |
-| `doku/` | Kurzkonzept, KI-Prompt-Protokoll, später Fachkonzept, DV-Konzept und KI-Konzept |
+| `doku/` | **Fachkonzept** (`Fachkonzept_FA-Digital.docx` und `.pdf`), Kurzkonzept, Prompt-Protokoll, später DV-Konzept und KI-Konzept |
+| `doku/prozesse/` | Prozessdiagramme für das Fachkonzept (`prozesse.js` erzeugt die HTML-Seiten, daraus entstehen die PNG-Bilder) |
+| `doku/fachkonzept/` | Inhalt des Fachkonzepts als `inhalt.json` und die Word-Skripte, die daraus das Dokument bauen |
 
 ## Online ansehen und Feedback geben
 
