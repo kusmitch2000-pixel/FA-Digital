@@ -9,9 +9,17 @@ Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Pr
 | `prototyp/` | Klickbarer HTML-Prototyp, 11 Seiten und `style.css`, noch ohne Datenbank |
 | `doku/` | Kurzkonzept, KI-Prompt-Protokoll, später Fachkonzept, DV-Konzept und KI-Konzept |
 
-## Prototyp öffnen
+## Online ansehen und Feedback geben
+
+- **Website:** https://kusmitch2000-pixel.github.io/FA-Digital/ (wird bei jedem Push automatisch aktualisiert)
+- **Feedback:** auf der Startseite „Feedback geben“ klicken. Das öffnet ein GitHub-Issue mit Vorlage. Pro Punkt ein eigenes Issue
+- **Alle Rückmeldungen:** https://github.com/kusmitch2000-pixel/FA-Digital/issues?q=label%3Afeedback
+
+## Prototyp lokal öffnen
 
 `prototyp/index.html` doppelt anklicken. Die Anmeldung ist noch nicht geprüft, „Anmelden“ führt direkt zum Dashboard.
+
+`prototyp/prototyp.js` gibt es nur, solange die Seiten statisch sind. Es leitet abgesendete Formulare direkt auf die Zielseite weiter, weil GitHub Pages keine POST-Anfragen annimmt. Mit PHP fällt die Datei weg.
 
 ## Seiten
 
