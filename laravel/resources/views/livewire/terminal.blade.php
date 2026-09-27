@@ -1,0 +1,20 @@
+<div>
+    <div class="seitenkopf"><div><h1>Werker-Terminal</h1><p class="leise">{{ auth()->user()->name }}</p></div><div class="feld"><label for="arbeitsplatz">Arbeitsplatz</label><select id="arbeitsplatz" wire:model.live="workstationId">@foreach($stations as $station)<option value="{{ $station->id }}">{{ $station->name }} ({{ $station->code }})</option>@endforeach</select></div></div>
+    @error('operation')<div class="hinweis fehler">{{ $message }}</div>@enderror
+    @if($active)
+    <section class="karte terminal-aktiv"><div class="spalten-gleich"><div><p class="leise klein">Laufender Arbeitsgang</p><p class="terminal-titel">{{ $active->operation->order->number }} · AG {{ $active->operation->sequence }} {{ $active->operation->name }}</p><p>{{ $active->operation->order->article->code }} {{ $active->operation->order->article->name }} · {{ $active->operation->order->quantity }} Stück</p><p><span class="badge laeuft">{{ $active->kind === 'interruption' ? 'Unterbrochen' : ($active->kind === 'setup' ? 'Rüsten' : 'Bearbeiten') }} seit {{ $active->started_at->format('H:i') }}</span></p><p class="leise">Soll-Zeit: {{ number_format($active->operation->planned_minutes, 1, ',', '.') }} min</p></div>
+    <div>
+        @if($active->kind === 'interruption')<button wire:click="resume" class="btn btn-erfolg btn-gross">Bearbeitung fortsetzen</button>
+        @else
+        <div class="knopfleiste"><button wire:click="switchKind('setup')" class="btn btn-sekundaer">Rüsten</button><button wire:click="switchKind('run')" class="btn btn-primaer">Bearbeiten</button></div>
+        <form wire:submit="finish"><div class="formular-raster"><div class="feld"><label>Gutmenge</label><input type="number" min="0" wire:model="goodQuantity"></div><div class="feld"><label>Ausschuss</label><input type="number" min="0" wire:model="scrapQuantity"></div></div><div class="feld"><label>Bemerkung</label><input wire:model="notes"></div>@error('goodQuantity')<small class="ueber">{{ $message }}</small>@enderror<button class="btn btn-erfolg btn-gross" type="submit">Arbeitsgang fertig melden</button></form>
+        @endif
+    </div></div>
+    @if($active->kind !== 'interruption')<hr class="trenner"><form wire:submit="pause"><fieldset><legend>Unterbrechen: Warum geht es gerade nicht weiter?</legend><div class="gruende">@foreach(['pause' => 'Pause', 'material' => 'Material fehlt', 'stoerung' => 'Maschinenstörung', 'werkzeug' => 'Werkzeug fehlt', 'sonstiges' => 'Sonstiges'] as $key => $label)<label class="grund"><input type="radio" wire:model="reason" value="{{ $key }}"> {{ $label }}</label>@endforeach</div></fieldset>@error('reason')<small class="ueber">{{ $message }}</small>@enderror<button type="submit" class="btn btn-sekundaer btn-gross">Unterbrechen</button></form>@endif
+    </section>
+    @endif
+    <section class="karte"><h2>Arbeitsvorrat</h2><div class="tabelle-scroll"><table><thead><tr><th>Auftrag</th><th>Arbeitsgang</th><th>Artikel</th><th class="zahl">Menge</th><th class="zahl">Soll-Zeit</th><th>Liefertermin</th><th>Status</th><th></th></tr></thead><tbody>
+        @forelse($queue as $operation)<tr><td><a href="{{ route('orders.show', $operation->order) }}">{{ $operation->order->number }}</a></td><td>{{ $operation->sequence }} {{ $operation->name }}</td><td>{{ $operation->order->article->code }} {{ $operation->order->article->name }}</td><td class="zahl">{{ $operation->order->quantity }}</td><td class="zahl">{{ number_format($operation->planned_minutes, 1, ',', '.') }} min</td><td>{{ $operation->order->due_date->format('d.m.Y') }}</td><td>{{ str_replace('_', ' ', $operation->status) }}</td><td><div class="knopfleiste"><button wire:click="start({{ $operation->id }}, 'setup')" class="btn btn-klein btn-primaer" @disabled($active)>Rüsten</button><button wire:click="start({{ $operation->id }}, 'run')" class="btn btn-klein btn-sekundaer" @disabled($active)>Bearbeiten</button></div></td></tr>
+        @empty<tr><td colspan="8">Kein freigegebener Arbeitsvorrat an diesem Arbeitsplatz.</td></tr>@endforelse
+    </tbody></table></div></section>
+</div>
