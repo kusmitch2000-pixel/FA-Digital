@@ -21,7 +21,7 @@
   <div class="rahmen">
     <nav class="menue">
       <p class="menue-titel">Übersicht</p>
-      <a href="dashboard.html">Dashboard</a>
+      <a href="dashboard.html">Hallenansicht</a>
       <a href="auftraege.html">Aufträge</a>
 
       <p class="menue-titel">Arbeitsvorbereitung</p>
@@ -67,12 +67,14 @@
             <p class="leise klein" style="margin: 0;">Laufender Arbeitsgang</p>
             <p class="terminal-titel">FA-1002 · AG 20 Drehen</p>
             <p>F-310 Flansch DN80 · 30 Stück<br>
-              <span class="badge laeuft">Bearbeiten seit 08:27</span></p>
-            <p class="leise klein" style="margin-bottom: 0.25rem;">Zeit bisher (Rüsten 22 min + Bearbeiten 63 min)</p>
-            <p class="uhr">85 <span class="leise" style="font-size: 1rem;">von 115 min Soll</span></p>
-            <div class="balken gross"><span class="warn" style="width: 74%;"></span></div>
+              <span class="badge laeuft">Bearbeiten seit 07:58</span></p>
+            <p class="leise klein" style="margin-bottom: 0.25rem;">Zeit bisher (Rüsten 28 min + Bearbeiten 92 min)</p>
+            <p class="uhr ueber">120 <span class="leise" style="font-size: 1rem; font-weight: normal;">von 115 min Soll</span></p>
+            <div class="balken gross"><span class="rot" style="width: 100%;"></span></div>
+            <p class="klein ueber" style="margin-top: 0.3rem;">Soll-Zeit um 5 min überschritten</p>
           </div>
 
+          <!-- Fertigmeldung mit Gutmenge und Ausschuss -->
           <form action="werker.html" method="post">
             <div class="formular-raster">
               <div class="feld">
@@ -88,12 +90,27 @@
               <label for="bemerkung">Bemerkung</label>
               <input type="text" id="bemerkung" name="bemerkung" placeholder="optional">
             </div>
-            <div class="knopfleiste">
-              <button type="submit" name="aktion" value="unterbrechen" class="btn btn-sekundaer btn-gross">Unterbrechen</button>
-              <button type="submit" name="aktion" value="fertig" class="btn btn-erfolg btn-gross">Arbeitsgang fertig melden</button>
-            </div>
+            <button type="submit" name="aktion" value="fertig" class="btn btn-erfolg btn-gross btn-breit">Arbeitsgang fertig melden</button>
           </form>
         </div>
+
+        <hr class="trenner">
+
+        <!-- Unterbrechen nur mit Grund. Die Unterbrechungszeit zählt nicht zur Ist-Zeit,
+             sondern wird in der Auswertung nach Grund zusammengefasst. -->
+        <form action="werker.html" method="post">
+          <fieldset>
+            <legend>Unterbrechen: Warum geht es gerade nicht weiter?</legend>
+            <div class="gruende">
+              <label class="grund"><input type="radio" name="grund" value="pause" required> Pause</label>
+              <label class="grund"><input type="radio" name="grund" value="material"> Material fehlt</label>
+              <label class="grund"><input type="radio" name="grund" value="stoerung"> Maschinenstörung</label>
+              <label class="grund"><input type="radio" name="grund" value="werkzeug"> Werkzeug fehlt</label>
+              <label class="grund"><input type="radio" name="grund" value="sonstiges"> Sonstiges</label>
+            </div>
+          </fieldset>
+          <button type="submit" name="aktion" value="unterbrechen" class="btn btn-sekundaer btn-gross">Unterbrechen</button>
+        </form>
       </section>
 
       <section class="karte">
@@ -157,7 +174,7 @@
           </table>
         </div>
         <p class="leise klein" style="margin: 0.75rem 0 0;">
-          Hier erscheinen nur Arbeitsgänge von freigegebenen Aufträgen. Wer einen neuen Arbeitsgang startet, unterbricht damit automatisch den laufenden.
+          Hier erscheinen nur Arbeitsgänge von freigegebenen Aufträgen. Jeder Werker bearbeitet immer nur einen Arbeitsgang. Vor dem Start eines neuen wird der laufende unterbrochen oder fertig gemeldet.
         </p>
       </section>
     </main>

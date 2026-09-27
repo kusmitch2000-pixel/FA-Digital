@@ -21,7 +21,7 @@
   <div class="rahmen">
     <nav class="menue">
       <p class="menue-titel">Übersicht</p>
-      <a href="dashboard.html">Dashboard</a>
+      <a href="dashboard.html">Hallenansicht</a>
       <a href="auftraege.html">Aufträge</a>
 
       <p class="menue-titel">Arbeitsvorbereitung</p>
@@ -44,7 +44,7 @@
       <div class="seitenkopf">
         <div>
           <h1>Auswertung</h1>
-          <p class="leise">Soll-Ist-Vergleich über alle abgeschlossenen Aufträge</p>
+          <p class="leise">Soll-Ist-Vergleich der abgeschlossenen Aufträge und Unterbrechungen im Zeitraum</p>
         </div>
       </div>
 
@@ -185,25 +185,92 @@
           </table>
         </div>
         <div class="hinweis warnung" style="margin: 1rem 0 0;">
-          <p>An der CNC-Fräsmaschine liegt die Ist-Zeit 22 % über Plan. Die Soll-Zeiten für das Fräsen im Arbeitsplan von F-310 sollten geprüft werden.</p>
+          <p>An der CNC-Fräsmaschine liegt die Ist-Zeit 22 % über Plan. Die Soll-Zeiten für das Fräsen im <a href="artikel.html">Arbeitsplan von F-310</a> sollten geprüft werden.</p>
         </div>
       </section>
 
-      <!-- Export: wird später von einer PHP-Seite als Datei erzeugt -->
+      <!-- Unterbrechungen nach Grund: Diese Zeit zählt nicht zur Ist-Zeit der Arbeitsgänge,
+           sondern zeigt, wo in der Fertigung Zeit verloren geht -->
+      <section class="karte">
+        <h2>Wo geht Zeit verloren? Unterbrechungen nach Grund</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Grund</th>
+                <th class="zahl">Anzahl</th>
+                <th class="zahl">Dauer</th>
+                <th>Anteil</th>
+                <th>Am häufigsten an</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Maschinenstörung</td>
+                <td class="zahl">3</td>
+                <td class="zahl">145 min</td>
+                <td>
+                  <div class="balken"><span style="width: 45%;"></span></div>
+                  <span class="leise klein">45 %</span>
+                </td>
+                <td>CNC-Fräsmaschine</td>
+              </tr>
+              <tr>
+                <td>Material fehlt</td>
+                <td class="zahl">2</td>
+                <td class="zahl">95 min</td>
+                <td>
+                  <div class="balken"><span style="width: 30%;"></span></div>
+                  <span class="leise klein">30 %</span>
+                </td>
+                <td>Säge</td>
+              </tr>
+              <tr>
+                <td>Werkzeug fehlt</td>
+                <td class="zahl">3</td>
+                <td class="zahl">60 min</td>
+                <td>
+                  <div class="balken"><span style="width: 19%;"></span></div>
+                  <span class="leise klein">19 %</span>
+                </td>
+                <td>CNC-Drehmaschine</td>
+              </tr>
+              <tr>
+                <td>Sonstiges</td>
+                <td class="zahl">1</td>
+                <td class="zahl">20 min</td>
+                <td>
+                  <div class="balken"><span style="width: 6%;"></span></div>
+                  <span class="leise klein">6 %</span>
+                </td>
+                <td>Messplatz</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>Summe ungeplant</td>
+                <td class="zahl">9</td>
+                <td class="zahl">320 min</td>
+                <td colspan="2">5:20 h</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <p class="leise klein" style="margin: 0.75rem 0 0;">
+          Pausen (14-mal, zusammen 420 min) sind geplant und zählen nicht als Verlust.
+          Unterbrechungen fließen nicht in die Ist-Zeit der Arbeitsgänge ein.
+        </p>
+        <div class="hinweis warnung" style="margin: 1rem 0 0;">
+          <p>Fast die Hälfte der verlorenen Zeit entfällt auf Maschinenstörungen, die meisten an der CNC-Fräsmaschine. Dort liegt auch die Bearbeitungszeit am weitesten über Plan. Das sollte mit der Instandhaltung besprochen werden.</p>
+        </div>
+      </section>
+
+      <!-- Export: wird später von einer PHP-Seite als CSV-Datei erzeugt -->
       <form class="karte" action="auswertung.html" method="get">
         <h2>Exportieren</h2>
-        <div class="formular-raster">
-          <div class="feld">
-            <label for="format">Format</label>
-            <select id="format" name="format">
-              <option value="csv">CSV (für Excel)</option>
-              <option value="txt">TXT</option>
-            </select>
-          </div>
-          <div class="feld feld-knopf">
-            <button type="submit" class="btn btn-primaer">Auswertung exportieren</button>
-          </div>
-        </div>
+        <p class="leise klein">Die Auswertung für den gewählten Zeitraum als CSV-Datei, direkt in Excel zu öffnen.</p>
+        <input type="hidden" name="format" value="csv">
+        <button type="submit" class="btn btn-primaer">Als CSV exportieren</button>
       </form>
     </main>
   </div>

@@ -21,7 +21,7 @@
   <div class="rahmen">
     <nav class="menue">
       <p class="menue-titel">Übersicht</p>
-      <a href="dashboard.html">Dashboard</a>
+      <a href="dashboard.html">Hallenansicht</a>
       <a href="auftraege.html" class="aktiv">Aufträge</a>
 
       <p class="menue-titel">Arbeitsvorbereitung</p>
@@ -66,10 +66,14 @@
           <div><dt>Freigegeben</dt><dd>24.09.2026, Anna Becker</dd></div>
         </dl>
         <div style="margin-top: 1.25rem;">
-          <div class="balken gross"><span style="width: 31%;"></span></div>
-          <p class="leise klein" style="margin-top: 0.3rem;">Ist-Zeit bisher 122 von 390 min Soll-Zeit</p>
+          <div class="balken gross"><span style="width: 40%;"></span></div>
+          <p class="leise klein" style="margin-top: 0.3rem;">Ist-Zeit bisher 157 von 390 min Soll-Zeit</p>
         </div>
       </section>
+
+      <div class="hinweis fehler">
+        <p><strong>AG 20 Drehen hat die Soll-Zeit überschritten:</strong> 120 von 115 min, der Arbeitsgang läuft noch.</p>
+      </div>
 
       <section class="karte">
         <h2>Arbeitsgänge</h2>
@@ -101,7 +105,7 @@
                 <td>Drehen</td>
                 <td>CNC-Drehmaschine (AP-20)</td>
                 <td class="zahl">115 min</td>
-                <td class="zahl">85 min</td>
+                <td class="zahl ueber">120 min</td>
                 <td><span class="badge laeuft">läuft · Jonas Wolff</span></td>
                 <td class="zahl">–</td>
               </tr>
@@ -128,7 +132,7 @@
               <tr>
                 <td colspan="3">Summe</td>
                 <td class="zahl">390 min</td>
-                <td class="zahl">122 min</td>
+                <td class="zahl">157 min</td>
                 <td colspan="2"></td>
               </tr>
             </tfoot>
@@ -175,18 +179,18 @@
                 <td>Jonas Wolff</td>
                 <td>20 Drehen</td>
                 <td>Rüsten</td>
-                <td class="zahl">08:05</td>
-                <td class="zahl">08:27</td>
-                <td class="zahl">22 min</td>
+                <td class="zahl">07:30</td>
+                <td class="zahl">07:58</td>
+                <td class="zahl">28 min</td>
               </tr>
               <tr class="hervorgehoben">
                 <td>28.09.2026</td>
                 <td>Jonas Wolff</td>
                 <td>20 Drehen</td>
                 <td>Bearbeiten</td>
-                <td class="zahl">08:27</td>
+                <td class="zahl">07:58</td>
                 <td class="zahl"><span class="badge laeuft">läuft</span></td>
-                <td class="zahl">63 min</td>
+                <td class="zahl">92 min</td>
               </tr>
             </tbody>
           </table>

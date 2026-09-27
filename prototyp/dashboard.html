@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard – FA-Digital</title>
+  <title>Hallenansicht – FA-Digital</title>
   <link rel="stylesheet" href="style.css">
   <script src="prototyp.js" defer></script>
 </head>
@@ -21,7 +21,7 @@
   <div class="rahmen">
     <nav class="menue">
       <p class="menue-titel">Übersicht</p>
-      <a href="dashboard.html" class="aktiv">Dashboard</a>
+      <a href="dashboard.html" class="aktiv">Hallenansicht</a>
       <a href="auftraege.html">Aufträge</a>
 
       <p class="menue-titel">Arbeitsvorbereitung</p>
@@ -43,144 +43,161 @@
     <main class="inhalt">
       <div class="seitenkopf">
         <div>
-          <h1>Dashboard</h1>
-          <p class="leise">Stand: Montag, 28.09.2026, 09:30 Uhr</p>
+          <h1>Hallenansicht</h1>
+          <p class="leise">Was gerade an jedem Arbeitsplatz passiert · Stand: Montag, 28.09.2026, 09:30 Uhr</p>
         </div>
         <a class="btn btn-primaer" href="auftrag-anlegen.html">+ Neuer Auftrag</a>
       </div>
 
-      <div class="hinweis warnung">
-        <p><strong>FA-1000 ist im Verzug:</strong> Liefertermin war der 25.09.2026, der erste Arbeitsgang wird gerade gerüstet.</p>
+      <!-- Kurzüberblick statt großer Kennzahl-Kacheln -->
+      <p class="kurzinfo">
+        <span><strong>Arbeitsplätze:</strong> 2 belegt · 1 unterbrochen · 2 frei</span>
+        <span><strong>Aufträge:</strong> <a href="auftraege.html">1 angelegt · 1 freigegeben · 4 in Arbeit · 1 fertig</a></span>
+      </p>
+
+      <div class="hinweis fehler">
+        <p><strong>Handlungsbedarf</strong></p>
+        <p>CNC-Drehmaschine: <a href="auftrag-detail.html">FA-1002</a> · AG 20 hat die Soll-Zeit überschritten (120 von 115 min) und ist noch nicht fertig gemeldet.</p>
+        <p>CNC-Fräsmaschine: steht seit 09:08 wegen Maschinenstörung. Betroffen ist FA-1000, dessen Liefertermin (25.09.) schon überschritten ist.</p>
       </div>
 
-      <!-- Kennzahlen: Anzahl der Aufträge je Status -->
-      <section class="kacheln">
-        <a class="kachel angelegt" href="auftraege.html">
-          <span class="zahl">1</span>
-          <span class="text">angelegt, noch nicht freigegeben</span>
-        </a>
-        <a class="kachel freigegeben" href="auftraege.html">
-          <span class="zahl">1</span>
-          <span class="text">freigegeben, wartet auf Start</span>
-        </a>
-        <a class="kachel in-arbeit" href="auftraege.html">
-          <span class="zahl">3</span>
-          <span class="text">in Arbeit</span>
-        </a>
-        <a class="kachel fertig" href="nachkalkulation.html">
-          <span class="zahl">1</span>
-          <span class="text">fertig, wartet auf Nachkalkulation</span>
-        </a>
-        <a class="kachel verzug" href="auftraege.html">
-          <span class="zahl">1</span>
-          <span class="text">Liefertermin überschritten</span>
-        </a>
+      <!-- Eine Karte pro Arbeitsplatz. Randfarbe = Ampel für die verbrauchte Soll-Zeit -->
+      <section class="halle">
+        <article class="platz gruen">
+          <div class="platz-kopf">
+            <span class="platz-name">Säge</span>
+            <span class="platz-nr">AP-10</span>
+          </div>
+          <p><span class="badge belegt">belegt · Bearbeiten</span></p>
+          <p class="platz-auftrag"><a href="auftrag-detail.html">FA-1004</a> · AG 10 Sägen</p>
+          <p class="leise klein">W-200 Antriebswelle Ø40 · 40 Stück<br>Paul Schneider · seit 08:58</p>
+          <div class="balken"><span class="gruen" style="width: 60%;"></span></div>
+          <p class="klein"><span class="ampel gruen"></span>42 von 70 min Soll (60 %)</p>
+        </article>
+
+        <article class="platz rot">
+          <div class="platz-kopf">
+            <span class="platz-name">CNC-Drehmaschine</span>
+            <span class="platz-nr">AP-20</span>
+          </div>
+          <p><span class="badge belegt">belegt · Bearbeiten</span></p>
+          <p class="platz-auftrag"><a href="auftrag-detail.html">FA-1002</a> · AG 20 Drehen</p>
+          <p class="leise klein">F-310 Flansch DN80 · 30 Stück<br>Jonas Wolff · seit 07:58</p>
+          <div class="balken"><span class="rot" style="width: 100%;"></span></div>
+          <p class="klein"><span class="ampel rot"></span><span class="ueber">120 von 115 min Soll (104 %)</span></p>
+        </article>
+
+        <article class="platz unterbrochen">
+          <div class="platz-kopf">
+            <span class="platz-name">CNC-Fräsmaschine</span>
+            <span class="platz-nr">AP-30</span>
+          </div>
+          <p><span class="badge unterbrochen">unterbrochen · Maschinenstörung</span></p>
+          <p class="platz-auftrag"><a href="auftrag-detail.html">FA-1000</a> · AG 10 Fräsen</p>
+          <p class="leise klein">G-120 Lagergehäuse · 10 Stück<br>Mehmet Yilmaz · steht seit 09:08 (22 min)</p>
+          <div class="balken"><span class="gruen" style="width: 50%;"></span></div>
+          <p class="klein"><span class="ampel gruen"></span>63 von 125 min Soll (50 %)</p>
+        </article>
+
+        <article class="platz frei">
+          <div class="platz-kopf">
+            <span class="platz-name">Messplatz</span>
+            <span class="platz-nr">AP-40</span>
+          </div>
+          <p><span class="badge frei">frei</span></p>
+          <p class="leise klein">Kein Arbeitsgang bereit.<br>Als Nächstes: FA-1002 · AG 40 Prüfen, wartet auf AG 30</p>
+        </article>
+
+        <article class="platz frei">
+          <div class="platz-kopf">
+            <span class="platz-name">Montage</span>
+            <span class="platz-nr">AP-50</span>
+          </div>
+          <p><span class="badge frei">frei</span></p>
+          <p class="leise klein">Kein Arbeitsgang bereit.<br>Als Nächstes: FA-1000 · AG 20 Montage, wartet auf AG 10</p>
+        </article>
       </section>
 
-      <section class="karte">
-        <h2>Gerade in Arbeit</h2>
+      <p class="legende">
+        <span><span class="ampel gruen"></span>bis 80 % der Soll-Zeit verbraucht</span>
+        <span><span class="ampel gelb"></span>80 bis 100 %</span>
+        <span><span class="ampel rot"></span>Soll-Zeit überschritten</span>
+      </p>
+
+      <section class="karte" style="margin-top: 1.5rem;">
+        <h2>Letzte Buchungen</h2>
         <div class="tabelle-scroll">
           <table>
             <thead>
               <tr>
+                <th class="zahl">Zeit</th>
                 <th>Mitarbeiter</th>
                 <th>Arbeitsplatz</th>
                 <th>Auftrag / Arbeitsgang</th>
-                <th>Tätigkeit</th>
-                <th class="zahl">seit</th>
-                <th>Soll-Zeit verbraucht</th>
+                <th>Buchung</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Jonas Wolff</td>
-                <td>CNC-Drehmaschine</td>
-                <td><a href="auftrag-detail.html">FA-1002</a> · AG 20 Drehen</td>
-                <td><span class="badge laeuft">Bearbeiten</span></td>
-                <td class="zahl">08:27</td>
-                <td>
-                  <div class="balken"><span style="width: 74%;"></span></div>
-                  <span class="leise klein">85 von 115 min</span>
-                </td>
-              </tr>
-              <tr>
+                <td class="zahl">09:08</td>
                 <td>Mehmet Yilmaz</td>
                 <td>CNC-Fräsmaschine</td>
-                <td><a href="auftrag-detail.html">FA-1000</a> · AG 10 Fräsen</td>
-                <td><span class="badge laeuft">Rüsten</span></td>
-                <td class="zahl">09:15</td>
-                <td>
-                  <div class="balken"><span style="width: 12%;"></span></div>
-                  <span class="leise klein">15 von 125 min</span>
-                </td>
+                <td>FA-1000 · AG 10</td>
+                <td><span class="badge unterbrochen">Unterbrochen: Maschinenstörung</span></td>
+              </tr>
+              <tr>
+                <td class="zahl">08:58</td>
+                <td>Paul Schneider</td>
+                <td>Säge</td>
+                <td>FA-1004 · AG 10</td>
+                <td>Start Bearbeiten</td>
+              </tr>
+              <tr>
+                <td class="zahl">08:53</td>
+                <td>Mehmet Yilmaz</td>
+                <td>CNC-Fräsmaschine</td>
+                <td>FA-1000 · AG 10</td>
+                <td>Start Bearbeiten</td>
+              </tr>
+              <tr>
+                <td class="zahl">08:48</td>
+                <td>Paul Schneider</td>
+                <td>Säge</td>
+                <td>FA-1004 · AG 10</td>
+                <td>Start Rüsten</td>
+              </tr>
+              <tr>
+                <td class="zahl">08:05</td>
+                <td>Mehmet Yilmaz</td>
+                <td>CNC-Fräsmaschine</td>
+                <td>FA-1000 · AG 10</td>
+                <td>Start Rüsten</td>
+              </tr>
+              <tr>
+                <td class="zahl">07:58</td>
+                <td>Jonas Wolff</td>
+                <td>CNC-Drehmaschine</td>
+                <td>FA-1002 · AG 20</td>
+                <td>Start Bearbeiten</td>
+              </tr>
+              <tr>
+                <td class="zahl">07:50</td>
+                <td>Lena Hoffmann</td>
+                <td>–</td>
+                <td>FA-1001 · AG 20</td>
+                <td>Korrektur: Buchung nachgetragen</td>
+              </tr>
+              <tr>
+                <td class="zahl">07:30</td>
+                <td>Jonas Wolff</td>
+                <td>CNC-Drehmaschine</td>
+                <td>FA-1002 · AG 20</td>
+                <td>Start Rüsten</td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
-
-      <div class="spalten-gleich">
-        <section class="karte">
-          <h2>Letzte Ereignisse</h2>
-          <ul class="feed">
-            <li><time>09:15</time><span>Mehmet Yilmaz hat an <strong>FA-1000</strong> AG 10 das Rüsten gestartet</span></li>
-            <li><time>08:58</time><span>Lena Hoffmann hat <strong>FA-1001</strong> abgeschlossen (48 Gut, 2 Ausschuss)</span></li>
-            <li><time>08:40</time><span>Anna Becker hat <strong>FA-1004</strong> freigegeben</span></li>
-            <li><time>08:31</time><span>Anna Becker hat <strong>FA-1005</strong> angelegt</span></li>
-            <li><time>08:27</time><span>Jonas Wolff hat an <strong>FA-1002</strong> AG 20 die Bearbeitung gestartet</span></li>
-            <li><time>08:05</time><span>Jonas Wolff hat an <strong>FA-1002</strong> AG 20 das Rüsten gestartet</span></li>
-            <li><time>07:50</time><span>Lena Hoffmann hat eine Buchung an <strong>FA-1001</strong> AG 20 korrigiert</span></li>
-          </ul>
-        </section>
-
-        <section class="karte">
-          <h2>Nächste Liefertermine</h2>
-          <div class="tabelle-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>Auftrag</th>
-                  <th>Artikel</th>
-                  <th>Termin</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><a href="auftrag-detail.html">FA-1000</a></td>
-                  <td>G-120 Lagergehäuse</td>
-                  <td>25.09. <span class="badge verzug">Verzug</span></td>
-                  <td><span class="badge in-arbeit">in Arbeit</span></td>
-                </tr>
-                <tr>
-                  <td><a href="nachkalkulation.html">FA-1001</a></td>
-                  <td>W-200 Antriebswelle Ø40</td>
-                  <td>02.10.</td>
-                  <td><span class="badge fertig">fertig</span></td>
-                </tr>
-                <tr>
-                  <td><a href="auftrag-detail.html">FA-1002</a></td>
-                  <td>F-310 Flansch DN80</td>
-                  <td>06.10.</td>
-                  <td><span class="badge in-arbeit">in Arbeit</span></td>
-                </tr>
-                <tr>
-                  <td><a href="auftrag-detail.html">FA-1003</a></td>
-                  <td>B-050 Distanzbuchse</td>
-                  <td>09.10.</td>
-                  <td><span class="badge in-arbeit">in Arbeit</span></td>
-                </tr>
-                <tr>
-                  <td><a href="auftrag-detail.html">FA-1004</a></td>
-                  <td>W-200 Antriebswelle Ø40</td>
-                  <td>14.10.</td>
-                  <td><span class="badge freigegeben">freigegeben</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </div>
     </main>
   </div>
 

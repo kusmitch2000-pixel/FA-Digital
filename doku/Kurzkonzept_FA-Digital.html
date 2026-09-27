@@ -17,8 +17,11 @@
     th, td { text-align: left; vertical-align: top; padding: 1.1mm 2mm; border-bottom: 1px solid #d9dee5; }
     th { background: #eef2f7; font-weight: 600; }
     td.nr { width: 8mm; }
-    .formel { background: #f4f6f9; border-left: 3px solid #2f6fd0; padding: 2.5mm 4mm; margin: 2mm 0 3mm; }
+    .formel { background: #f4f6f9; border-left: 3px solid #2f6fd0; padding: 2.5mm 4mm; margin: 2mm 0 3mm; break-inside: avoid; }
     .formel p { margin: 0 0 1mm; }
+    .schwerpunkt { background: #e8eef7; border-left: 4px solid #1d3f6e; padding: 3mm 4mm; margin: 0 0 4mm; font-size: 11pt; }
+    .schwerpunkt p { margin: 0; }
+    .neu { font-size: 8pt; font-weight: 600; color: #1f5fbf; background: #e3edfb; padding: 0 1.5mm; border-radius: 2mm; }
     .status { font-weight: 600; }
     code { font-family: Consolas, monospace; font-size: 9.5pt; }
     h2 { break-after: avoid; }
@@ -33,29 +36,35 @@
     Kurzkonzept zum ersten Prototyp · Projektseminar Softwareentwicklung · WiSe 2026/27 · Stand 28.09.2026
   </p>
 
+  <div class="schwerpunkt">
+    <p><strong>Schwerpunkt:</strong> FA-Digital deckt ab, was während und nach der Produktion passiert. Werker buchen Zeiten, am Ende stehen Soll-Ist-Vergleich und Kosten.</p>
+  </div>
+
   <h2>1 Ausgangslage und Ziel</h2>
-  <p>In vielen kleinen und mittleren Fertigungsbetrieben begleitet eine Laufkarte aus Papier den Fertigungsauftrag durch die Werkstatt. Zeiten werden von Hand notiert oder gar nicht erfasst. Die Nachkalkulation ist deshalb aufwendig und ungenau, und Abweichungen vom Plan fallen erst spät auf.</p>
+  <p>In vielen kleinen und mittleren Fertigungsbetrieben begleitet eine Laufkarte aus Papier den Fertigungsauftrag durch die Werkstatt. Zeiten werden von Hand notiert oder gar nicht erfasst. Die Nachkalkulation ist deshalb aufwendig und ungenau, Abweichungen vom Plan fallen erst spät auf, und niemand weiß genau, wo in der Fertigung Zeit verloren geht.</p>
   <p>FA-Digital bildet den Fertigungsauftrag digital ab:</p>
   <ul>
     <li>Die Arbeitsvorbereitung legt den Auftrag an. Die Arbeitsgänge und Soll-Zeiten entstehen automatisch aus dem Arbeitsplan des Artikels.</li>
-    <li>Werker buchen Rüst- und Bearbeitungszeiten direkt am Arbeitsgang und melden Gutmenge und Ausschuss.</li>
-    <li>Meister sehen jederzeit, wer woran arbeitet und wie weit jeder Auftrag ist.</li>
+    <li>Werker buchen Rüst- und Bearbeitungszeiten direkt am Arbeitsgang, geben bei jeder Unterbrechung den Grund an und melden Gutmenge und Ausschuss.</li>
+    <li>Meister sehen in der Hallenansicht für jeden Arbeitsplatz, wer woran arbeitet und wie viel der Soll-Zeit verbraucht ist.</li>
     <li>Das Controlling erhält nach Abschluss eine Nachkalkulation mit Soll-Ist-Vergleich von Zeiten und Kosten.</li>
+    <li>Aus den Ist-Zeiten abgeschlossener Aufträge schlägt das System genauere Soll-Zeiten vor. So wird der Arbeitsplan mit jedem Auftrag besser.</li>
   </ul>
 
   <h2>2 Ablauf und Status</h2>
   <p><span class="status">Auftrag:</span> angelegt → freigegeben → in Arbeit → fertig → nachkalkuliert. Stornieren ist nur möglich, solange noch kein Arbeitsgang gestartet wurde.</p>
-  <p><span class="status">Arbeitsgang:</span> offen → läuft (Rüsten oder Bearbeiten) → unterbrochen → erledigt. Ein Arbeitsgang kann erst starten, wenn sein Vorgänger erledigt ist.</p>
+  <p><span class="status">Arbeitsgang:</span> offen → läuft (Rüsten oder Bearbeiten) → unterbrochen (mit Grund) → läuft → erledigt. Ein Arbeitsgang kann erst starten, wenn sein Vorgänger erledigt ist. Jeder Werker bearbeitet immer nur einen Arbeitsgang.</p>
 
   <h2>3 Berechnungen</h2>
   <div class="formel">
     <p>Soll-Zeit je Arbeitsgang = Rüstzeit + Menge × Stückzeit</p>
-    <p>Ist-Zeit je Arbeitsgang = Summe aller Zeitbuchungen</p>
-    <p>Kosten = Zeit in Stunden × Stundensatz des Arbeitsplatzes</p>
-    <p>Kosten pro Gutstück = Ist-Kosten ÷ Gutmenge</p>
-    <p>Ampel für die Kostenabweichung: bis +5 % grün, bis +10 % gelb, darüber rot</p>
+    <p>Ist-Zeit je Arbeitsgang = Summe der Rüst- und Bearbeitungsbuchungen. Unterbrechungen zählen nicht dazu, sie werden getrennt nach Grund ausgewertet.</p>
+    <p>Kosten = Zeit in Stunden × Stundensatz des Arbeitsplatzes · Kosten pro Gutstück = Ist-Kosten ÷ Gutmenge</p>
+    <p>Ampel Hallenansicht: verbrauchte Soll-Zeit bis 80 % grün, bis 100 % gelb, darüber rot</p>
+    <p>Ampel Nachkalkulation: Kostenabweichung bis +5 % grün, bis +10 % gelb, darüber rot</p>
+    <p>Vorschlag Soll-Zeit: Ø Rüstzeit = Mittelwert je Auftrag, Ø Stückzeit = Bearbeitungszeit ÷ produzierte Menge. Vorschlag ab 10 % Abweichung.</p>
   </div>
-  <p>Beispiel aus dem Prototyp (FA-1001, 50 Antriebswellen): Geplant waren 365 min und 431,25 €. Gebucht wurden 387 min und 468,67 € (+8,7 %). Die Abweichung entsteht fast vollständig beim Drehen: Das Rüsten dauerte 12 min länger als geplant, die Bearbeitung 20 min.</p>
+  <p>Beispiel aus dem Prototyp (FA-1001, 50 Antriebswellen): Geplant waren 365 min und 431,25 €. Gebucht wurden 387 min und 468,67 € (+8,7 %). Die Abweichung entsteht fast vollständig beim Drehen, vor allem beim Rüsten. Über zwei Aufträge gerechnet dauert das Rüsten dort im Schnitt 39 statt 30 min, deshalb schlägt der Arbeitsplan die neue Rüstzeit vor.</p>
 
   <div class="zusammen">
   <h2>4 Rollen</h2>
@@ -64,9 +73,9 @@
       <tr><th>Rolle</th><th>Aufgabe im System</th></tr>
     </thead>
     <tbody>
-      <tr><td>Arbeitsvorbereitung</td><td>Pflegt Artikel, Arbeitspläne und Arbeitsplätze, legt Aufträge an, gibt sie frei oder storniert sie</td></tr>
-      <tr><td>Werker</td><td>Startet, unterbricht und beendet Arbeitsgänge, meldet Gutmenge und Ausschuss</td></tr>
-      <tr><td>Meister</td><td>Überwacht die Fertigung, trägt vergessene Buchungen nach, schließt Aufträge ab</td></tr>
+      <tr><td>Arbeitsvorbereitung</td><td>Pflegt Artikel, Arbeitspläne und Arbeitsplätze, übernimmt Soll-Zeit-Vorschläge, legt Aufträge an, gibt sie frei oder storniert sie</td></tr>
+      <tr><td>Werker</td><td>Startet Arbeitsgänge, unterbricht sie mit Grund, meldet sie mit Gutmenge und Ausschuss fertig</td></tr>
+      <tr><td>Meister</td><td>Überwacht die Hallenansicht, trägt vergessene Buchungen nach, schließt Aufträge ab</td></tr>
       <tr><td>Controlling</td><td>Pflegt Stundensätze, erstellt Nachkalkulation und Auswertungen</td></tr>
       <tr><td>Admin</td><td>Verwaltet Benutzer und Rollen, hat Zugriff auf alle Bereiche</td></tr>
     </tbody>
@@ -80,19 +89,21 @@
     </thead>
     <tbody>
       <tr><td class="nr">1</td><td>Artikel und Arbeitspläne verwalten (Arbeitsgänge mit Rüst- und Stückzeit)</td><td>Arbeitsvorbereitung</td><td>Artikel &amp; Arbeitspläne</td></tr>
-      <tr><td class="nr">2</td><td>Arbeitsplätze mit Stundensätzen verwalten</td><td>Arbeitsvorbereitung, Controlling</td><td>Arbeitsplätze</td></tr>
-      <tr><td class="nr">3</td><td>Fertigungsauftrag anlegen, Arbeitsgänge und Soll-Kosten entstehen automatisch</td><td>Arbeitsvorbereitung</td><td>Auftrag anlegen</td></tr>
-      <tr><td class="nr">4</td><td>Auftrag ändern, freigeben oder stornieren</td><td>Arbeitsvorbereitung</td><td>Auftrag anlegen, Auftragsdetail</td></tr>
-      <tr><td class="nr">5</td><td>Offene Arbeitsgänge am eigenen Arbeitsplatz anzeigen</td><td>Werker</td><td>Werker-Terminal</td></tr>
-      <tr><td class="nr">6</td><td>Arbeitsgang starten, unterbrechen und fortsetzen, getrennt nach Rüsten und Bearbeiten</td><td>Werker</td><td>Werker-Terminal</td></tr>
-      <tr><td class="nr">7</td><td>Arbeitsgang abschließen und Gutmenge und Ausschuss melden</td><td>Werker</td><td>Werker-Terminal</td></tr>
-      <tr><td class="nr">8</td><td>Vergessene Buchungen nachtragen oder korrigieren, mit Begründung</td><td>Meister</td><td>Auftragsdetail</td></tr>
-      <tr><td class="nr">9</td><td>Auftragsübersicht mit Fortschritt und Terminverzug</td><td>alle</td><td>Aufträge</td></tr>
-      <tr><td class="nr">10</td><td>Dashboard: wer gerade woran arbeitet, Aufträge je Status, letzte Ereignisse</td><td>alle</td><td>Dashboard</td></tr>
-      <tr><td class="nr">11</td><td>Auftrag abschließen, danach sind keine Buchungen mehr möglich</td><td>Meister</td><td>Auftragsdetail</td></tr>
-      <tr><td class="nr">12</td><td>Nachkalkulation eines Auftrags: Soll-Ist je Arbeitsgang, Ampel, Kosten pro Gutstück</td><td>Controlling</td><td>Nachkalkulation</td></tr>
-      <tr><td class="nr">13</td><td>Auswertung über mehrere Aufträge und Export als CSV</td><td>Controlling</td><td>Auswertung</td></tr>
-      <tr><td class="nr">14</td><td>Benutzer mit Rolle und Personalnummer verwalten</td><td>Admin</td><td>Benutzer</td></tr>
+      <tr><td class="nr">2</td><td>Soll-Zeiten aus Ist-Werten früherer Aufträge vorschlagen und übernehmen <span class="neu">neu</span></td><td>Arbeitsvorbereitung</td><td>Artikel &amp; Arbeitspläne</td></tr>
+      <tr><td class="nr">3</td><td>Arbeitsplätze mit Stundensätzen verwalten</td><td>Arbeitsvorbereitung, Controlling</td><td>Arbeitsplätze</td></tr>
+      <tr><td class="nr">4</td><td>Fertigungsauftrag anlegen, Arbeitsgänge und Soll-Kosten entstehen automatisch</td><td>Arbeitsvorbereitung</td><td>Auftrag anlegen</td></tr>
+      <tr><td class="nr">5</td><td>Auftrag ändern, freigeben oder stornieren</td><td>Arbeitsvorbereitung</td><td>Auftrag anlegen, Auftragsdetail</td></tr>
+      <tr><td class="nr">6</td><td>Offene Arbeitsgänge am eigenen Arbeitsplatz anzeigen</td><td>Werker</td><td>Werker-Terminal</td></tr>
+      <tr><td class="nr">7</td><td>Arbeitsgang starten und fortsetzen, getrennt nach Rüsten und Bearbeiten</td><td>Werker</td><td>Werker-Terminal</td></tr>
+      <tr><td class="nr">8</td><td>Arbeitsgang unterbrechen und den Grund angeben (Pause, Material, Störung, Werkzeug) <span class="neu">neu</span></td><td>Werker</td><td>Werker-Terminal</td></tr>
+      <tr><td class="nr">9</td><td>Arbeitsgang fertig melden mit Gutmenge und Ausschuss</td><td>Werker</td><td>Werker-Terminal</td></tr>
+      <tr><td class="nr">10</td><td>Vergessene Buchungen nachtragen oder korrigieren, mit Begründung</td><td>Meister</td><td>Auftragsdetail</td></tr>
+      <tr><td class="nr">11</td><td>Hallenansicht: je Arbeitsplatz frei oder belegt, wer woran arbeitet, verbrauchte Soll-Zeit mit Ampel <span class="neu">neu</span></td><td>alle</td><td>Hallenansicht</td></tr>
+      <tr><td class="nr">12</td><td>Auftragsübersicht mit Fortschritt und Terminverzug</td><td>alle</td><td>Aufträge</td></tr>
+      <tr><td class="nr">13</td><td>Auftrag abschließen, danach sind keine Buchungen mehr möglich</td><td>Meister</td><td>Auftragsdetail</td></tr>
+      <tr><td class="nr">14</td><td>Nachkalkulation eines Auftrags: Soll-Ist je Arbeitsgang, Ampel, Kosten pro Gutstück</td><td>Controlling</td><td>Nachkalkulation</td></tr>
+      <tr><td class="nr">15</td><td>Auswertung: Soll-Ist über mehrere Aufträge, Unterbrechungen nach Grund, Export als CSV</td><td>Controlling</td><td>Auswertung</td></tr>
+      <tr><td class="nr">16</td><td>Benutzer mit Rolle und Personalnummer verwalten</td><td>Admin</td><td>Benutzer</td></tr>
     </tbody>
   </table>
   <p>Für alle Seiten gilt eine Anmeldung mit E-Mail und Passwort. Jede Rolle sieht nur ihre Menüpunkte.</p>
@@ -101,9 +112,9 @@
   <ul>
     <li>11 statische HTML-Seiten mit einer gemeinsamen CSS-Datei, noch ohne Datenbank und ohne PHP</li>
     <li>Alle Seiten sind verlinkt und lassen sich durchklicken. Start: <code>index.html</code> im Browser öffnen</li>
-    <li>Formulare für alle Eingaben (Anmeldung, Auftrag, Zeitbuchung, Stammdaten, Benutzer, Filter und Export)</li>
+    <li>Formulare für alle Eingaben: Anmeldung, Auftrag, Zeitbuchung, Unterbrechung, Stammdaten, Benutzer, Filter und Export</li>
     <li>Die Beispieldaten sind über alle Seiten stimmig und nachgerechnet</li>
-    <li>Die Oberfläche passt sich an Tablet und Smartphone an, wichtig für das Werker-Terminal an der Maschine</li>
+    <li>Die Oberfläche passt sich an Tablet und Smartphone an. Das ist wichtig für das Werker-Terminal an der Maschine</li>
   </ul>
 
   <h2>7 Offene Fragen und nächste Schritte</h2>

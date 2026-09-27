@@ -2,6 +2,8 @@
 
 Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Projektseminar Softwareentwicklung (HAW Kiel, WiSe 2026/27).
 
+**Schwerpunkt:** FA-Digital deckt ab, was während und nach der Produktion passiert. Werker buchen Zeiten, am Ende stehen Soll-Ist-Vergleich und Kosten.
+
 ## Ordner
 
 | Ordner | Inhalt |
@@ -17,7 +19,7 @@ Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Pr
 
 ## Prototyp lokal öffnen
 
-`prototyp/index.html` doppelt anklicken. Die Anmeldung ist noch nicht geprüft, „Anmelden“ führt direkt zum Dashboard.
+`prototyp/index.html` doppelt anklicken. Die Anmeldung ist noch nicht geprüft, „Anmelden“ führt direkt zur Hallenansicht.
 
 `prototyp/prototyp.js` gibt es nur, solange die Seiten statisch sind. Es leitet abgesendete Formulare direkt auf die Zielseite weiter, weil GitHub Pages keine POST-Anfragen annimmt. Mit PHP fällt die Datei weg.
 
@@ -26,16 +28,18 @@ Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Pr
 | Datei | Seite | Anwendungsfälle |
 |---|---|---|
 | `index.html` | Anmeldung | Login |
-| `dashboard.html` | Dashboard | 10 |
-| `auftraege.html` | Auftragsübersicht | 9 |
-| `auftrag-anlegen.html` | Neuer Fertigungsauftrag | 3, 4 |
-| `auftrag-detail.html` | Auftragsdetail FA-1002 | 4, 8, 11 |
-| `werker.html` | Werker-Terminal | 5, 6, 7 |
-| `nachkalkulation.html` | Nachkalkulation FA-1001 | 12 |
-| `auswertung.html` | Auswertung und Export | 13 |
-| `artikel.html` | Artikel und Arbeitspläne | 1 |
-| `arbeitsplaetze.html` | Arbeitsplätze und Stundensätze | 2 |
-| `benutzer.html` | Benutzerverwaltung | 14 |
+| `dashboard.html` | Hallenansicht: eine Karte je Arbeitsplatz mit Ampel | 11 |
+| `auftraege.html` | Auftragsübersicht | 12 |
+| `auftrag-anlegen.html` | Neuer Fertigungsauftrag | 4, 5 |
+| `auftrag-detail.html` | Auftragsdetail FA-1002 | 5, 10, 13 |
+| `werker.html` | Werker-Terminal mit Unterbrechungsgrund | 6, 7, 8, 9 |
+| `nachkalkulation.html` | Nachkalkulation FA-1001 | 14 |
+| `auswertung.html` | Auswertung, Unterbrechungen nach Grund, CSV-Export | 15 |
+| `artikel.html` | Artikel, Arbeitspläne, Soll-Zeit-Vorschläge | 1, 2 |
+| `arbeitsplaetze.html` | Arbeitsplätze und Stundensätze | 3 |
+| `benutzer.html` | Benutzerverwaltung | 16 |
+
+Die Nummern beziehen sich auf die 16 Anwendungsfälle im Kurzkonzept (`doku/Kurzkonzept_FA-Digital.pdf`).
 
 ## Technik
 
@@ -51,7 +55,7 @@ Einmalig das Repository klonen, z. B. in VS Code über „Git: Clone“ oder im 
 git clone https://github.com/kusmitch2000-pixel/FA-Digital.git
 ```
 
-Das Repository ist privat. Vorher die Einladung auf GitHub annehmen (E-Mail oder https://github.com/kusmitch2000-pixel/FA-Digital/invitations).
+Zum Hochladen von Änderungen vorher die Einladung auf GitHub annehmen (E-Mail oder https://github.com/kusmitch2000-pixel/FA-Digital/invitations).
 
 Bei jeder Arbeitssitzung:
 

@@ -21,7 +21,7 @@
   <div class="rahmen">
     <nav class="menue">
       <p class="menue-titel">Übersicht</p>
-      <a href="dashboard.html">Dashboard</a>
+      <a href="dashboard.html">Hallenansicht</a>
       <a href="auftraege.html">Aufträge</a>
 
       <p class="menue-titel">Arbeitsvorbereitung</p>
@@ -60,6 +60,7 @@
                 <th class="zahl">Arbeitsgänge</th>
                 <th class="zahl">Rüstzeit gesamt</th>
                 <th class="zahl">Stückzeit gesamt</th>
+                <th>Abgleich mit Ist-Zeiten</th>
                 <th>Status</th>
                 <th></th>
               </tr>
@@ -71,6 +72,7 @@
                 <td class="zahl">3</td>
                 <td class="zahl">40 min</td>
                 <td class="zahl">6,5 min</td>
+                <td><a href="#abgleich"><span class="badge laeuft">1 Vorschlag</span></a></td>
                 <td><span class="badge aktiv">aktiv</span></td>
                 <td><a class="btn btn-klein btn-sekundaer" href="artikel.html">Bearbeiten</a></td>
               </tr>
@@ -80,6 +82,7 @@
                 <td class="zahl">4</td>
                 <td class="zahl">75 min</td>
                 <td class="zahl">10,5 min</td>
+                <td><span class="badge laeuft">1 Vorschlag</span></td>
                 <td><span class="badge aktiv">aktiv</span></td>
                 <td><a class="btn btn-klein btn-sekundaer" href="artikel.html">Bearbeiten</a></td>
               </tr>
@@ -89,6 +92,7 @@
                 <td class="zahl">3</td>
                 <td class="zahl">60 min</td>
                 <td class="zahl">16,0 min</td>
+                <td><span class="leise klein">noch kein Auftrag abgeschlossen</span></td>
                 <td><span class="badge aktiv">aktiv</span></td>
                 <td><a class="btn btn-klein btn-sekundaer" href="artikel.html">Bearbeiten</a></td>
               </tr>
@@ -98,6 +102,7 @@
                 <td class="zahl">2</td>
                 <td class="zahl">25 min</td>
                 <td class="zahl">2,0 min</td>
+                <td><span class="leise klein">noch kein Auftrag abgeschlossen</span></td>
                 <td><span class="badge aktiv">aktiv</span></td>
                 <td><a class="btn btn-klein btn-sekundaer" href="artikel.html">Bearbeiten</a></td>
               </tr>
@@ -194,6 +199,63 @@
         </div>
         <p class="leise klein" style="margin: 0.75rem 0 0;">
           Änderungen am Arbeitsplan gelten nur für neue Aufträge. Bereits angelegte Aufträge behalten ihre Soll-Zeiten.
+        </p>
+      </form>
+
+      <!-- Soll-Zeiten aus Ist-Werten vorschlagen: Der Arbeitsplan wird mit jedem Auftrag genauer.
+           Ø Rüstzeit  = Mittelwert der Rüstzeiten je Auftrag
+           Ø Stückzeit = gesamte Bearbeitungszeit ÷ produzierte Menge (Gut + Ausschuss) -->
+      <form id="abgleich" class="karte" action="artikel.html" method="post">
+        <h2>Soll-Zeiten mit Ist-Werten abgleichen: W-200</h2>
+        <p class="leise klein">
+          Grundlage: 2 abgeschlossene Aufträge (FA-0998 mit 80 Stück, FA-1001 mit 50 Stück).
+          Ein Vorschlag erscheint, wenn der Durchschnitt mehr als 10 % von der Soll-Zeit abweicht.
+        </p>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>AG</th>
+                <th class="zahl">Rüsten Soll</th>
+                <th class="zahl">Rüsten Ø Ist</th>
+                <th class="zahl">Stück Soll</th>
+                <th class="zahl">Stück Ø Ist</th>
+                <th>Vorschlag</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>10 Sägen</td>
+                <td class="zahl">10 min</td>
+                <td class="zahl">9,5 min</td>
+                <td class="zahl">1,5 min</td>
+                <td class="zahl">1,4 min</td>
+                <td><span class="badge erledigt">passt</span></td>
+              </tr>
+              <tr class="hervorgehoben">
+                <td>20 Drehen</td>
+                <td class="zahl">30 min</td>
+                <td class="zahl ueber">39,0 min (+30 %)</td>
+                <td class="zahl">4,0 min</td>
+                <td class="zahl">4,0 min</td>
+                <td>
+                  <button type="submit" name="uebernehmen" value="20-ruestzeit-39" class="btn btn-klein btn-primaer">39 min übernehmen</button>
+                </td>
+              </tr>
+              <tr>
+                <td>30 Prüfen</td>
+                <td class="zahl">0 min</td>
+                <td class="zahl">0 min</td>
+                <td class="zahl">1,0 min</td>
+                <td class="zahl">1,0 min</td>
+                <td><span class="badge erledigt">passt</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="leise klein" style="margin: 0.75rem 0 0;">
+          Ø Rüstzeit = Mittelwert der Rüstzeiten je Auftrag. Ø Stückzeit = gesamte Bearbeitungszeit ÷ produzierte Menge (Gut + Ausschuss).
+          Beispiel Drehen: Rüsten dauerte 36 und 42 min, im Schnitt also 39 statt geplanter 30 min.
         </p>
       </form>
     </main>
