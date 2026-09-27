@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Werker-Terminal – FA-Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="kopf">
+    <a class="logo" href="dashboard.html">FA-Digital</a>
+    <span class="untertitel">Digitaler Fertigungsauftrag</span>
+    <div class="benutzer">
+      Sven Petersen · Admin
+      <a href="index.html">Abmelden</a>
+    </div>
+  </header>
+
+  <div class="rahmen">
+    <nav class="menue">
+      <p class="menue-titel">Übersicht</p>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="auftraege.html">Aufträge</a>
+
+      <p class="menue-titel">Arbeitsvorbereitung</p>
+      <a href="auftrag-anlegen.html">Auftrag anlegen</a>
+      <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="arbeitsplaetze.html">Arbeitsplätze</a>
+
+      <p class="menue-titel">Werkstatt</p>
+      <a href="werker.html" class="aktiv">Werker-Terminal</a>
+
+      <p class="menue-titel">Controlling</p>
+      <a href="nachkalkulation.html">Nachkalkulation</a>
+      <a href="auswertung.html">Auswertung</a>
+
+      <p class="menue-titel">Verwaltung</p>
+      <a href="benutzer.html">Benutzer</a>
+    </nav>
+
+    <main class="inhalt">
+      <div class="seitenkopf">
+        <div>
+          <h1>Werker-Terminal</h1>
+          <p class="leise">Jonas Wolff · Personalnummer 1042</p>
+        </div>
+        <!-- Arbeitsplatz wechseln: Formular mit GET, die Auswahl steht dann in der Adresse -->
+        <form action="werker.html" method="get" class="knopfleiste">
+          <label for="arbeitsplatz" class="leise" style="margin: 0; align-self: center;">Arbeitsplatz</label>
+          <select id="arbeitsplatz" name="arbeitsplatz" style="width: auto;">
+            <option value="AP-10">Säge (AP-10)</option>
+            <option value="AP-20" selected>CNC-Drehmaschine (AP-20)</option>
+            <option value="AP-30">CNC-Fräsmaschine (AP-30)</option>
+            <option value="AP-40">Messplatz (AP-40)</option>
+            <option value="AP-50">Montage (AP-50)</option>
+          </select>
+          <button type="submit" class="btn btn-sekundaer">Wechseln</button>
+        </form>
+      </div>
+
+      <!-- Laufender Arbeitsgang mit großen Buttons für die Bedienung an der Maschine -->
+      <section class="karte terminal-aktiv">
+        <div class="spalten-gleich">
+          <div>
+            <p class="leise klein" style="margin: 0;">Laufender Arbeitsgang</p>
+            <p class="terminal-titel">FA-1002 · AG 20 Drehen</p>
+            <p>F-310 Flansch DN80 · 30 Stück<br>
+              <span class="badge laeuft">Bearbeiten seit 08:27</span></p>
+            <p class="leise klein" style="margin-bottom: 0.25rem;">Zeit bisher (Rüsten 22 min + Bearbeiten 63 min)</p>
+            <p class="uhr">85 <span class="leise" style="font-size: 1rem;">von 115 min Soll</span></p>
+            <div class="balken gross"><span class="warn" style="width: 74%;"></span></div>
+          </div>
+
+          <form action="werker.html" method="post">
+            <div class="formular-raster">
+              <div class="feld">
+                <label for="gutmenge">Gutmenge</label>
+                <input type="number" id="gutmenge" name="gutmenge" min="0" value="30">
+              </div>
+              <div class="feld">
+                <label for="ausschuss">Ausschuss</label>
+                <input type="number" id="ausschuss" name="ausschuss" min="0" value="0">
+              </div>
+            </div>
+            <div class="feld">
+              <label for="bemerkung">Bemerkung</label>
+              <input type="text" id="bemerkung" name="bemerkung" placeholder="optional">
+            </div>
+            <div class="knopfleiste">
+              <button type="submit" name="aktion" value="unterbrechen" class="btn btn-sekundaer btn-gross">Unterbrechen</button>
+              <button type="submit" name="aktion" value="fertig" class="btn btn-erfolg btn-gross">Arbeitsgang fertig melden</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="karte">
+        <h2>Arbeitsvorrat an der CNC-Drehmaschine</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Auftrag</th>
+                <th>Arbeitsgang</th>
+                <th>Artikel</th>
+                <th class="zahl">Menge</th>
+                <th class="zahl">Soll-Zeit</th>
+                <th>Liefertermin</th>
+                <th>Bereit?</th>
+                <th>Starten</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="hervorgehoben">
+                <td><strong>FA-1002</strong></td>
+                <td>20 Drehen</td>
+                <td>F-310 Flansch DN80</td>
+                <td class="zahl">30</td>
+                <td class="zahl">115 min</td>
+                <td>06.10.2026</td>
+                <td><span class="badge laeuft">läuft</span></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td><strong>FA-1003</strong></td>
+                <td>20 Drehen</td>
+                <td>B-050 Distanzbuchse</td>
+                <td class="zahl">200</td>
+                <td class="zahl">320 min</td>
+                <td>09.10.2026</td>
+                <td><span class="badge erledigt">bereit</span></td>
+                <td>
+                  <form action="werker.html" method="post" class="knopfleiste" style="margin: 0;">
+                    <button type="submit" name="aktion" value="ruesten" class="btn btn-klein btn-primaer">Rüsten</button>
+                    <button type="submit" name="aktion" value="bearbeiten" class="btn btn-klein btn-sekundaer">Bearbeiten</button>
+                  </form>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>FA-1004</strong></td>
+                <td>20 Drehen</td>
+                <td>W-200 Antriebswelle Ø40</td>
+                <td class="zahl">40</td>
+                <td class="zahl">190 min</td>
+                <td>14.10.2026</td>
+                <td><span class="badge offen">wartet auf AG 10</span></td>
+                <td>
+                  <div class="knopfleiste" style="margin: 0;">
+                    <button type="button" class="btn btn-klein btn-primaer" disabled>Rüsten</button>
+                    <button type="button" class="btn btn-klein btn-sekundaer" disabled>Bearbeiten</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="leise klein" style="margin: 0.75rem 0 0;">
+          Hier erscheinen nur Arbeitsgänge von freigegebenen Aufträgen. Wer einen neuen Arbeitsgang startet, unterbricht damit automatisch den laufenden.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="fuss">
+    Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
+  </footer>
+
+</body>
+</html>

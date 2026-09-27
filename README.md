@@ -1,0 +1,57 @@
+# FA-Digital
+
+Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Projektseminar Softwareentwicklung (HAW Kiel, WiSe 2026/27).
+
+## Ordner
+
+| Ordner | Inhalt |
+|---|---|
+| `prototyp/` | Klickbarer HTML-Prototyp, 11 Seiten und `style.css`, noch ohne Datenbank |
+| `doku/` | Kurzkonzept, KI-Prompt-Protokoll, später Fachkonzept, DV-Konzept und KI-Konzept |
+
+## Prototyp öffnen
+
+`prototyp/index.html` doppelt anklicken. Die Anmeldung ist noch nicht geprüft, „Anmelden“ führt direkt zum Dashboard.
+
+## Seiten
+
+| Datei | Seite | Anwendungsfälle |
+|---|---|---|
+| `index.html` | Anmeldung | Login |
+| `dashboard.html` | Dashboard | 10 |
+| `auftraege.html` | Auftragsübersicht | 9 |
+| `auftrag-anlegen.html` | Neuer Fertigungsauftrag | 3, 4 |
+| `auftrag-detail.html` | Auftragsdetail FA-1002 | 4, 8, 11 |
+| `werker.html` | Werker-Terminal | 5, 6, 7 |
+| `nachkalkulation.html` | Nachkalkulation FA-1001 | 12 |
+| `auswertung.html` | Auswertung und Export | 13 |
+| `artikel.html` | Artikel und Arbeitspläne | 1 |
+| `arbeitsplaetze.html` | Arbeitsplätze und Stundensätze | 2 |
+| `benutzer.html` | Benutzerverwaltung | 14 |
+
+## Technik
+
+HTML und CSS. Später PHP mit PDO und MariaDB über XAMPP.
+
+## Zusammenarbeit im Team
+
+Jeder arbeitet mit seinem eigenen GitHub-Konto. So zeigt die Commit-Historie, wer welchen Teil gebaut hat. Das ist für die Bewertung wichtig.
+
+Einmalig das Repository klonen, z. B. in VS Code über „Git: Clone“ oder im Terminal:
+
+```
+git clone <Adresse des Repositorys>
+```
+
+Bei jeder Arbeitssitzung:
+
+1. Vorher den neuesten Stand holen: `git pull`
+2. Arbeiten
+3. Änderungen speichern und hochladen:
+   ```
+   git add .
+   git commit -m "Kurz beschreiben, was geändert wurde"
+   git push
+   ```
+
+Prompts an die KI tragt ihr mit eurem Namen in `doku/KI-Konzept_Prompt-Protokoll.md` ein.

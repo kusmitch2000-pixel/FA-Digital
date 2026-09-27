@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Auftrag FA-1002 – FA-Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="kopf">
+    <a class="logo" href="dashboard.html">FA-Digital</a>
+    <span class="untertitel">Digitaler Fertigungsauftrag</span>
+    <div class="benutzer">
+      Sven Petersen · Admin
+      <a href="index.html">Abmelden</a>
+    </div>
+  </header>
+
+  <div class="rahmen">
+    <nav class="menue">
+      <p class="menue-titel">Übersicht</p>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="auftraege.html" class="aktiv">Aufträge</a>
+
+      <p class="menue-titel">Arbeitsvorbereitung</p>
+      <a href="auftrag-anlegen.html">Auftrag anlegen</a>
+      <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="arbeitsplaetze.html">Arbeitsplätze</a>
+
+      <p class="menue-titel">Werkstatt</p>
+      <a href="werker.html">Werker-Terminal</a>
+
+      <p class="menue-titel">Controlling</p>
+      <a href="nachkalkulation.html">Nachkalkulation</a>
+      <a href="auswertung.html">Auswertung</a>
+
+      <p class="menue-titel">Verwaltung</p>
+      <a href="benutzer.html">Benutzer</a>
+    </nav>
+
+    <main class="inhalt">
+      <p class="klein"><a href="auftraege.html">← Zurück zu den Aufträgen</a></p>
+
+      <div class="seitenkopf">
+        <div>
+          <h1>Auftrag FA-1002 <span class="badge in-arbeit">in Arbeit</span></h1>
+          <p class="leise">F-310 Flansch DN80 · 30 Stück · 1 von 4 Arbeitsgängen erledigt</p>
+        </div>
+        <!-- Welche Aktion möglich ist, hängt vom Status ab -->
+        <div class="knopfleiste">
+          <button type="button" class="btn btn-gefahr" disabled title="Nur möglich, solange noch kein Arbeitsgang gestartet wurde">Stornieren</button>
+          <button type="button" class="btn btn-sekundaer" disabled title="Erst möglich, wenn alle Arbeitsgänge erledigt sind">Auftrag abschließen</button>
+        </div>
+      </div>
+
+      <section class="karte">
+        <h2>Kopfdaten</h2>
+        <dl class="kopfdaten">
+          <div><dt>Artikel</dt><dd>F-310 Flansch DN80</dd></div>
+          <div><dt>Menge</dt><dd>30 Stück</dd></div>
+          <div><dt>Kunde</dt><dd>Nordwerk Maschinenbau GmbH</dd></div>
+          <div><dt>Liefertermin</dt><dd>06.10.2026</dd></div>
+          <div><dt>Angelegt</dt><dd>24.09.2026, Anna Becker</dd></div>
+          <div><dt>Freigegeben</dt><dd>24.09.2026, Anna Becker</dd></div>
+        </dl>
+        <div style="margin-top: 1.25rem;">
+          <div class="balken gross"><span style="width: 31%;"></span></div>
+          <p class="leise klein" style="margin-top: 0.3rem;">Ist-Zeit bisher 122 von 390 min Soll-Zeit</p>
+        </div>
+      </section>
+
+      <section class="karte">
+        <h2>Arbeitsgänge</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>AG</th>
+                <th>Arbeitsgang</th>
+                <th>Arbeitsplatz</th>
+                <th class="zahl">Soll-Zeit</th>
+                <th class="zahl">Ist-Zeit</th>
+                <th>Status</th>
+                <th class="zahl">Gut / Ausschuss</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>10</td>
+                <td>Sägen</td>
+                <td>Säge (AP-10)</td>
+                <td class="zahl">40 min</td>
+                <td class="zahl">37 min</td>
+                <td><span class="badge erledigt">erledigt</span></td>
+                <td class="zahl">30 / 0</td>
+              </tr>
+              <tr class="hervorgehoben">
+                <td>20</td>
+                <td>Drehen</td>
+                <td>CNC-Drehmaschine (AP-20)</td>
+                <td class="zahl">115 min</td>
+                <td class="zahl">85 min</td>
+                <td><span class="badge laeuft">läuft · Jonas Wolff</span></td>
+                <td class="zahl">–</td>
+              </tr>
+              <tr>
+                <td>30</td>
+                <td>Fräsen</td>
+                <td>CNC-Fräsmaschine (AP-30)</td>
+                <td class="zahl">190 min</td>
+                <td class="zahl">–</td>
+                <td><span class="badge offen">offen</span></td>
+                <td class="zahl">–</td>
+              </tr>
+              <tr>
+                <td>40</td>
+                <td>Prüfen</td>
+                <td>Messplatz (AP-40)</td>
+                <td class="zahl">45 min</td>
+                <td class="zahl">–</td>
+                <td><span class="badge offen">offen</span></td>
+                <td class="zahl">–</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3">Summe</td>
+                <td class="zahl">390 min</td>
+                <td class="zahl">122 min</td>
+                <td colspan="2"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <section class="karte">
+        <h2>Zeitbuchungen</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th>Mitarbeiter</th>
+                <th>Arbeitsgang</th>
+                <th>Tätigkeit</th>
+                <th class="zahl">Beginn</th>
+                <th class="zahl">Ende</th>
+                <th class="zahl">Dauer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>25.09.2026</td>
+                <td>Mehmet Yilmaz</td>
+                <td>10 Sägen</td>
+                <td>Rüsten</td>
+                <td class="zahl">13:02</td>
+                <td class="zahl">13:10</td>
+                <td class="zahl">8 min</td>
+              </tr>
+              <tr>
+                <td>25.09.2026</td>
+                <td>Mehmet Yilmaz</td>
+                <td>10 Sägen</td>
+                <td>Bearbeiten</td>
+                <td class="zahl">13:10</td>
+                <td class="zahl">13:39</td>
+                <td class="zahl">29 min</td>
+              </tr>
+              <tr>
+                <td>28.09.2026</td>
+                <td>Jonas Wolff</td>
+                <td>20 Drehen</td>
+                <td>Rüsten</td>
+                <td class="zahl">08:05</td>
+                <td class="zahl">08:27</td>
+                <td class="zahl">22 min</td>
+              </tr>
+              <tr class="hervorgehoben">
+                <td>28.09.2026</td>
+                <td>Jonas Wolff</td>
+                <td>20 Drehen</td>
+                <td>Bearbeiten</td>
+                <td class="zahl">08:27</td>
+                <td class="zahl"><span class="badge laeuft">läuft</span></td>
+                <td class="zahl">63 min</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Nur für die Rolle Meister: vergessene Buchungen nachtragen -->
+      <section class="karte">
+        <h2>Buchung nachtragen oder korrigieren</h2>
+        <p class="leise klein">Nur für Meister. Jede Korrektur wird mit Begründung gespeichert und im Ereignis-Feed angezeigt.</p>
+        <form action="auftrag-detail.html" method="post">
+          <div class="formular-raster">
+            <div class="feld">
+              <label for="ag">Arbeitsgang</label>
+              <select id="ag" name="ag">
+                <option>10 Sägen</option>
+                <option selected>20 Drehen</option>
+                <option>30 Fräsen</option>
+                <option>40 Prüfen</option>
+              </select>
+            </div>
+            <div class="feld">
+              <label for="mitarbeiter">Mitarbeiter</label>
+              <select id="mitarbeiter" name="mitarbeiter">
+                <option>Jonas Wolff</option>
+                <option>Mehmet Yilmaz</option>
+              </select>
+            </div>
+            <div class="feld">
+              <label for="datum">Datum</label>
+              <input type="date" id="datum" name="datum" value="2026-09-28">
+            </div>
+            <div class="feld">
+              <label for="beginn">Beginn</label>
+              <input type="time" id="beginn" name="beginn">
+            </div>
+            <div class="feld">
+              <label for="ende">Ende</label>
+              <input type="time" id="ende" name="ende">
+            </div>
+          </div>
+          <fieldset>
+            <legend>Tätigkeit</legend>
+            <div class="auswahl-gruppe">
+              <label class="auswahl"><input type="radio" name="taetigkeit" value="ruesten"> Rüsten</label>
+              <label class="auswahl"><input type="radio" name="taetigkeit" value="bearbeiten" checked> Bearbeiten</label>
+            </div>
+          </fieldset>
+          <div class="feld">
+            <label for="begruendung">Begründung</label>
+            <input type="text" id="begruendung" name="begruendung" placeholder="z. B. Stempeln vergessen" required>
+          </div>
+          <button type="submit" class="btn btn-primaer">Buchung speichern</button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <footer class="fuss">
+    Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
+  </footer>
+
+</body>
+</html>

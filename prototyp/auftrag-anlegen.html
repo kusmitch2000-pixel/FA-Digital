@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Auftrag anlegen – FA-Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="kopf">
+    <a class="logo" href="dashboard.html">FA-Digital</a>
+    <span class="untertitel">Digitaler Fertigungsauftrag</span>
+    <div class="benutzer">
+      Sven Petersen · Admin
+      <a href="index.html">Abmelden</a>
+    </div>
+  </header>
+
+  <div class="rahmen">
+    <nav class="menue">
+      <p class="menue-titel">Übersicht</p>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="auftraege.html">Aufträge</a>
+
+      <p class="menue-titel">Arbeitsvorbereitung</p>
+      <a href="auftrag-anlegen.html" class="aktiv">Auftrag anlegen</a>
+      <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="arbeitsplaetze.html">Arbeitsplätze</a>
+
+      <p class="menue-titel">Werkstatt</p>
+      <a href="werker.html">Werker-Terminal</a>
+
+      <p class="menue-titel">Controlling</p>
+      <a href="nachkalkulation.html">Nachkalkulation</a>
+      <a href="auswertung.html">Auswertung</a>
+
+      <p class="menue-titel">Verwaltung</p>
+      <a href="benutzer.html">Benutzer</a>
+    </nav>
+
+    <main class="inhalt">
+      <div class="seitenkopf">
+        <div>
+          <h1>Neuer Fertigungsauftrag</h1>
+          <p class="leise">Die Arbeitsgänge und Soll-Zeiten entstehen automatisch aus dem Arbeitsplan des Artikels.</p>
+        </div>
+      </div>
+
+      <form action="auftraege.html" method="post">
+        <section class="karte">
+          <h2>Auftragsdaten</h2>
+          <div class="formular-raster">
+            <div class="feld">
+              <label for="artikel">Artikel</label>
+              <select id="artikel" name="artikel" required>
+                <option value="W-200" selected>W-200 Antriebswelle Ø40</option>
+                <option value="F-310">F-310 Flansch DN80</option>
+                <option value="G-120">G-120 Lagergehäuse</option>
+                <option value="B-050">B-050 Distanzbuchse</option>
+              </select>
+            </div>
+            <div class="feld">
+              <label for="menge">Menge (Stück)</label>
+              <input type="number" id="menge" name="menge" min="1" value="40" required>
+            </div>
+            <div class="feld">
+              <label for="liefertermin">Liefertermin</label>
+              <input type="date" id="liefertermin" name="liefertermin" value="2026-10-14" required>
+            </div>
+            <div class="feld">
+              <label for="kunde">Kunde oder Kommission</label>
+              <input type="text" id="kunde" name="kunde" value="Nordwerk Maschinenbau GmbH">
+            </div>
+          </div>
+          <div class="feld">
+            <label for="bemerkung">Bemerkung</label>
+            <textarea id="bemerkung" name="bemerkung" placeholder="z. B. Sonderwunsch des Kunden"></textarea>
+          </div>
+        </section>
+
+        <!-- Vorkalkulation: Soll-Zeit = Rüstzeit + Menge × Stückzeit,
+             Soll-Kosten = Soll-Zeit in Stunden × Stundensatz des Arbeitsplatzes -->
+        <section class="karte">
+          <h2>Vorschau: Arbeitsgänge und Soll-Kosten</h2>
+          <p class="leise klein">Für W-200 Antriebswelle Ø40, 40 Stück</p>
+          <div class="tabelle-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>AG</th>
+                  <th>Arbeitsgang</th>
+                  <th>Arbeitsplatz</th>
+                  <th class="zahl">Rüstzeit</th>
+                  <th class="zahl">Stückzeit</th>
+                  <th class="zahl">Soll-Zeit</th>
+                  <th class="zahl">Stundensatz</th>
+                  <th class="zahl">Soll-Kosten</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>10</td>
+                  <td>Sägen</td>
+                  <td>Säge (AP-10)</td>
+                  <td class="zahl">10 min</td>
+                  <td class="zahl">1,5 min</td>
+                  <td class="zahl">10 + 40 × 1,5 = <strong>70 min</strong></td>
+                  <td class="zahl">45,00 €/h</td>
+                  <td class="zahl">52,50 €</td>
+                </tr>
+                <tr>
+                  <td>20</td>
+                  <td>Drehen</td>
+                  <td>CNC-Drehmaschine (AP-20)</td>
+                  <td class="zahl">30 min</td>
+                  <td class="zahl">4,0 min</td>
+                  <td class="zahl">30 + 40 × 4,0 = <strong>190 min</strong></td>
+                  <td class="zahl">85,00 €/h</td>
+                  <td class="zahl">269,17 €</td>
+                </tr>
+                <tr>
+                  <td>30</td>
+                  <td>Prüfen</td>
+                  <td>Messplatz (AP-40)</td>
+                  <td class="zahl">0 min</td>
+                  <td class="zahl">1,0 min</td>
+                  <td class="zahl">0 + 40 × 1,0 = <strong>40 min</strong></td>
+                  <td class="zahl">50,00 €/h</td>
+                  <td class="zahl">33,33 €</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="5">Summe</td>
+                  <td class="zahl">300 min (5:00 h)</td>
+                  <td></td>
+                  <td class="zahl">355,00 €</td>
+                </tr>
+                <tr>
+                  <td colspan="7">Soll-Kosten pro Stück</td>
+                  <td class="zahl">8,88 €</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <p class="leise klein" style="margin: 0.75rem 0 0;">
+            Prototyp: Die Vorschau ist fest eingetragen. Im fertigen System rechnet sie sich bei jeder Änderung von Artikel oder Menge neu.
+          </p>
+        </section>
+
+        <div class="knopfleiste">
+          <button type="submit" name="aktion" value="speichern" class="btn btn-sekundaer">Speichern</button>
+          <button type="submit" name="aktion" value="freigeben" class="btn btn-primaer">Speichern und freigeben</button>
+          <a class="btn btn-sekundaer" href="auftraege.html">Abbrechen</a>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <footer class="fuss">
+    Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
+  </footer>
+
+</body>
+</html>

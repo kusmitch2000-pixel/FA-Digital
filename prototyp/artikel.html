@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Artikel &amp; Arbeitspläne – FA-Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="kopf">
+    <a class="logo" href="dashboard.html">FA-Digital</a>
+    <span class="untertitel">Digitaler Fertigungsauftrag</span>
+    <div class="benutzer">
+      Sven Petersen · Admin
+      <a href="index.html">Abmelden</a>
+    </div>
+  </header>
+
+  <div class="rahmen">
+    <nav class="menue">
+      <p class="menue-titel">Übersicht</p>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="auftraege.html">Aufträge</a>
+
+      <p class="menue-titel">Arbeitsvorbereitung</p>
+      <a href="auftrag-anlegen.html">Auftrag anlegen</a>
+      <a href="artikel.html" class="aktiv">Artikel &amp; Arbeitspläne</a>
+      <a href="arbeitsplaetze.html">Arbeitsplätze</a>
+
+      <p class="menue-titel">Werkstatt</p>
+      <a href="werker.html">Werker-Terminal</a>
+
+      <p class="menue-titel">Controlling</p>
+      <a href="nachkalkulation.html">Nachkalkulation</a>
+      <a href="auswertung.html">Auswertung</a>
+
+      <p class="menue-titel">Verwaltung</p>
+      <a href="benutzer.html">Benutzer</a>
+    </nav>
+
+    <main class="inhalt">
+      <div class="seitenkopf">
+        <div>
+          <h1>Artikel &amp; Arbeitspläne</h1>
+          <p class="leise">Der Arbeitsplan legt fest, welche Arbeitsgänge ein Artikel durchläuft und wie lange sie dauern sollen.</p>
+        </div>
+        <a class="btn btn-primaer" href="artikel.html">+ Neuer Artikel</a>
+      </div>
+
+      <section class="karte">
+        <h2>Artikel</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Artikel-Nr.</th>
+                <th>Bezeichnung</th>
+                <th class="zahl">Arbeitsgänge</th>
+                <th class="zahl">Rüstzeit gesamt</th>
+                <th class="zahl">Stückzeit gesamt</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="hervorgehoben">
+                <td><strong>W-200</strong></td>
+                <td>Antriebswelle Ø40</td>
+                <td class="zahl">3</td>
+                <td class="zahl">40 min</td>
+                <td class="zahl">6,5 min</td>
+                <td><span class="badge aktiv">aktiv</span></td>
+                <td><a class="btn btn-klein btn-sekundaer" href="artikel.html">Bearbeiten</a></td>
+              </tr>
+              <tr>
+                <td><strong>F-310</strong></td>
+                <td>Flansch DN80</td>
+                <td class="zahl">4</td>
+                <td class="zahl">75 min</td>
+                <td class="zahl">10,5 min</td>
+                <td><span class="badge aktiv">aktiv</span></td>
+                <td><a class="btn btn-klein btn-sekundaer" href="artikel.html">Bearbeiten</a></td>
+              </tr>
+              <tr>
+                <td><strong>G-120</strong></td>
+                <td>Lagergehäuse</td>
+                <td class="zahl">3</td>
+                <td class="zahl">60 min</td>
+                <td class="zahl">16,0 min</td>
+                <td><span class="badge aktiv">aktiv</span></td>
+                <td><a class="btn btn-klein btn-sekundaer" href="artikel.html">Bearbeiten</a></td>
+              </tr>
+              <tr>
+                <td><strong>B-050</strong></td>
+                <td>Distanzbuchse</td>
+                <td class="zahl">2</td>
+                <td class="zahl">25 min</td>
+                <td class="zahl">2,0 min</td>
+                <td><span class="badge aktiv">aktiv</span></td>
+                <td><a class="btn btn-klein btn-sekundaer" href="artikel.html">Bearbeiten</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <form class="karte" action="artikel.html" method="post">
+        <h2>Artikel bearbeiten: W-200 Antriebswelle Ø40</h2>
+        <div class="formular-raster">
+          <div class="feld">
+            <label for="nummer">Artikel-Nr.</label>
+            <input type="text" id="nummer" name="nummer" value="W-200" required>
+          </div>
+          <div class="feld">
+            <label for="bezeichnung">Bezeichnung</label>
+            <input type="text" id="bezeichnung" name="bezeichnung" value="Antriebswelle Ø40" required>
+          </div>
+          <div class="feld feld-knopf">
+            <label class="auswahl"><input type="checkbox" name="aktiv" checked> Artikel ist aktiv</label>
+          </div>
+        </div>
+
+        <h2 style="margin-top: 0.5rem;">Arbeitsplan</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>AG</th>
+                <th>Arbeitsgang</th>
+                <th>Arbeitsplatz</th>
+                <th>Rüstzeit (min)</th>
+                <th>Stückzeit (min)</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="number" name="ag[]" value="10" min="10" step="10" aria-label="AG-Nummer"></td>
+                <td><input type="text" name="bezeichnung_ag[]" value="Sägen" aria-label="Arbeitsgang"></td>
+                <td>
+                  <select name="arbeitsplatz[]" aria-label="Arbeitsplatz">
+                    <option selected>Säge (AP-10)</option>
+                    <option>CNC-Drehmaschine (AP-20)</option>
+                    <option>CNC-Fräsmaschine (AP-30)</option>
+                    <option>Messplatz (AP-40)</option>
+                    <option>Montage (AP-50)</option>
+                  </select>
+                </td>
+                <td><input type="number" name="ruestzeit[]" value="10" min="0" aria-label="Rüstzeit"></td>
+                <td><input type="number" name="stueckzeit[]" value="1.5" min="0" step="0.1" aria-label="Stückzeit"></td>
+                <td><button type="submit" name="entfernen" value="10" class="btn btn-klein btn-gefahr">Entfernen</button></td>
+              </tr>
+              <tr>
+                <td><input type="number" name="ag[]" value="20" min="10" step="10" aria-label="AG-Nummer"></td>
+                <td><input type="text" name="bezeichnung_ag[]" value="Drehen" aria-label="Arbeitsgang"></td>
+                <td>
+                  <select name="arbeitsplatz[]" aria-label="Arbeitsplatz">
+                    <option>Säge (AP-10)</option>
+                    <option selected>CNC-Drehmaschine (AP-20)</option>
+                    <option>CNC-Fräsmaschine (AP-30)</option>
+                    <option>Messplatz (AP-40)</option>
+                    <option>Montage (AP-50)</option>
+                  </select>
+                </td>
+                <td><input type="number" name="ruestzeit[]" value="30" min="0" aria-label="Rüstzeit"></td>
+                <td><input type="number" name="stueckzeit[]" value="4.0" min="0" step="0.1" aria-label="Stückzeit"></td>
+                <td><button type="submit" name="entfernen" value="20" class="btn btn-klein btn-gefahr">Entfernen</button></td>
+              </tr>
+              <tr>
+                <td><input type="number" name="ag[]" value="30" min="10" step="10" aria-label="AG-Nummer"></td>
+                <td><input type="text" name="bezeichnung_ag[]" value="Prüfen" aria-label="Arbeitsgang"></td>
+                <td>
+                  <select name="arbeitsplatz[]" aria-label="Arbeitsplatz">
+                    <option>Säge (AP-10)</option>
+                    <option>CNC-Drehmaschine (AP-20)</option>
+                    <option>CNC-Fräsmaschine (AP-30)</option>
+                    <option selected>Messplatz (AP-40)</option>
+                    <option>Montage (AP-50)</option>
+                  </select>
+                </td>
+                <td><input type="number" name="ruestzeit[]" value="0" min="0" aria-label="Rüstzeit"></td>
+                <td><input type="number" name="stueckzeit[]" value="1.0" min="0" step="0.1" aria-label="Stückzeit"></td>
+                <td><button type="submit" name="entfernen" value="30" class="btn btn-klein btn-gefahr">Entfernen</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="knopfleiste" style="margin-top: 1rem;">
+          <button type="submit" name="aktion" value="zeile" class="btn btn-sekundaer">+ Arbeitsgang hinzufügen</button>
+          <button type="submit" name="aktion" value="speichern" class="btn btn-primaer">Speichern</button>
+        </div>
+        <p class="leise klein" style="margin: 0.75rem 0 0;">
+          Änderungen am Arbeitsplan gelten nur für neue Aufträge. Bereits angelegte Aufträge behalten ihre Soll-Zeiten.
+        </p>
+      </form>
+    </main>
+  </div>
+
+  <footer class="fuss">
+    Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
+  </footer>
+
+</body>
+</html>

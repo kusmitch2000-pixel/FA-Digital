@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Benutzer – FA-Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="kopf">
+    <a class="logo" href="dashboard.html">FA-Digital</a>
+    <span class="untertitel">Digitaler Fertigungsauftrag</span>
+    <div class="benutzer">
+      Sven Petersen · Admin
+      <a href="index.html">Abmelden</a>
+    </div>
+  </header>
+
+  <div class="rahmen">
+    <nav class="menue">
+      <p class="menue-titel">Übersicht</p>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="auftraege.html">Aufträge</a>
+
+      <p class="menue-titel">Arbeitsvorbereitung</p>
+      <a href="auftrag-anlegen.html">Auftrag anlegen</a>
+      <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="arbeitsplaetze.html">Arbeitsplätze</a>
+
+      <p class="menue-titel">Werkstatt</p>
+      <a href="werker.html">Werker-Terminal</a>
+
+      <p class="menue-titel">Controlling</p>
+      <a href="nachkalkulation.html">Nachkalkulation</a>
+      <a href="auswertung.html">Auswertung</a>
+
+      <p class="menue-titel">Verwaltung</p>
+      <a href="benutzer.html" class="aktiv">Benutzer</a>
+    </nav>
+
+    <main class="inhalt">
+      <div class="seitenkopf">
+        <div>
+          <h1>Benutzer</h1>
+          <p class="leise">Nur für Admins. Die Rolle bestimmt, welche Seiten jemand sieht.</p>
+        </div>
+      </div>
+
+      <section class="karte">
+        <h2>Alle Benutzer</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th class="zahl">Pers.-Nr.</th>
+                <th>E-Mail</th>
+                <th>Rolle</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Sven Petersen</td>
+                <td class="zahl">1000</td>
+                <td>sven.petersen@fa-digital.de</td>
+                <td>Admin</td>
+                <td><span class="badge aktiv">aktiv</span></td>
+                <td><a class="btn btn-klein btn-sekundaer" href="benutzer.html">Bearbeiten</a></td>
+              </tr>
+              <tr>
+                <td>Anna Becker</td>
+                <td class="zahl">1001</td>
+                <td>anna.becker@fa-digital.de</td>
+                <td>Arbeitsvorbereitung</td>
+                <td><span class="badge aktiv">aktiv</span></td>
+                <td><a class="btn btn-klein btn-sekundaer" href="benutzer.html">Bearbeiten</a></td>
+              </tr>
+              <tr>
+                <td>Lena Hoffmann</td>
+                <td class="zahl">1002</td>
+                <td>lena.hoffmann@fa-digital.de</td>
+                <td>Meister</td>
+                <td><span class="badge aktiv">aktiv</span></td>
+                <td><a class="btn btn-klein btn-sekundaer" href="benutzer.html">Bearbeiten</a></td>
+              </tr>
+              <tr>
+                <td>Tobias Krüger</td>
+                <td class="zahl">1010</td>
+                <td>tobias.krueger@fa-digital.de</td>
+                <td>Controlling</td>
+                <td><span class="badge aktiv">aktiv</span></td>
+                <td><a class="btn btn-klein btn-sekundaer" href="benutzer.html">Bearbeiten</a></td>
+              </tr>
+              <tr>
+                <td>Jonas Wolff</td>
+                <td class="zahl">1042</td>
+                <td>jonas.wolff@fa-digital.de</td>
+                <td>Werker</td>
+                <td><span class="badge aktiv">aktiv</span></td>
+                <td><a class="btn btn-klein btn-sekundaer" href="benutzer.html">Bearbeiten</a></td>
+              </tr>
+              <tr>
+                <td>Mehmet Yilmaz</td>
+                <td class="zahl">1043</td>
+                <td>mehmet.yilmaz@fa-digital.de</td>
+                <td>Werker</td>
+                <td><span class="badge aktiv">aktiv</span></td>
+                <td><a class="btn btn-klein btn-sekundaer" href="benutzer.html">Bearbeiten</a></td>
+              </tr>
+              <tr>
+                <td>Katrin Wagner</td>
+                <td class="zahl">1044</td>
+                <td>katrin.wagner@fa-digital.de</td>
+                <td>Werker</td>
+                <td><span class="badge inaktiv">inaktiv</span></td>
+                <td><a class="btn btn-klein btn-sekundaer" href="benutzer.html">Bearbeiten</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="spalten-gleich">
+        <form class="karte" action="benutzer.html" method="post">
+          <h2>Neuen Benutzer anlegen</h2>
+          <div class="formular-raster">
+            <div class="feld">
+              <label for="vorname">Vorname</label>
+              <input type="text" id="vorname" name="vorname" required>
+            </div>
+            <div class="feld">
+              <label for="nachname">Nachname</label>
+              <input type="text" id="nachname" name="nachname" required>
+            </div>
+            <div class="feld">
+              <label for="persnr">Personalnummer</label>
+              <input type="number" id="persnr" name="persnr" min="1000" required>
+            </div>
+            <div class="feld">
+              <label for="rolle">Rolle</label>
+              <select id="rolle" name="rolle" required>
+                <option value="werker">Werker</option>
+                <option value="meister">Meister</option>
+                <option value="av">Arbeitsvorbereitung</option>
+                <option value="controlling">Controlling</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+          <div class="feld">
+            <label for="email">E-Mail</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="feld">
+            <label for="passwort">Startpasswort</label>
+            <input type="password" id="passwort" name="passwort" minlength="8" required>
+          </div>
+          <button type="submit" class="btn btn-primaer">Benutzer anlegen</button>
+        </form>
+
+        <section class="karte">
+          <h2>Welche Rolle darf was?</h2>
+          <div class="tabelle-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Bereich</th>
+                  <th>AV</th>
+                  <th>Werker</th>
+                  <th>Meister</th>
+                  <th>Contr.</th>
+                  <th>Admin</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Dashboard, Aufträge ansehen</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+                <tr><td>Auftrag anlegen, freigeben, stornieren</td><td>✓</td><td></td><td></td><td></td><td>✓</td></tr>
+                <tr><td>Artikel und Arbeitspläne</td><td>✓</td><td></td><td></td><td></td><td>✓</td></tr>
+                <tr><td>Arbeitsplätze und Stundensätze</td><td>✓</td><td></td><td></td><td>✓</td><td>✓</td></tr>
+                <tr><td>Werker-Terminal</td><td></td><td>✓</td><td>✓</td><td></td><td>✓</td></tr>
+                <tr><td>Buchungen korrigieren, Auftrag abschließen</td><td></td><td></td><td>✓</td><td></td><td>✓</td></tr>
+                <tr><td>Nachkalkulation und Auswertung</td><td></td><td></td><td>lesen</td><td>✓</td><td>✓</td></tr>
+                <tr><td>Benutzer verwalten</td><td></td><td></td><td></td><td></td><td>✓</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="leise klein" style="margin: 0.75rem 0 0;">AV = Arbeitsvorbereitung, Contr. = Controlling</p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer class="fuss">
+    Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard – FA-Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="kopf">
+    <a class="logo" href="dashboard.html">FA-Digital</a>
+    <span class="untertitel">Digitaler Fertigungsauftrag</span>
+    <div class="benutzer">
+      Sven Petersen · Admin
+      <a href="index.html">Abmelden</a>
+    </div>
+  </header>
+
+  <div class="rahmen">
+    <nav class="menue">
+      <p class="menue-titel">Übersicht</p>
+      <a href="dashboard.html" class="aktiv">Dashboard</a>
+      <a href="auftraege.html">Aufträge</a>
+
+      <p class="menue-titel">Arbeitsvorbereitung</p>
+      <a href="auftrag-anlegen.html">Auftrag anlegen</a>
+      <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="arbeitsplaetze.html">Arbeitsplätze</a>
+
+      <p class="menue-titel">Werkstatt</p>
+      <a href="werker.html">Werker-Terminal</a>
+
+      <p class="menue-titel">Controlling</p>
+      <a href="nachkalkulation.html">Nachkalkulation</a>
+      <a href="auswertung.html">Auswertung</a>
+
+      <p class="menue-titel">Verwaltung</p>
+      <a href="benutzer.html">Benutzer</a>
+    </nav>
+
+    <main class="inhalt">
+      <div class="seitenkopf">
+        <div>
+          <h1>Dashboard</h1>
+          <p class="leise">Stand: Montag, 28.09.2026, 09:30 Uhr</p>
+        </div>
+        <a class="btn btn-primaer" href="auftrag-anlegen.html">+ Neuer Auftrag</a>
+      </div>
+
+      <div class="hinweis warnung">
+        <p><strong>FA-1000 ist im Verzug:</strong> Liefertermin war der 25.09.2026, der erste Arbeitsgang wird gerade gerüstet.</p>
+      </div>
+
+      <!-- Kennzahlen: Anzahl der Aufträge je Status -->
+      <section class="kacheln">
+        <a class="kachel angelegt" href="auftraege.html">
+          <span class="zahl">1</span>
+          <span class="text">angelegt, noch nicht freigegeben</span>
+        </a>
+        <a class="kachel freigegeben" href="auftraege.html">
+          <span class="zahl">1</span>
+          <span class="text">freigegeben, wartet auf Start</span>
+        </a>
+        <a class="kachel in-arbeit" href="auftraege.html">
+          <span class="zahl">3</span>
+          <span class="text">in Arbeit</span>
+        </a>
+        <a class="kachel fertig" href="nachkalkulation.html">
+          <span class="zahl">1</span>
+          <span class="text">fertig, wartet auf Nachkalkulation</span>
+        </a>
+        <a class="kachel verzug" href="auftraege.html">
+          <span class="zahl">1</span>
+          <span class="text">Liefertermin überschritten</span>
+        </a>
+      </section>
+
+      <section class="karte">
+        <h2>Gerade in Arbeit</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Mitarbeiter</th>
+                <th>Arbeitsplatz</th>
+                <th>Auftrag / Arbeitsgang</th>
+                <th>Tätigkeit</th>
+                <th class="zahl">seit</th>
+                <th>Soll-Zeit verbraucht</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Jonas Wolff</td>
+                <td>CNC-Drehmaschine</td>
+                <td><a href="auftrag-detail.html">FA-1002</a> · AG 20 Drehen</td>
+                <td><span class="badge laeuft">Bearbeiten</span></td>
+                <td class="zahl">08:27</td>
+                <td>
+                  <div class="balken"><span style="width: 74%;"></span></div>
+                  <span class="leise klein">85 von 115 min</span>
+                </td>
+              </tr>
+              <tr>
+                <td>Mehmet Yilmaz</td>
+                <td>CNC-Fräsmaschine</td>
+                <td><a href="auftrag-detail.html">FA-1000</a> · AG 10 Fräsen</td>
+                <td><span class="badge laeuft">Rüsten</span></td>
+                <td class="zahl">09:15</td>
+                <td>
+                  <div class="balken"><span style="width: 12%;"></span></div>
+                  <span class="leise klein">15 von 125 min</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="spalten-gleich">
+        <section class="karte">
+          <h2>Letzte Ereignisse</h2>
+          <ul class="feed">
+            <li><time>09:15</time><span>Mehmet Yilmaz hat an <strong>FA-1000</strong> AG 10 das Rüsten gestartet</span></li>
+            <li><time>08:58</time><span>Lena Hoffmann hat <strong>FA-1001</strong> abgeschlossen (48 Gut, 2 Ausschuss)</span></li>
+            <li><time>08:40</time><span>Anna Becker hat <strong>FA-1004</strong> freigegeben</span></li>
+            <li><time>08:31</time><span>Anna Becker hat <strong>FA-1005</strong> angelegt</span></li>
+            <li><time>08:27</time><span>Jonas Wolff hat an <strong>FA-1002</strong> AG 20 die Bearbeitung gestartet</span></li>
+            <li><time>08:05</time><span>Jonas Wolff hat an <strong>FA-1002</strong> AG 20 das Rüsten gestartet</span></li>
+            <li><time>07:50</time><span>Lena Hoffmann hat eine Buchung an <strong>FA-1001</strong> AG 20 korrigiert</span></li>
+          </ul>
+        </section>
+
+        <section class="karte">
+          <h2>Nächste Liefertermine</h2>
+          <div class="tabelle-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Auftrag</th>
+                  <th>Artikel</th>
+                  <th>Termin</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="auftrag-detail.html">FA-1000</a></td>
+                  <td>G-120 Lagergehäuse</td>
+                  <td>25.09. <span class="badge verzug">Verzug</span></td>
+                  <td><span class="badge in-arbeit">in Arbeit</span></td>
+                </tr>
+                <tr>
+                  <td><a href="nachkalkulation.html">FA-1001</a></td>
+                  <td>W-200 Antriebswelle Ø40</td>
+                  <td>02.10.</td>
+                  <td><span class="badge fertig">fertig</span></td>
+                </tr>
+                <tr>
+                  <td><a href="auftrag-detail.html">FA-1002</a></td>
+                  <td>F-310 Flansch DN80</td>
+                  <td>06.10.</td>
+                  <td><span class="badge in-arbeit">in Arbeit</span></td>
+                </tr>
+                <tr>
+                  <td><a href="auftrag-detail.html">FA-1003</a></td>
+                  <td>B-050 Distanzbuchse</td>
+                  <td>09.10.</td>
+                  <td><span class="badge in-arbeit">in Arbeit</span></td>
+                </tr>
+                <tr>
+                  <td><a href="auftrag-detail.html">FA-1004</a></td>
+                  <td>W-200 Antriebswelle Ø40</td>
+                  <td>14.10.</td>
+                  <td><span class="badge freigegeben">freigegeben</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer class="fuss">
+    Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nachkalkulation – FA-Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="kopf">
+    <a class="logo" href="dashboard.html">FA-Digital</a>
+    <span class="untertitel">Digitaler Fertigungsauftrag</span>
+    <div class="benutzer">
+      Sven Petersen · Admin
+      <a href="index.html">Abmelden</a>
+    </div>
+  </header>
+
+  <div class="rahmen">
+    <nav class="menue">
+      <p class="menue-titel">Übersicht</p>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="auftraege.html">Aufträge</a>
+
+      <p class="menue-titel">Arbeitsvorbereitung</p>
+      <a href="auftrag-anlegen.html">Auftrag anlegen</a>
+      <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="arbeitsplaetze.html">Arbeitsplätze</a>
+
+      <p class="menue-titel">Werkstatt</p>
+      <a href="werker.html">Werker-Terminal</a>
+
+      <p class="menue-titel">Controlling</p>
+      <a href="nachkalkulation.html" class="aktiv">Nachkalkulation</a>
+      <a href="auswertung.html">Auswertung</a>
+
+      <p class="menue-titel">Verwaltung</p>
+      <a href="benutzer.html">Benutzer</a>
+    </nav>
+
+    <main class="inhalt">
+      <div class="seitenkopf">
+        <div>
+          <h1>Nachkalkulation FA-1001 <span class="badge fertig">fertig</span></h1>
+          <p class="leise">W-200 Antriebswelle Ø40 · 50 Stück bestellt · 48 Gut, 2 Ausschuss · abgeschlossen am 28.09.2026</p>
+        </div>
+        <form action="nachkalkulation.html" method="get" class="knopfleiste">
+          <label for="auftrag" class="leise" style="margin: 0; align-self: center;">Auftrag</label>
+          <select id="auftrag" name="auftrag" style="width: auto;">
+            <option value="FA-1001" selected>FA-1001 · W-200 (fertig)</option>
+            <option value="FA-0999">FA-0999 · F-310 (nachkalkuliert)</option>
+            <option value="FA-0998">FA-0998 · W-200 (nachkalkuliert)</option>
+          </select>
+          <button type="submit" class="btn btn-sekundaer">Anzeigen</button>
+        </form>
+      </div>
+
+      <section class="kacheln">
+        <div class="kachel">
+          <span class="text">Soll-Kosten</span>
+          <span class="zahl">431,25 €</span>
+          <span class="text">365 min geplant</span>
+        </div>
+        <div class="kachel in-arbeit">
+          <span class="text">Ist-Kosten</span>
+          <span class="zahl">468,67 €</span>
+          <span class="text"><span class="ampel gelb"></span><span class="ueber">+37,42 € (+8,7 %)</span></span>
+        </div>
+        <div class="kachel">
+          <span class="text">Ist-Zeit</span>
+          <span class="zahl">387 min</span>
+          <span class="text"><span class="ueber">+22 min (+6,0 %)</span></span>
+        </div>
+        <div class="kachel verzug">
+          <span class="text">Kosten pro Gutstück</span>
+          <span class="zahl">9,76 €</span>
+          <span class="text">Soll 8,63 € · <span class="ueber">+13,2 %</span></span>
+        </div>
+      </section>
+
+      <!-- Soll-Ist-Vergleich je Arbeitsgang.
+           Ampel: bis +5 % grün, bis +10 % gelb, darüber rot -->
+      <section class="karte">
+        <h2>Soll-Ist-Vergleich je Arbeitsgang</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>AG</th>
+                <th>Arbeitsplatz</th>
+                <th class="zahl">Satz</th>
+                <th class="zahl">Soll-Zeit</th>
+                <th class="zahl">Ist-Zeit</th>
+                <th class="zahl">Abw. Zeit</th>
+                <th class="zahl">Soll-Kosten</th>
+                <th class="zahl">Ist-Kosten</th>
+                <th class="zahl">Abw. Kosten</th>
+                <th>Bewertung</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>10 Sägen</td>
+                <td>Säge</td>
+                <td class="zahl">45,00 €/h</td>
+                <td class="zahl">85 min</td>
+                <td class="zahl">80 min</td>
+                <td class="zahl unter">−5,9 %</td>
+                <td class="zahl">63,75 €</td>
+                <td class="zahl">60,00 €</td>
+                <td class="zahl unter">−3,75 €</td>
+                <td><span class="ampel gruen"></span>im Plan</td>
+              </tr>
+              <tr>
+                <td>20 Drehen</td>
+                <td>CNC-Drehmaschine</td>
+                <td class="zahl">85,00 €/h</td>
+                <td class="zahl">230 min</td>
+                <td class="zahl">262 min</td>
+                <td class="zahl ueber">+13,9 %</td>
+                <td class="zahl">325,83 €</td>
+                <td class="zahl">371,17 €</td>
+                <td class="zahl ueber">+45,33 €</td>
+                <td><span class="ampel rot"></span>deutlich über Plan</td>
+              </tr>
+              <tr>
+                <td>30 Prüfen</td>
+                <td>Messplatz</td>
+                <td class="zahl">50,00 €/h</td>
+                <td class="zahl">50 min</td>
+                <td class="zahl">45 min</td>
+                <td class="zahl unter">−10,0 %</td>
+                <td class="zahl">41,67 €</td>
+                <td class="zahl">37,50 €</td>
+                <td class="zahl unter">−4,17 €</td>
+                <td><span class="ampel gruen"></span>im Plan</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3">Summe</td>
+                <td class="zahl">365 min</td>
+                <td class="zahl">387 min</td>
+                <td class="zahl ueber">+6,0 %</td>
+                <td class="zahl">431,25 €</td>
+                <td class="zahl">468,67 €</td>
+                <td class="zahl ueber">+37,42 €</td>
+                <td><span class="ampel gelb"></span>leicht über Plan</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <div class="spalten-gleich">
+        <section class="karte">
+          <h2>Rüsten und Bearbeiten getrennt</h2>
+          <div class="tabelle-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>AG</th>
+                  <th class="zahl">Rüsten Soll / Ist</th>
+                  <th class="zahl">Bearbeiten Soll / Ist</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>10 Sägen</td>
+                  <td class="zahl">10 / 8 min</td>
+                  <td class="zahl">75 / 72 min</td>
+                </tr>
+                <tr>
+                  <td>20 Drehen</td>
+                  <td class="zahl">30 / <span class="ueber">42 min</span></td>
+                  <td class="zahl">200 / <span class="ueber">220 min</span></td>
+                </tr>
+                <tr>
+                  <td>30 Prüfen</td>
+                  <td class="zahl">0 / 0 min</td>
+                  <td class="zahl">50 / 45 min</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="karte">
+          <h2>Ergebnis</h2>
+          <p>Die Mehrkosten entstehen fast vollständig beim <strong>Drehen</strong>: Das Rüsten hat 12 min länger gedauert als geplant (+40 %), die Bearbeitung 20 min (+10 %).</p>
+          <p>Durch 2 Ausschussteile verteilen sich die Kosten auf nur 48 Gutstücke. Deshalb steigen die Kosten pro Stück stärker als die Gesamtkosten.</p>
+          <p class="leise klein">Eine Buchung an AG 20 wurde von Lena Hoffmann korrigiert (Stempeln vergessen).</p>
+        </section>
+      </div>
+
+      <form action="nachkalkulation.html" method="post" class="knopfleiste">
+        <button type="submit" name="aktion" value="abschliessen" class="btn btn-primaer">Nachkalkulation abschließen</button>
+        <button type="submit" name="aktion" value="export" class="btn btn-sekundaer">Als CSV exportieren</button>
+      </form>
+    </main>
+  </div>
+
+  <footer class="fuss">
+    Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,692 @@
+/* ============================================================
+   FA-Digital – zentrale Gestaltung für alle Seiten
+   Alle Farben stehen als Variablen oben, damit man sie an
+   einer Stelle ändern kann.
+   ============================================================ */
+
+:root {
+  --blau: #1d3f6e;          /* Hauptfarbe: Kopfzeile, Überschriften */
+  --blau-hell: #e8eef7;
+  --akzent: #2f6fd0;        /* Buttons, Links, Fortschritt */
+  --text: #1f2933;
+  --text-leise: #5f6b7a;
+  --rand: #d9dee5;
+  --hintergrund: #f4f6f9;
+  --weiss: #ffffff;
+
+  --gruen: #1e8e5a;
+  --gruen-hell: #e3f4eb;
+  --gelb: #c98a1a;
+  --gelb-hell: #fdf3dc;
+  --rot: #c53030;
+  --rot-hell: #fde8e8;
+  --lila-hell: #eee8fb;
+  --grau-hell: #eceff3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--hintergrund);
+}
+
+a {
+  color: var(--akzent);
+}
+
+h1 {
+  font-size: 1.6rem;
+  margin: 0 0 0.25rem;
+  color: var(--blau);
+}
+
+h2 {
+  font-size: 1.15rem;
+  margin: 0 0 0.75rem;
+  color: var(--blau);
+}
+
+p {
+  margin: 0 0 0.75rem;
+}
+
+.leise {
+  color: var(--text-leise);
+}
+
+.klein {
+  font-size: 0.85rem;
+}
+
+/* ---------- Kopfzeile ---------- */
+
+.kopf {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--blau);
+  color: var(--weiss);
+}
+
+.logo {
+  color: var(--weiss);
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.kopf .untertitel {
+  color: #c9d6ea;
+  font-size: 0.9rem;
+}
+
+.benutzer {
+  margin-left: auto;
+  font-size: 0.9rem;
+}
+
+.benutzer a {
+  color: var(--weiss);
+  margin-left: 0.75rem;
+}
+
+/* ---------- Rahmen: Menü links, Inhalt rechts ---------- */
+
+.rahmen {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  min-height: calc(100vh - 110px);
+}
+
+.menue {
+  background: var(--weiss);
+  border-right: 1px solid var(--rand);
+  padding: 0.5rem 0 1.5rem;
+}
+
+.menue-titel {
+  margin: 1rem 1.25rem 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-leise);
+}
+
+.menue a {
+  display: block;
+  padding: 0.45rem 1.25rem;
+  border-left: 3px solid transparent;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.menue a:hover {
+  background: var(--blau-hell);
+}
+
+.menue a.aktiv {
+  background: var(--blau-hell);
+  border-left-color: var(--akzent);
+  color: var(--blau);
+  font-weight: 600;
+}
+
+.inhalt {
+  min-width: 0;             /* damit breite Tabellen scrollen statt das Layout zu sprengen */
+  max-width: 1200px;
+  padding: 1.5rem 2rem 3rem;
+}
+
+.fuss {
+  padding: 1rem;
+  border-top: 1px solid var(--rand);
+  background: var(--weiss);
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-leise);
+}
+
+/* ---------- Seitenkopf: Titel links, Buttons rechts ---------- */
+
+.seitenkopf {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.seitenkopf .knopfleiste {
+  margin-top: 0;
+}
+
+/* ---------- Karten und Spalten ---------- */
+
+.karte {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  background: var(--weiss);
+  border: 1px solid var(--rand);
+  border-radius: 8px;
+}
+
+.spalten {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.spalten-gleich {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* Spalten dürfen schmaler werden als ihre Tabellen, die Tabelle scrollt dann in sich */
+.spalten > *,
+.spalten-gleich > * {
+  min-width: 0;
+}
+
+/* ---------- Kennzahlen-Kacheln ---------- */
+
+.kacheln {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.kachel {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.1rem;
+  background: var(--weiss);
+  border: 1px solid var(--rand);
+  border-top: 4px solid var(--rand);
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+a.kachel:hover {
+  background: #fafbfd;
+}
+
+.kachel .zahl {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--blau);
+}
+
+.kachel .text {
+  font-size: 0.9rem;
+  color: var(--text-leise);
+}
+
+.kachel.angelegt       { border-top-color: #8a94a3; }
+.kachel.freigegeben    { border-top-color: var(--akzent); }
+.kachel.in-arbeit      { border-top-color: var(--gelb); }
+.kachel.fertig         { border-top-color: var(--gruen); }
+.kachel.verzug         { border-top-color: var(--rot); }
+.kachel.verzug .zahl   { color: var(--rot); }
+
+/* ---------- Tabellen ---------- */
+
+.tabelle-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+th,
+td {
+  padding: 0.55rem 0.6rem;
+  border-bottom: 1px solid var(--rand);
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  background: #f8f9fb;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-leise);
+  white-space: nowrap;
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+th.zahl,
+td.zahl {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+tfoot td {
+  font-weight: 700;
+  border-top: 2px solid var(--rand);
+  border-bottom: none;
+}
+
+tr.hervorgehoben {
+  background: #fffbef;
+}
+
+td input,
+td select {
+  min-width: 70px;
+}
+
+/* ---------- Status-Badges ---------- */
+
+.badge {
+  display: inline-block;
+  padding: 0.12rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge.angelegt,
+.badge.offen,
+.badge.inaktiv       { background: var(--grau-hell);  color: #4a5563; }
+.badge.freigegeben   { background: #e3edfb;           color: #1f5fbf; }
+.badge.in-arbeit,
+.badge.laeuft        { background: var(--gelb-hell);  color: #85560c; }
+.badge.fertig,
+.badge.erledigt,
+.badge.aktiv         { background: var(--gruen-hell); color: #17683f; }
+.badge.nachkalkuliert { background: var(--lila-hell); color: #553c9a; }
+.badge.storniert,
+.badge.verzug        { background: var(--rot-hell);   color: #a12626; }
+
+/* ---------- Ampel und Abweichungen ---------- */
+
+.ampel {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  margin-right: 0.35rem;
+  border-radius: 50%;
+  vertical-align: -0.05rem;
+}
+
+.ampel.gruen { background: var(--gruen); }
+.ampel.gelb  { background: var(--gelb); }
+.ampel.rot   { background: var(--rot); }
+
+/* Mehr Zeit oder Kosten als geplant ist schlecht (rot), weniger ist gut (grün) */
+.ueber { color: var(--rot); font-weight: 600; }
+.unter { color: var(--gruen); font-weight: 600; }
+
+/* ---------- Fortschrittsbalken ---------- */
+
+.balken {
+  height: 0.5rem;
+  min-width: 90px;
+  overflow: hidden;
+  background: var(--grau-hell);
+  border-radius: 999px;
+}
+
+.balken span {
+  display: block;
+  height: 100%;
+  background: var(--akzent);
+  border-radius: 999px;
+}
+
+.balken.gross {
+  height: 0.9rem;
+}
+
+.balken span.voll { background: var(--gruen); }
+.balken span.warn { background: var(--gelb); }
+
+/* ---------- Formulare ---------- */
+
+.feld {
+  margin-bottom: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #c3cad4;
+  border-radius: 6px;
+  background: var(--weiss);
+  font: inherit;
+  color: var(--text);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--akzent);
+  outline-offset: 1px;
+  border-color: var(--akzent);
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.formular-raster {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0 1rem;
+}
+
+.feld-knopf {
+  display: flex;
+  align-items: flex-end;
+}
+
+.auswahl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: normal;
+}
+
+.auswahl input {
+  width: auto;
+  margin: 0;
+}
+
+.auswahl-gruppe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  padding: 0.5rem 0;
+}
+
+fieldset {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: none;
+}
+
+legend {
+  margin-bottom: 0.3rem;
+  padding: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.knopfleiste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primaer {
+  background: var(--akzent);
+  color: var(--weiss);
+}
+
+.btn-primaer:hover {
+  background: #255bb0;
+}
+
+.btn-sekundaer {
+  background: var(--weiss);
+  border-color: #c3cad4;
+  color: var(--blau);
+}
+
+.btn-sekundaer:hover {
+  background: var(--blau-hell);
+}
+
+.btn-gefahr {
+  background: var(--weiss);
+  border-color: #e9b4b4;
+  color: var(--rot);
+}
+
+.btn-gefahr:hover {
+  background: var(--rot-hell);
+}
+
+.btn-erfolg {
+  background: var(--gruen);
+  color: var(--weiss);
+}
+
+.btn-erfolg:hover {
+  background: #177249;
+}
+
+.btn-klein {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+.btn-gross {
+  padding: 0.9rem 1.5rem;
+  font-size: 1.1rem;
+}
+
+.btn-breit {
+  width: 100%;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- Hinweiskästen ---------- */
+
+.hinweis {
+  margin: 0 0 1.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--blau-hell);
+  border-left: 4px solid var(--akzent);
+  border-radius: 4px;
+  font-size: 0.92rem;
+}
+
+.hinweis.warnung {
+  background: var(--gelb-hell);
+  border-left-color: var(--gelb);
+}
+
+.hinweis.fehler {
+  background: var(--rot-hell);
+  border-left-color: var(--rot);
+}
+
+.hinweis p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- Kopfdaten eines Auftrags ---------- */
+
+.kopfdaten {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.9rem 1.5rem;
+  margin: 0;
+}
+
+.kopfdaten dt {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-leise);
+}
+
+.kopfdaten dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ---------- Ereignis-Feed ---------- */
+
+.feed {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.feed li {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--rand);
+  font-size: 0.92rem;
+}
+
+.feed li:last-child {
+  border-bottom: none;
+}
+
+.feed time {
+  min-width: 3rem;
+  color: var(--text-leise);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Werker-Terminal ---------- */
+
+.terminal-aktiv {
+  border: 2px solid var(--gelb);
+  background: #fffdf6;
+}
+
+.terminal-titel {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--blau);
+}
+
+.uhr {
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Anmeldeseite ---------- */
+
+.login-seite {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+  background: linear-gradient(160deg, var(--blau) 0%, #2b5a97 100%);
+}
+
+.login-box {
+  width: 100%;
+  max-width: 380px;
+  padding: 2rem;
+  background: var(--weiss);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.login-box h1 {
+  font-size: 1.8rem;
+}
+
+/* ---------- Schmale Bildschirme (Tablet, Handy) ---------- */
+
+@media (max-width: 800px) {
+  .rahmen {
+    grid-template-columns: 1fr;
+  }
+
+  .menue {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0.5rem;
+    border-right: none;
+    border-bottom: 1px solid var(--rand);
+  }
+
+  .menue-titel {
+    display: none;
+  }
+
+  .menue a {
+    padding: 0.35rem 0.7rem;
+    border-left: none;
+    border-radius: 6px;
+  }
+
+  .spalten,
+  .spalten-gleich {
+    grid-template-columns: 1fr;
+  }
+
+  .inhalt {
+    padding: 1rem;
+  }
+
+  .kopf {
+    padding: 0.75rem 1rem;
+  }
+
+  .kopf .untertitel {
+    display: none;
+  }
+}

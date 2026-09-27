@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Anmelden – FA-Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-seite">
+
+  <main class="login-box">
+    <h1>FA-Digital</h1>
+    <p class="leise">Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation</p>
+
+    <!-- Im Prototyp führt das Formular ohne Prüfung zum Dashboard.
+         Später prüft PHP die E-Mail und das Passwort gegen die Datenbank. -->
+    <form action="dashboard.html" method="post">
+      <div class="feld">
+        <label for="email">E-Mail</label>
+        <input type="email" id="email" name="email" value="sven.petersen@fa-digital.de" required>
+      </div>
+
+      <div class="feld">
+        <label for="passwort">Passwort</label>
+        <input type="password" id="passwort" name="passwort" placeholder="beliebig (Prototyp)">
+      </div>
+
+      <button type="submit" class="btn btn-primaer btn-breit">Anmelden</button>
+    </form>
+
+    <p class="leise klein" style="margin-top: 1rem;">
+      Prototyp: Die Anmeldung wird noch nicht geprüft.
+    </p>
+  </main>
+
+</body>
+</html>

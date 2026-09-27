@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aufträge – FA-Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="kopf">
+    <a class="logo" href="dashboard.html">FA-Digital</a>
+    <span class="untertitel">Digitaler Fertigungsauftrag</span>
+    <div class="benutzer">
+      Sven Petersen · Admin
+      <a href="index.html">Abmelden</a>
+    </div>
+  </header>
+
+  <div class="rahmen">
+    <nav class="menue">
+      <p class="menue-titel">Übersicht</p>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="auftraege.html" class="aktiv">Aufträge</a>
+
+      <p class="menue-titel">Arbeitsvorbereitung</p>
+      <a href="auftrag-anlegen.html">Auftrag anlegen</a>
+      <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="arbeitsplaetze.html">Arbeitsplätze</a>
+
+      <p class="menue-titel">Werkstatt</p>
+      <a href="werker.html">Werker-Terminal</a>
+
+      <p class="menue-titel">Controlling</p>
+      <a href="nachkalkulation.html">Nachkalkulation</a>
+      <a href="auswertung.html">Auswertung</a>
+
+      <p class="menue-titel">Verwaltung</p>
+      <a href="benutzer.html">Benutzer</a>
+    </nav>
+
+    <main class="inhalt">
+      <div class="seitenkopf">
+        <div>
+          <h1>Aufträge</h1>
+          <p class="leise">Alle Fertigungsaufträge, die noch nicht nachkalkuliert sind</p>
+        </div>
+        <a class="btn btn-primaer" href="auftrag-anlegen.html">+ Neuer Auftrag</a>
+      </div>
+
+      <!-- Filter: wird später per GET an PHP übergeben -->
+      <form class="karte" action="auftraege.html" method="get">
+        <div class="formular-raster">
+          <div class="feld">
+            <label for="suche">Suche</label>
+            <input type="text" id="suche" name="suche" placeholder="Auftrag oder Artikel">
+          </div>
+          <div class="feld">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+              <option value="">alle</option>
+              <option value="angelegt">angelegt</option>
+              <option value="freigegeben">freigegeben</option>
+              <option value="in_arbeit">in Arbeit</option>
+              <option value="fertig">fertig</option>
+              <option value="storniert">storniert</option>
+            </select>
+          </div>
+          <div class="feld feld-knopf">
+            <button type="submit" class="btn btn-sekundaer">Filtern</button>
+          </div>
+        </div>
+      </form>
+
+      <section class="karte">
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Auftrag</th>
+                <th>Artikel</th>
+                <th class="zahl">Menge</th>
+                <th>Liefertermin</th>
+                <th>Status</th>
+                <th>Fortschritt</th>
+                <th class="zahl">Soll-Zeit</th>
+                <th class="zahl">Ist-Zeit</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a href="auftrag-detail.html"><strong>FA-1000</strong></a></td>
+                <td>G-120 Lagergehäuse</td>
+                <td class="zahl">10</td>
+                <td>25.09.2026 <span class="badge verzug">Verzug</span></td>
+                <td><span class="badge in-arbeit">in Arbeit</span></td>
+                <td>
+                  <div class="balken"><span style="width: 0%;"></span></div>
+                  <span class="leise klein">0 von 3 AG</span>
+                </td>
+                <td class="zahl">220 min</td>
+                <td class="zahl">15 min</td>
+                <td><a class="btn btn-klein btn-sekundaer" href="auftrag-detail.html">Details</a></td>
+              </tr>
+              <tr>
+                <td><a href="nachkalkulation.html"><strong>FA-1001</strong></a></td>
+                <td>W-200 Antriebswelle Ø40</td>
+                <td class="zahl">50</td>
+                <td>02.10.2026</td>
+                <td><span class="badge fertig">fertig</span></td>
+                <td>
+                  <div class="balken"><span class="voll" style="width: 100%;"></span></div>
+                  <span class="leise klein">3 von 3 AG</span>
+                </td>
+                <td class="zahl">365 min</td>
+                <td class="zahl">387 min</td>
+                <td><a class="btn btn-klein btn-primaer" href="nachkalkulation.html">Nachkalkulation</a></td>
+              </tr>
+              <tr>
+                <td><a href="auftrag-detail.html"><strong>FA-1002</strong></a></td>
+                <td>F-310 Flansch DN80</td>
+                <td class="zahl">30</td>
+                <td>06.10.2026</td>
+                <td><span class="badge in-arbeit">in Arbeit</span></td>
+                <td>
+                  <div class="balken"><span style="width: 25%;"></span></div>
+                  <span class="leise klein">1 von 4 AG</span>
+                </td>
+                <td class="zahl">390 min</td>
+                <td class="zahl">122 min</td>
+                <td><a class="btn btn-klein btn-sekundaer" href="auftrag-detail.html">Details</a></td>
+              </tr>
+              <tr>
+                <td><a href="auftrag-detail.html"><strong>FA-1003</strong></a></td>
+                <td>B-050 Distanzbuchse</td>
+                <td class="zahl">200</td>
+                <td>09.10.2026</td>
+                <td><span class="badge in-arbeit">in Arbeit</span></td>
+                <td>
+                  <div class="balken"><span style="width: 50%;"></span></div>
+                  <span class="leise klein">1 von 2 AG</span>
+                </td>
+                <td class="zahl">425 min</td>
+                <td class="zahl">98 min</td>
+                <td><a class="btn btn-klein btn-sekundaer" href="auftrag-detail.html">Details</a></td>
+              </tr>
+              <tr>
+                <td><a href="auftrag-detail.html"><strong>FA-1004</strong></a></td>
+                <td>W-200 Antriebswelle Ø40</td>
+                <td class="zahl">40</td>
+                <td>14.10.2026</td>
+                <td><span class="badge freigegeben">freigegeben</span></td>
+                <td>
+                  <div class="balken"><span style="width: 0%;"></span></div>
+                  <span class="leise klein">0 von 3 AG</span>
+                </td>
+                <td class="zahl">300 min</td>
+                <td class="zahl">0 min</td>
+                <td><a class="btn btn-klein btn-sekundaer" href="auftrag-detail.html">Details</a></td>
+              </tr>
+              <tr>
+                <td><a href="auftrag-detail.html"><strong>FA-1005</strong></a></td>
+                <td>G-120 Lagergehäuse</td>
+                <td class="zahl">8</td>
+                <td>16.10.2026</td>
+                <td><span class="badge angelegt">angelegt</span></td>
+                <td>
+                  <div class="balken"><span style="width: 0%;"></span></div>
+                  <span class="leise klein">0 von 3 AG</span>
+                </td>
+                <td class="zahl">188 min</td>
+                <td class="zahl">0 min</td>
+                <td><a class="btn btn-klein btn-sekundaer" href="auftrag-detail.html">Details</a></td>
+              </tr>
+              <tr>
+                <td><a href="auftrag-detail.html"><strong>FA-0997</strong></a></td>
+                <td>F-310 Flansch DN80</td>
+                <td class="zahl">16</td>
+                <td>07.10.2026</td>
+                <td><span class="badge storniert">storniert</span></td>
+                <td><span class="leise klein">–</span></td>
+                <td class="zahl">243 min</td>
+                <td class="zahl">0 min</td>
+                <td><a class="btn btn-klein btn-sekundaer" href="auftrag-detail.html">Details</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="leise klein" style="margin: 0.75rem 0 0;">
+          Prototyp: Alle „Details“-Links führen zu FA-1002. Im fertigen System lassen sich die Spalten per Klick sortieren.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="fuss">
+    Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
+  </footer>
+
+</body>
+</html>

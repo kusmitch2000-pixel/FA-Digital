@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Auswertung – FA-Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="kopf">
+    <a class="logo" href="dashboard.html">FA-Digital</a>
+    <span class="untertitel">Digitaler Fertigungsauftrag</span>
+    <div class="benutzer">
+      Sven Petersen · Admin
+      <a href="index.html">Abmelden</a>
+    </div>
+  </header>
+
+  <div class="rahmen">
+    <nav class="menue">
+      <p class="menue-titel">Übersicht</p>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="auftraege.html">Aufträge</a>
+
+      <p class="menue-titel">Arbeitsvorbereitung</p>
+      <a href="auftrag-anlegen.html">Auftrag anlegen</a>
+      <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="arbeitsplaetze.html">Arbeitsplätze</a>
+
+      <p class="menue-titel">Werkstatt</p>
+      <a href="werker.html">Werker-Terminal</a>
+
+      <p class="menue-titel">Controlling</p>
+      <a href="nachkalkulation.html">Nachkalkulation</a>
+      <a href="auswertung.html" class="aktiv">Auswertung</a>
+
+      <p class="menue-titel">Verwaltung</p>
+      <a href="benutzer.html">Benutzer</a>
+    </nav>
+
+    <main class="inhalt">
+      <div class="seitenkopf">
+        <div>
+          <h1>Auswertung</h1>
+          <p class="leise">Soll-Ist-Vergleich über alle abgeschlossenen Aufträge</p>
+        </div>
+      </div>
+
+      <form class="karte" action="auswertung.html" method="get">
+        <div class="formular-raster">
+          <div class="feld">
+            <label for="von">Abgeschlossen von</label>
+            <input type="date" id="von" name="von" value="2026-09-01">
+          </div>
+          <div class="feld">
+            <label for="bis">bis</label>
+            <input type="date" id="bis" name="bis" value="2026-09-30">
+          </div>
+          <div class="feld">
+            <label for="artikel">Artikel</label>
+            <select id="artikel" name="artikel">
+              <option value="">alle</option>
+              <option value="W-200">W-200 Antriebswelle Ø40</option>
+              <option value="F-310">F-310 Flansch DN80</option>
+              <option value="G-120">G-120 Lagergehäuse</option>
+              <option value="B-050">B-050 Distanzbuchse</option>
+            </select>
+          </div>
+          <div class="feld feld-knopf">
+            <button type="submit" class="btn btn-sekundaer">Anzeigen</button>
+          </div>
+        </div>
+      </form>
+
+      <section class="karte">
+        <h2>Aufträge im Zeitraum</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Auftrag</th>
+                <th>Artikel</th>
+                <th class="zahl">Gut / Ausschuss</th>
+                <th>Abschluss</th>
+                <th class="zahl">Soll-Kosten</th>
+                <th class="zahl">Ist-Kosten</th>
+                <th class="zahl">Abweichung</th>
+                <th class="zahl">€ je Gutstück Soll / Ist</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a href="nachkalkulation.html">FA-0998</a></td>
+                <td>W-200</td>
+                <td class="zahl">80 / 0</td>
+                <td>18.09.2026</td>
+                <td class="zahl">660,00 €</td>
+                <td class="zahl">642,58 €</td>
+                <td class="zahl"><span class="ampel gruen"></span><span class="unter">−2,6 %</span></td>
+                <td class="zahl">8,25 € / 8,03 €</td>
+                <td><span class="badge nachkalkuliert">nachkalkuliert</span></td>
+              </tr>
+              <tr>
+                <td><a href="nachkalkulation.html">FA-0999</a></td>
+                <td>F-310</td>
+                <td class="zahl">19 / 1</td>
+                <td>23.09.2026</td>
+                <td class="zahl">389,58 €</td>
+                <td class="zahl">449,58 €</td>
+                <td class="zahl"><span class="ampel rot"></span><span class="ueber">+15,4 %</span></td>
+                <td class="zahl">19,48 € / 23,66 €</td>
+                <td><span class="badge nachkalkuliert">nachkalkuliert</span></td>
+              </tr>
+              <tr>
+                <td><a href="nachkalkulation.html">FA-1001</a></td>
+                <td>W-200</td>
+                <td class="zahl">48 / 2</td>
+                <td>28.09.2026</td>
+                <td class="zahl">431,25 €</td>
+                <td class="zahl">468,67 €</td>
+                <td class="zahl"><span class="ampel gelb"></span><span class="ueber">+8,7 %</span></td>
+                <td class="zahl">8,63 € / 9,76 €</td>
+                <td><span class="badge fertig">fertig</span></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4">Summe</td>
+                <td class="zahl">1.480,83 €</td>
+                <td class="zahl">1.560,83 €</td>
+                <td class="zahl"><span class="ueber">+5,4 %</span></td>
+                <td colspan="2"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <section class="karte">
+        <h2>Zeitabweichung je Arbeitsplatz</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Arbeitsplatz</th>
+                <th class="zahl">Soll-Zeit</th>
+                <th class="zahl">Ist-Zeit</th>
+                <th class="zahl">Abweichung</th>
+                <th>Bewertung</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Säge (AP-10)</td>
+                <td class="zahl">245 min</td>
+                <td class="zahl">233 min</td>
+                <td class="zahl unter">−4,9 %</td>
+                <td><span class="ampel gruen"></span>im Plan</td>
+              </tr>
+              <tr>
+                <td>CNC-Drehmaschine (AP-20)</td>
+                <td class="zahl">665 min</td>
+                <td class="zahl">692 min</td>
+                <td class="zahl ueber">+4,1 %</td>
+                <td><span class="ampel gruen"></span>im Plan</td>
+              </tr>
+              <tr>
+                <td>CNC-Fräsmaschine (AP-30)</td>
+                <td class="zahl">140 min</td>
+                <td class="zahl">171 min</td>
+                <td class="zahl ueber">+22,1 %</td>
+                <td><span class="ampel rot"></span>Arbeitsplan prüfen</td>
+              </tr>
+              <tr>
+                <td>Messplatz (AP-40)</td>
+                <td class="zahl">160 min</td>
+                <td class="zahl">162 min</td>
+                <td class="zahl ueber">+1,3 %</td>
+                <td><span class="ampel gruen"></span>im Plan</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="hinweis warnung" style="margin: 1rem 0 0;">
+          <p>An der CNC-Fräsmaschine liegt die Ist-Zeit 22 % über Plan. Die Soll-Zeiten für das Fräsen im Arbeitsplan von F-310 sollten geprüft werden.</p>
+        </div>
+      </section>
+
+      <!-- Export: wird später von einer PHP-Seite als Datei erzeugt -->
+      <form class="karte" action="auswertung.html" method="get">
+        <h2>Exportieren</h2>
+        <div class="formular-raster">
+          <div class="feld">
+            <label for="format">Format</label>
+            <select id="format" name="format">
+              <option value="csv">CSV (für Excel)</option>
+              <option value="txt">TXT</option>
+            </select>
+          </div>
+          <div class="feld feld-knopf">
+            <button type="submit" class="btn btn-primaer">Auswertung exportieren</button>
+          </div>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <footer class="fuss">
+    Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
+  </footer>
+
+</body>
+</html>

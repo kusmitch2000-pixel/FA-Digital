@@ -1,0 +1,10 @@
+# Abgabe-Pakete werden aus den Quelldateien erzeugt
+*.zip
+
+# Systemdateien
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editor-Einstellungen
+.vscode/
