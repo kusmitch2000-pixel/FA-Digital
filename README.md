@@ -10,7 +10,7 @@ Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Pr
 |---|---|
 | `prototyp/` | Klickbarer HTML-Prototyp, 11 Seiten und `style.css`, noch ohne Datenbank |
 | `doku/` | **Fachkonzept** (`Fachkonzept_FA-Digital.docx` und `.pdf`), Kurzkonzept, Prompt-Protokoll, später DV-Konzept und KI-Konzept |
-| `doku/prozesse/` | Prozessdiagramme für das Fachkonzept (`prozesse.js` erzeugt die HTML-Seiten, daraus entstehen die PNG-Bilder) |
+| `doku/prozesse/` | Prozessdiagramme für das Fachkonzept: `auftrag`, `checkliste`, `verbesserung`. `prozesse.js` erzeugt die HTML-Seiten, daraus entstehen die PNG-Bilder. Die Stammdatenpflege liegt vorerst in `zurueckgestellt/` |
 | `doku/fachkonzept/` | Inhalt des Fachkonzepts als `inhalt.json` und die Word-Skripte, die daraus das Dokument bauen |
 
 ## Online ansehen und Feedback geben
@@ -30,18 +30,18 @@ Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Pr
 | Datei | Seite | Anwendungsfälle |
 |---|---|---|
 | `index.html` | Anmeldung | Login |
-| `dashboard.html` | Hallenansicht: eine Karte je Arbeitsplatz mit Ampel | 11 |
-| `auftraege.html` | Auftragsübersicht | 12 |
+| `dashboard.html` | Hallenansicht: eine Karte je Arbeitsplatz mit Ampel | 12 |
+| `auftraege.html` | Auftragsübersicht | 13 |
 | `auftrag-anlegen.html` | Neuer Fertigungsauftrag | 4, 5 |
-| `auftrag-detail.html` | Auftragsdetail FA-1002 | 5, 10, 13 |
-| `werker.html` | Werker-Terminal mit Unterbrechungsgrund | 6, 7, 8, 9 |
-| `nachkalkulation.html` | Nachkalkulation FA-1001 | 14 |
-| `auswertung.html` | Auswertung, Unterbrechungen nach Grund, CSV-Export | 15 |
+| `auftrag-detail.html` | Auftragsdetail FA-1002 | 5, 11, 14 |
+| `werker.html` | Werker-Terminal mit Unterbrechungsgrund | 6, 7, 8, 10 |
+| `nachkalkulation.html` | Nachkalkulation FA-1001 | 16 |
+| `auswertung.html` | Auswertung, Unterbrechungen nach Grund, CSV-Export | 17 |
 | `artikel.html` | Artikel, Arbeitspläne, Soll-Zeit-Vorschläge | 1, 2 |
 | `arbeitsplaetze.html` | Arbeitsplätze und Stundensätze | 3 |
-| `benutzer.html` | Benutzerverwaltung | 16 |
+| `benutzer.html` | Benutzerverwaltung | 18 |
 
-Die Nummern beziehen sich auf die 16 Anwendungsfälle im Kurzkonzept (`doku/Kurzkonzept_FA-Digital.pdf`).
+Die Nummern beziehen sich auf die 18 Anwendungsfälle im Fachkonzept (`doku/Fachkonzept_FA-Digital.pdf`). Anwendungsfall 9 (Checkliste im Arbeitsgang) und 15 (Werkszertifikat) sind im Prototyp noch nicht umgesetzt.
 
 ## Technik
 

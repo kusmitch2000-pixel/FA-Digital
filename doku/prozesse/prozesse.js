@@ -1,7 +1,7 @@
 // Erzeugt die Prozessdiagramme für das Fachkonzept als HTML-Seiten (SVG) im Stil der Vorlage
 // „Fachkonzept Meldung Arbeitsort“: Überschrift als Aussagesatz, Bahnen je Rolle,
 // Kreise für Start und Ende, Rechtecke für Tätigkeiten, Rauten für Entscheidungen.
-// Aufruf: node prozesse.js  →  schreibt prozess1.html bis prozess3.html in diesen Ordner.
+// Aufruf: node prozesse.js  →  schreibt die HTML-Seiten in diesen Ordner.
 // Die PNG-Bilder entstehen danach per Screenshot im Browser.
 
 const fs = require("fs");
@@ -60,8 +60,8 @@ ${inhalt.join("\n")}
 }
 
 const diagramme = {
-  // Prozess 1: Stammdaten pflegen
-  "prozess1.html": seite(1840, 580,
+  // Zurückgestellt (27.09.2026): Stammdatenpflege, bis klar ist, wie sie mit den Auftragsdaten zusammenspielt
+  "zurueckgestellt/stammdaten.html": seite(1840, 580,
     ["Artikel, Arbeitspläne und Arbeitsplätze werden", "von der Arbeitsvorbereitung gepflegt."], [
       bahn(300, "Arbeitsvorbereitung"),
       kreis(160, 450, ["Neuer", "Artikel wird", "gefertigt"]),
@@ -75,8 +75,8 @@ const diagramme = {
       pfeil([[1300, 450], [1610, 450]]),
     ]),
 
-  // Prozess 2: Fertigungsauftrag abwickeln
-  "prozess2.html": seite(2070, 1620,
+  // Fertigungsauftrag abwickeln
+  "auftrag.html": seite(2070, 1620,
     ["Ein Fertigungsauftrag wird angelegt, in der", "Werkstatt gebucht und nachkalkuliert."], [
       bahn(290, "Arbeitsvorbereitung"),
       kreis(160, 420, ["Kundenauftrag", "liegt vor"]),
@@ -113,8 +113,35 @@ const diagramme = {
       pfeil([[1790, 1495], [1850, 1495]]),
     ]),
 
-  // Prozess 3: Aus Ist-Zeiten lernen
-  "prozess3.html": seite(1840, 920,
+  // Checklisten im Arbeitsgang abarbeiten und Daten für das Werkszertifikat liefern
+  "checkliste.html": seite(2070, 1080,
+    ["Werker arbeiten im Arbeitsgang Checklisten ab und", "liefern die Daten für das Werkszertifikat."], [
+      bahn(290, "Werker/innen"),
+      kreis(160, 420, ["Arbeitsgang", "läuft"]),
+      aufgabe(310, 345, ["Checkliste des", "Arbeitsgangs", "öffnen"]),
+      aufgabe(620, 345, ["Prüfpunkte", "abhaken und", "Messwerte", "erfassen"]),
+      raute(1045, 420, ["Alles in der", "Toleranz?"]),
+      aufgabe(920, 560, ["Abweichung", "erfassen und", "nacharbeiten"]),
+      aufgabe(1230, 345, ["Checkliste", "abschließen"]),
+      pfeil([[250, 420], [310, 420]]),
+      pfeil([[560, 420], [620, 420]]),
+      pfeil([[870, 420], [920, 420]]),
+      pfeil([[1045, 500], [1045, 560]]), beschriftung(1058, 540, "Nein"),
+      pfeil([[920, 635], [745, 635], [745, 495]]), beschriftung(832, 622, "erneut prüfen", "middle"),
+      pfeil([[1170, 420], [1230, 420]]), beschriftung(1200, 405, "Ja", "middle"),
+      trenner(760, 2070),
+
+      bahn(815, "Meister/in"),
+      aufgabe(1230, 850, ["Prüfdaten aller", "Arbeitsgänge", "kontrollieren"]),
+      aufgabe(1540, 850, ["Werkszertifikat", "erstellen und", "freigeben"]),
+      kreis(1940, 925, ["Ende"]),
+      pfeil([[1355, 495], [1355, 850]]),
+      pfeil([[1480, 925], [1540, 925]]),
+      pfeil([[1790, 925], [1850, 925]]),
+    ]),
+
+  // Aus Ist-Zeiten lernen
+  "verbesserung.html": seite(1840, 920,
     ["Aus Nachkalkulation und Auswertung werden", "Arbeitspläne und Abläufe verbessert."], [
       bahn(300, "Arbeitsvorbereitung"),
       kreis(160, 430, ["Auftrag", "ist nach-", "kalkuliert"]),

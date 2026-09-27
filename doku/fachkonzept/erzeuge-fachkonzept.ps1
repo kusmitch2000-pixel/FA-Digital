@@ -3,11 +3,10 @@
 # Titel, Version/Stand/Autoren, Inhalt, Ueberblick, Prozesse, Anwendungsfaelle.
 # Aufruf: powershell -File erzeuge-fachkonzept.ps1 -Sichtbar
 #
-# Bekanntes Problem auf Daniels Rechner (27.09.2026): Word haengt beim ersten Speichern
-# eines per Skript neu erzeugten Dokuments (SaveAs2) und beim PDF-Export, ohne einen
-# Dialog zu zeigen. Umweg: mit -Sichtbar starten, sobald das Dokument fertig aufgebaut
-# ist in Word mit F12 als Fachkonzept_FA-Digital.docx speichern, danach
-# nachbearbeiten.ps1 -OhnePdf ausfuehren und das PDF in Word ueber F12 > Dateityp PDF erzeugen.
+# Bekanntes Problem auf Daniels Rechner (27.09.2026): Speichern per Skript (SaveAs2) und der
+# PDF-Export haengen in Word ohne sichtbaren Dialog. Deshalb baut das Skript das Dokument nur auf
+# und laesst Word sichtbar offen. Danach in Word speichern:
+#   F12 > dokuFachkonzept_FA-Digital.docx (Word-Dokument), dann F12 > Dateityp PDF.
 # (Die Datei enthaelt bewusst keine Umlaute, weil PowerShell 5.1 Skripte ohne BOM als ANSI liest.)
 
 param(
@@ -25,6 +24,7 @@ $bildOrdner = Join-Path $doku "prozesse"
 $docxPfad = Join-Path $doku "Fachkonzept_FA-Digital.docx"
 $pdfPfad = Join-Path $doku "Fachkonzept_FA-Digital.pdf"
 
+$fertig = $false
 $bloecke = Get-Content -Raw -Encoding UTF8 $jsonPfad | ConvertFrom-Json
 
 # Word-Konstanten
@@ -66,6 +66,15 @@ try {
   Formatiere $UEBERSCHRIFT1 "Calibri Light" 16 $true 18 8
   Formatiere $UEBERSCHRIFT2 "Calibri Light" 13 $true 14 6
   Formatiere $AUFZAEHLUNG "Verdana" 10 $false 0 2
+  # Spiegelstriche wie in der Vorlage statt Aufzaehlungspunkte
+  $vorlage = $doc.Styles.Item($AUFZAEHLUNG).ListTemplate
+  $ebene = $vorlage.ListLevels.Item(1)
+  $ebene.NumberFormat = "-"
+  $ebene.Font.Name = "Verdana"
+  $ebene.NumberPosition = $word.CentimetersToPoints(0.75)
+  $ebene.TextPosition = $word.CentimetersToPoints(1.25)
+  $ebene.TabPosition = $word.CentimetersToPoints(1.25)
+  $doc.Styles.Item($AUFZAEHLUNG).LinkToListTemplate($vorlage, 1)
   Formatiere $VERZEICHNIS1 "Verdana" 10 $false 4 2
   Formatiere $VERZEICHNIS2 "Verdana" 10 $false 0 2
 
@@ -159,15 +168,16 @@ try {
   $verzeichnis.Update()
   Log "Verzeichnis aktualisiert"
 
-  $doc.SaveAs2($docxPfad, 16)
-  Log "docx gespeichert"
-  $doc.SaveAs2($pdfPfad, 17)
-  Log "pdf gespeichert"
   "Seiten: " + $doc.ComputeStatistics(2)
-  $doc.Close(0)
+  $fertig = $true
+  Log "Dokument fertig aufgebaut, Word bleibt zum Speichern offen"
 }
 finally {
-  $word.Quit()
+  if ($fertig) {
+    $word.Visible = $true
+    $doc.Activate()
+  } else {
+    $word.Quit()
+  }
   [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($word)
 }
-"Fertig: $docxPfad"
