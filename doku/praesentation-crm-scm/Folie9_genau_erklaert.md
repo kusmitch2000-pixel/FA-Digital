@@ -83,3 +83,15 @@ Drei Aufgaben, die man in einem Satz so erklären kann:
 ## Roter Faden in einem Satz
 
 "Ich sorge dafür, dass der Drucker technisch passt, zuverlässig läuft und jedes Etikett korrekt und rechtssicher ist, denn bei Lebensmitteln ist ein Kennzeichnungsfehler ein Risiko für Kunden und Unternehmen."
+
+## Verantwortung in einfachen Worten
+
+Folie: "Prüft technische Eignung und Integration, sichert Wartung sowie korrekte, lebensmittelsichere Kennzeichnung."
+
+Einfach gesagt: "Ich schaue, ob der Drucker zu unseren Maschinen und unserer IT passt. Ich sorge dafür, dass er gewartet wird und läuft. Und ich stelle sicher, dass auf jedem Etikett die richtigen Angaben stehen und nichts davon der Schokolade schadet."
+
+- Technische Eignung = Kann der Drucker das, was wir brauchen?
+- Integration = Lässt er sich an Linie und IT anschließen?
+- Wartung = Wird er regelmäßig gepflegt und schnell repariert?
+- Korrekte Kennzeichnung = Stimmen MHD, Charge und Allergene?
+- Lebensmittelsicher = Sind Etikett, Farbe und Kleber für Lebensmittel unbedenklich?
