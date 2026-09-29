@@ -37,3 +37,11 @@ Faustregel: **Komplementär** = beide gewinnen, wenn eins erreicht wird. **Konfl
 - **Sachin will doch auch schnelle Sortenwechsel, warum Konflikt mit Marketing?** Schnelle Wechsel sollen den Aufwand je Wechsel senken. Pascal will aber mehr Wechsel. Die Häufigkeit ist der Konflikt.
 - **Warum ist Technik–Marketing nicht einfach komplementär?** Weil Designfreiheit an den Pflichtangaben endet. Die Basis ist gleich, die Grenze ziehe ich.
 - **Der Einkauf will doch auch TCO und Nachhaltigkeit, warum dann Konflikt?** Er bewertet die Gesamtkosten, aber sein Ziel bleibt, sie niedrig zu halten. Der Konflikt entsteht, sobald eine Anforderung den Preis erhöht.
+
+## Kurzfassung zum Vortragen: Einkauf und Leitung (ca. 40 s)
+
+"Wenn man sich die Tabelle anschaut, fallen zwei Muster auf.
+
+Erstens: Der Einkauf steht zu fast allen im Konflikt, nämlich zu Produktion, Technik und Marketing. Das ist klassisch für ein Buying Center. Der Einkauf ist der einzige Bereich, dessen Kernziel es ist, Kosten niedrig zu halten. Alle anderen fordern etwas, das Geld kostet: die Produktion Leistung, wir in der Technik Qualität und Service, das Marketing Flexibilität und Design. Jede Anforderung, die einer von uns stellt, macht das Angebot teurer, und genau das will der Einkauf verhindern.
+
+Zweitens: Die Leitung ist mit fast allen komplementär. Das liegt daran, dass Luca die übergeordneten Unternehmensziele vertritt. Unsere Bereichsziele sind aus diesen Zielen abgeleitet. Wenn die Produktion sicherer läuft, das Marketing die Marke stärkt oder der Einkauf günstig beschafft, zahlt das jeweils direkt auf seine Ziele ein. Nur mit uns in der Technik ist es 'beides': Qualität will Luca auch, aber sie kostet Budget."
