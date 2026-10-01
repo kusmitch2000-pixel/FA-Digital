@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+.git
+.github
+.agents
+vendor
+node_modules
+public/build
+public/hot
+storage/logs/*
+storage/app/.docker-app-key
+tests
