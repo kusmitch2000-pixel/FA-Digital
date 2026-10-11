@@ -15,7 +15,7 @@ MariaDB 10.4 aus XAMPP, Datenbank `fa_digital`. Die Beschreibung des Datenmodell
 
 ## Import
 
-XAMPP Control Panel öffnen und MySQL starten. Dann in phpMyAdmin unter „Importieren“ die Dateien 01, 02 und 03 nacheinander einspielen. Alternativ in der Kommandozeile:
+XAMPP Control Panel öffnen und Apache und MySQL starten. Dann in phpMyAdmin unter „Importieren“ die Dateien 01, 02 und 03 nacheinander einspielen. Schritt für Schritt mit Datensätze ansehen und Fehlerhilfe: `anleitung-phpmyadmin.md`. Alternativ in der Kommandozeile:
 
 ```
 cd C:\xampp\mysql\bin
