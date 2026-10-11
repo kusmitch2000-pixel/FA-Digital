@@ -4,34 +4,34 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'FA-Digital' }} – FA-Digital</title>
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="stylesheet" href="{{ asset('css/production.css') }}">
     @livewireStyles
 </head>
 <body>
+    @php($benutzer = auth()->user())
     <header class="kopf">
-        <a class="logo" href="{{ route('dashboard') }}">FA-Digital</a>
+        <a class="logo" href="{{ route('home') }}">FA-Digital</a>
         <span class="untertitel">Digitaler Fertigungsauftrag</span>
-        <div style="margin-left:auto; display:flex; align-items:center; gap:1rem">
-            <span>{{ auth()->user()->name }}</span>
+        <div class="benutzer">
+            <span>{{ $benutzer->name }} · {{ $benutzer->rollenbezeichnung }}</span>
             <form method="POST" action="{{ route('logout') }}">@csrf <button class="btn btn-sekundaer btn-klein" type="submit">Abmelden</button></form>
         </div>
     </header>
     <div class="rahmen">
+        {{-- Jede Rolle sieht nur ihre Bereiche (config/fa.php) --}}
         <nav class="menue" aria-label="Hauptnavigation">
-            <a href="{{ route('dashboard') }}" @class(['aktiv' => request()->routeIs('dashboard')])>Hallenansicht</a>
-            <a href="{{ route('orders.index') }}" @class(['aktiv' => request()->routeIs('orders.index', 'orders.show')])>Aufträge</a>
-            @if(auth()->user()->role === 'admin')<a href="{{ route('orders.create') }}" @class(['aktiv' => request()->routeIs('orders.create')])>Auftrag anlegen</a>@endif
-            <a href="{{ route('articles.index') }}" @class(['aktiv' => request()->routeIs('articles.index')])>Artikel &amp; Arbeitspläne</a>
-            <a href="{{ route('workstations.index') }}" @class(['aktiv' => request()->routeIs('workstations.index')])>Arbeitsplätze</a>
-            <a href="{{ route('terminal') }}" @class(['aktiv' => request()->routeIs('terminal')])>Werker-Terminal</a>
-            <a href="{{ route('costing') }}" @class(['aktiv' => request()->routeIs('costing')])>Nachkalkulation</a>
-            <a href="{{ route('reports') }}" @class(['aktiv' => request()->routeIs('reports')])>Auswertung</a>
-            @if(auth()->user()->role === 'admin')<a href="{{ route('users.index') }}" @class(['aktiv' => request()->routeIs('users.index')])>Benutzer</a>@endif
+            @foreach (config('fa.menue') as $route => $bezeichnung)
+                @if ($benutzer->darf($route))
+                    <a href="{{ route($route) }}" @class(['aktiv' => request()->routeIs($route) || ($route === 'auftraege' && request()->routeIs('auftrag'))])>{{ $bezeichnung }}</a>
+                @endif
+            @endforeach
         </nav>
         <main class="inhalt">
-            @if (session('status')) <div class="hinweis">{{ session('status') }}</div> @endif
-            {{ $slot ?? '' }}
-            @yield('content')
+            @if (session('status'))
+                <div class="hinweis" role="status">{{ session('status') }}</div>
+            @endif
+            {{ $slot }}
         </main>
     </div>
     @livewireScripts

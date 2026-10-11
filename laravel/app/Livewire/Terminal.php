@@ -2,119 +2,136 @@
 
 namespace App\Livewire;
 
-use App\Models\OrderOperation;
-use App\Models\TimeEntry;
-use App\Models\Workstation;
+use App\Actions\Fertigung\Werkstatt;
+use App\Livewire\Concerns\BrauchtRecht;
+use App\Models\Arbeitsplatz;
+use App\Models\Unterbrechung;
+use App\Models\Unterbrechungsgrund;
+use App\Models\Zeitbuchung;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
+/**
+ * Werker-Terminal (Anwendungsfälle 1 bis 5): Arbeitsvorrat am Arbeitsplatz, Rüsten und Bearbeiten stempeln,
+ * mit Grund unterbrechen, Checkliste abarbeiten und den Arbeitsgang mit Gutmenge und Ausschuss fertig melden.
+ * Die Abläufe selbst stehen in App\Actions\Fertigung\Werkstatt.
+ */
 class Terminal extends Component
 {
-    public ?int $workstationId = null;
-    public string $reason = '';
-    public int $goodQuantity = 0;
-    public int $scrapQuantity = 0;
-    public string $notes = '';
+    use BrauchtRecht;
+
+    protected string $recht = 'terminal';
+
+    /** Gewählter Arbeitsplatz, steht in der Adresse, z. B. /werker?arbeitsplatz=AP-20 */
+    #[Url(as: 'arbeitsplatz')]
+    public string $arbeitsplatz = '';
+
+    public ?int $grund = null;
+
+    public string $unterbrechungBemerkung = '';
+
+    public ?int $gutmenge = null;
+
+    public ?int $ausschuss = 0;
+
+    public string $bemerkung = '';
+
+    /** @var array<int, string> Messwerte der Checkliste je Prüfpunkt-ID */
+    public array $istwert = [];
+
+    /** @var array<int, string> Bemerkungen der Checkliste je Prüfpunkt-ID */
+    public array $pruefBemerkung = [];
 
     public function mount(): void
     {
-        $this->workstationId = Workstation::query()->value('id');
+        $aktuell = $this->werkstatt()->aktuellerArbeitsgang(auth()->user());
+
+        if ($this->arbeitsplatz === '') {
+            $this->arbeitsplatz = $aktuell?->arbeitsplatz->nummer
+                ?? Arbeitsplatz::where('aktiv', true)->orderBy('nummer')->value('nummer')
+                ?? '';
+        }
+
+        $this->gutmenge = $aktuell?->auftrag->menge;
     }
 
-    public function start(int $id, string $kind): void
+    public function starten(int $arbeitsgangId, string $taetigkeit): void
     {
-        abort_unless(in_array($kind, ['setup', 'run'], true), 422);
-        DB::transaction(function () use ($id, $kind) {
-            $operation = OrderOperation::with('order')->lockForUpdate()->findOrFail($id);
-            abort_unless($operation->workstation_id === (int) $this->workstationId && in_array($operation->order->status, ['freigegeben', 'in_arbeit'], true), 403);
-            abort_unless($operation->status !== 'fertig', 409);
-            $earlierOpen = OrderOperation::where('manufacturing_order_id', $operation->manufacturing_order_id)
-                ->where('sequence', '<', $operation->sequence)->where('status', '!=', 'fertig')->exists();
-            if ($earlierOpen) {
-                throw ValidationException::withMessages(['operation' => 'Der vorherige Arbeitsgang ist noch nicht fertig.']);
-            }
-            $otherActive = TimeEntry::where('user_id', auth()->id())->whereNull('ended_at')->exists();
-            $operationActive = $operation->entries()->whereNull('ended_at')->exists();
-            if ($otherActive || $operationActive) {
-                throw ValidationException::withMessages(['operation' => 'Es läuft bereits eine Buchung.']);
-            }
-            $operation->entries()->create(['user_id' => auth()->id(), 'kind' => $kind, 'started_at' => now()]);
-            $operation->update(['status' => 'in_arbeit']);
-            $operation->order->update(['status' => 'in_arbeit']);
-        });
+        $this->resetErrorBag();
+        $this->werkstatt()->starten(auth()->user(), $arbeitsgangId, $taetigkeit);
+
+        $aktuell = $this->werkstatt()->aktuellerArbeitsgang(auth()->user());
+        $this->arbeitsplatz = $aktuell->arbeitsplatz->nummer;
+        $this->gutmenge = $aktuell->auftrag->menge;
+        $this->ausschuss = 0;
     }
 
-    public function switchKind(string $kind): void
+    public function wechseln(string $taetigkeit): void
     {
-        abort_unless(in_array($kind, ['setup', 'run'], true), 422);
-        DB::transaction(function () use ($kind) {
-            $entry = TimeEntry::where('user_id', auth()->id())->whereNull('ended_at')->lockForUpdate()->firstOrFail();
-            abort_unless($entry->kind !== 'interruption', 409);
-            $entry->update(['ended_at' => now()]);
-            $entry->operation->entries()->create(['user_id' => auth()->id(), 'kind' => $kind, 'started_at' => now()]);
-        });
+        $this->resetErrorBag();
+        $this->werkstatt()->taetigkeitWechseln(auth()->user(), $taetigkeit);
     }
 
-    public function pause(): void
+    public function unterbrechen(): void
     {
-        $this->validate(['reason' => 'required|in:pause,material,stoerung,werkzeug,sonstiges']);
-        DB::transaction(function () {
-            $entry = TimeEntry::where('user_id', auth()->id())->whereNull('ended_at')->lockForUpdate()->firstOrFail();
-            abort_unless($entry->kind !== 'interruption', 409);
-            $entry->update(['ended_at' => now()]);
-            $entry->operation->entries()->create(['user_id' => auth()->id(), 'kind' => 'interruption', 'reason' => $this->reason, 'resume_kind' => $entry->kind, 'started_at' => now()]);
-        });
-        $this->reason = '';
+        $this->resetErrorBag();
+        $this->werkstatt()->unterbrechen(auth()->user(), (int) $this->grund, $this->unterbrechungBemerkung);
+        $this->reset('grund', 'unterbrechungBemerkung');
     }
 
-    public function resume(): void
+    public function fortsetzen(): void
     {
-        DB::transaction(function () {
-            $entry = TimeEntry::where('user_id', auth()->id())->whereNull('ended_at')->lockForUpdate()->firstOrFail();
-            abort_unless($entry->kind === 'interruption', 409);
-            $entry->update(['ended_at' => now()]);
-            $entry->operation->entries()->create(['user_id' => auth()->id(), 'kind' => $entry->resume_kind === 'setup' ? 'setup' : 'run', 'started_at' => now()]);
-        });
+        $this->resetErrorBag();
+        $this->werkstatt()->fortsetzen(auth()->user());
     }
 
-    public function finish(): void
+    public function pruefen(int $pruefpunktId, ?string $ergebnis = null): void
     {
-        $this->validate([
-            'goodQuantity' => 'required|integer|min:0',
-            'scrapQuantity' => 'required|integer|min:0',
-            'notes' => 'nullable|string|max:5000',
-        ]);
-        DB::transaction(function () {
-            $entry = TimeEntry::where('user_id', auth()->id())->whereNull('ended_at')->lockForUpdate()->firstOrFail();
-            abort_unless($entry->kind !== 'interruption', 409);
-            $entry->update(['ended_at' => now()]);
-            $operation = $entry->operation;
-            if ($this->goodQuantity + $this->scrapQuantity > $operation->order->quantity) {
-                throw ValidationException::withMessages(['goodQuantity' => 'Die Gesamtmenge überschreitet die Auftragsmenge.']);
-            }
-            $operation->update([
-                'status' => 'fertig', 'good_quantity' => $this->goodQuantity,
-                'scrap_quantity' => $this->scrapQuantity, 'notes' => $this->notes,
-            ]);
-            if (! $operation->order->operations()->where('status', '!=', 'fertig')->exists()) {
-                $operation->order->update(['status' => 'fertig']);
-            }
-        });
-        $this->reset('goodQuantity', 'scrapQuantity', 'notes');
+        $this->resetErrorBag();
+        $this->werkstatt()->pruefen(
+            auth()->user(),
+            $pruefpunktId,
+            $this->istwert[$pruefpunktId] ?? null,
+            $ergebnis,
+            $this->pruefBemerkung[$pruefpunktId] ?? null,
+        );
     }
 
-    public function render()
+    public function fertigMelden(): void
     {
-        $stations = Workstation::where('active', true)->orderBy('code')->get();
-        $active = TimeEntry::with(['operation.order.article', 'operation.workstation'])
-            ->where('user_id', auth()->id())->whereNull('ended_at')->first();
-        $queue = OrderOperation::with(['order.article', 'entries'])
-            ->where('workstation_id', $this->workstationId)
-            ->where('status', '!=', 'fertig')
-            ->whereHas('order', fn ($query) => $query->whereIn('status', ['freigegeben', 'in_arbeit']))
-            ->orderBy('created_at')->get();
+        $this->resetErrorBag();
+        $this->werkstatt()->fertigMelden(auth()->user(), (int) $this->gutmenge, (int) $this->ausschuss, $this->bemerkung);
+        $this->reset('gutmenge', 'ausschuss', 'bemerkung', 'istwert', 'pruefBemerkung');
+        session()->flash('status', 'Arbeitsgang fertig gemeldet.');
+    }
 
-        return view('livewire.terminal', compact('stations', 'active', 'queue'))->layout('layouts::production', ['title' => 'Werker-Terminal']);
+    private function werkstatt(): Werkstatt
+    {
+        return app(Werkstatt::class);
+    }
+
+    public function render(): View
+    {
+        $benutzer = auth()->user();
+        $aktuell = $this->werkstatt()->aktuellerArbeitsgang($benutzer);
+        $aktuell?->load('pruefpunkte');
+
+        return view('livewire.terminal', [
+            'benutzer' => $benutzer,
+            'aktuell' => $aktuell,
+            'zeit' => $aktuell ? DB::table('v_arbeitsgang_zeit')->where('arbeitsgang_id', $aktuell->id)->first() : null,
+            'buchung' => $aktuell ? Zeitbuchung::where('arbeitsgang_id', $aktuell->id)->where('benutzer_id', $benutzer->id)->whereNull('ende')->where('gueltig', true)->first() : null,
+            'unterbrechung' => $aktuell ? Unterbrechung::with('grund')->where('arbeitsgang_id', $aktuell->id)->whereNull('ende')->first() : null,
+            'plaetze' => Arbeitsplatz::where('aktiv', true)->orderBy('nummer')->get(),
+            'vorrat' => DB::table('v_arbeitsvorrat')
+                ->where('arbeitsplatz_nummer', $this->arbeitsplatz)
+                ->orderByRaw("FIELD(bereitschaft, 'laeuft', 'unterbrochen', 'bereit', 'wartet')")
+                ->orderBy('liefertermin')
+                ->orderBy('auftragsnummer')
+                ->get(),
+            'gruende' => Unterbrechungsgrund::where('aktiv', true)->orderBy('id')->get(),
+        ])->layout('layouts::production', ['title' => 'Werker-Terminal']);
     }
 }

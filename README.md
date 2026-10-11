@@ -9,7 +9,7 @@ Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Pr
 | Ordner | Inhalt |
 |---|---|
 | `prototyp/` | Klickbarer HTML-Prototyp, 11 Seiten und `style.css`, noch ohne Datenbank |
-| `laravel/` | Laravel-13-Anwendung mit Livewire, Anmeldung und MariaDB; Einrichtung siehe `laravel/README.md` |
+| `laravel/` | **Anwendung**: Laravel 13 mit Livewire und Docker, arbeitet direkt mit dem Datenmodell aus `datenbank/`. Alle 12 Anwendungsfälle, eine Ansicht je Rolle. Einrichtung in `laravel/README.md` |
 | `datenbank/` | **Datenmodell als SQL**: Schema, Testdaten, Sichten, Beispielabfragen und -abläufe für MariaDB (XAMPP). Anleitung in `datenbank/README.md` |
 | `doku/` | **Fachkonzept** (`Fachkonzept_FA-Digital.docx` und `.pdf`), **Datenmodell** (`Datenmodell_FA-Digital.docx` und `.pdf`), Kurzkonzept, Prompt-Protokoll, später DV-Konzept und KI-Konzept |
 | `doku/prozesse/` | Prozessdiagramme für das Fachkonzept: `auftrag`, `checkliste`, `verbesserung`. `prozesse.js` erzeugt die HTML-Seiten, daraus entstehen die PNG-Bilder. Die Stammdatenpflege liegt vorerst in `zurueckgestellt/` |
@@ -47,7 +47,9 @@ Die Nummern beziehen sich auf die 18 Anwendungsfälle im Fachkonzept (`doku/Fach
 
 ## Technik
 
-Der ursprüngliche Prototyp besteht aus HTML und CSS. Die neue Anwendung in `laravel/` verwendet Laravel, Livewire und MariaDB. Das Datenmodell liegt als SQL in `datenbank/`.
+- **Prototyp** (`prototyp/`): HTML und CSS, ohne Datenbank, online über GitHub Pages
+- **Datenmodell** (`datenbank/`): MariaDB mit 14 Tabellen und 14 Sichten. Die Sichten rechnen Soll-/Ist-Zeiten, Kosten, Ampeln und Vorschläge
+- **Anwendung** (`laravel/`): PHP mit Laravel 13, Livewire 4 für die Seiten und Fortify für die Anmeldung. Die Migrationen führen die SQL-Skripte aus `datenbank/` aus, es gibt das Datenmodell also nur einmal. Start mit Docker (`docker compose up`) oder mit PHP 8.4 und der MariaDB aus XAMPP
 
 ## Zusammenarbeit im Team
 

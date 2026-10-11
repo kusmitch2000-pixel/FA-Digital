@@ -73,7 +73,7 @@ return [
     |
     */
 
-    'home' => '/dashboard',
+    'home' => '/',
 
     /*
     |--------------------------------------------------------------------------
@@ -167,25 +167,8 @@ return [
     */
 
     'features' => [
-        /* @chisel-registration */
-        // Accounts are created by an administrator in the Benutzer screen.
-        /* @end-chisel-registration */
-        Features::resetPasswords(),
-        /* @chisel-email-verification */
-        Features::emailVerification(),
-        /* @end-chisel-email-verification */
-        /* @chisel-2fa */
-        Features::twoFactorAuthentication([
-            'confirm' => true,
-            'confirmPassword' => true,
-            // 'window' => 0
-        ]),
-        /* @end-chisel-2fa */
-        /* @chisel-passkeys */
-        Features::passkeys([
-            'confirmPassword' => true,
-        ]),
-        /* @end-chisel-passkeys */
+        // Nur Anmelden und Abmelden. Konten legt der Admin unter „Benutzer“ an
+        // und setzt dort bei Bedarf ein neues Passwort.
     ],
 
 ];

@@ -809,3 +809,111 @@ legend {
     display: none;
   }
 }
+
+/* ---------- Ergänzungen für die Laravel-Anwendung ---------- */
+
+.benutzer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ohne-abstand {
+  margin: 0;
+  align-self: center;
+}
+
+.abstand-oben {
+  margin-top: 1.5rem;
+}
+
+select.schmal,
+input.schmal {
+  width: auto;
+  min-width: 12rem;
+}
+
+input.eingabe-kurz {
+  width: 7rem;
+}
+
+th.mitte,
+td.mitte {
+  text-align: center;
+}
+
+.uhr-zusatz {
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+/* Korrigierte Buchungen bleiben sichtbar, aber durchgestrichen */
+tr.ungueltig td {
+  color: var(--text-leise);
+  text-decoration: line-through;
+}
+
+tr.ungueltig td:last-child,
+tr.ungueltig td:nth-child(7) {
+  text-decoration: none;
+}
+
+.seitenkopf h2 {
+  margin: 0;
+}
+
+.testkonten {
+  margin-top: 1.25rem;
+  color: var(--text-leise);
+}
+
+.testkonten ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Druckansicht Werkszeugnis */
+.druckseite {
+  background: var(--weiss);
+}
+
+.dokument {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.dokument table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dokument th,
+.dokument td {
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--rand);
+  text-align: left;
+}
+
+.unterschrift {
+  margin-top: 3rem;
+}
+
+@media print {
+  .nicht-drucken {
+    display: none;
+  }
+
+  .dokument {
+    padding: 0;
+  }
+}
+
+td.kein-umbruch {
+  white-space: nowrap;
+}

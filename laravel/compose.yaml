@@ -11,23 +11,26 @@ services:
       APP_DEBUG: "true"
       APP_URL: http://localhost:8000
       APP_LOCALE: de
+      APP_TIMEZONE: Europe/Berlin
+      TZ: Europe/Berlin
       DB_CONNECTION: mysql
       DB_HOST: db
       DB_PORT: "3306"
       DB_DATABASE: fa_digital
       DB_USERNAME: fa_digital
       DB_PASSWORD: local-demo-password
+      DB_COLLATION: utf8mb4_german2_ci
       SESSION_DRIVER: database
       CACHE_STORE: database
       QUEUE_CONNECTION: sync
       MAIL_MAILER: log
-      DEMO_ADMIN_EMAIL: admin@fa-digital.local
-      DEMO_ADMIN_PASSWORD: TestPasswort123!
     depends_on:
       db:
         condition: service_healthy
     volumes:
       - app-storage:/var/www/html/storage
+      # Die Migrationen lesen das Datenmodell direkt aus datenbank/ (01_schema.sql, 02_testdaten.sql, 03_sichten.sql)
+      - ../datenbank:/var/www/datenbank:ro
 
   db:
     image: mariadb:11.8
@@ -36,6 +39,8 @@ services:
       MARIADB_DATABASE: fa_digital
       MARIADB_USER: fa_digital
       MARIADB_PASSWORD: local-demo-password
+      # NOW() in den Sichten soll dieselbe Uhrzeit liefern wie PHP
+      TZ: Europe/Berlin
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s

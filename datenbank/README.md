@@ -24,6 +24,8 @@ mysql -u root --default-character-set=utf8mb4 fa_digital < C:\Pfad\zu\datenbank\
 mysql -u root --default-character-set=utf8mb4 fa_digital < C:\Pfad\zu\datenbank\03_sichten.sql
 ```
 
+Die Anwendung in `laravel/` nutzt dieselben Skripte: `php artisan migrate:fresh --seed` führt 01, 02 und 03 aus und legt nur die technischen Tabellen von Laravel dazu (`sessions`, `cache`, `jobs`).
+
 ## Test-Benutzer
 
 Alle haben das Passwort `fa-digital` (nur für die Entwicklung).

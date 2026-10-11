@@ -11,8 +11,9 @@ export APP_KEY="$(cat "$key_file")"
 
 chown -R www-data:www-data storage bootstrap/cache
 
+# Datenmodell aus datenbank/ anlegen und beim ersten Start die Testdaten laden.
+# Sind schon Benutzer da, lässt der Seeder die Daten in Ruhe.
 php artisan migrate --force
-php artisan db:seed --class=ProductionSeeder --force
-php artisan db:seed --class=DockerDemoSeeder --force
+php artisan db:seed --force
 
 exec apache2-foreground
