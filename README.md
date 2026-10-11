@@ -9,9 +9,10 @@ Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Pr
 | Ordner | Inhalt |
 |---|---|
 | `prototyp/` | Klickbarer HTML-Prototyp, 11 Seiten und `style.css`, noch ohne Datenbank |
-| `doku/` | **Fachkonzept** (`Fachkonzept_FA-Digital.docx` und `.pdf`), Kurzkonzept, Prompt-Protokoll, später DV-Konzept und KI-Konzept |
+| `datenbank/` | **Datenmodell als SQL**: Schema, Testdaten, Sichten, Beispielabfragen und -abläufe für MariaDB (XAMPP). Anleitung in `datenbank/README.md` |
+| `doku/` | **Fachkonzept** (`Fachkonzept_FA-Digital.docx` und `.pdf`), **Datenmodell** (`Datenmodell_FA-Digital.docx` und `.pdf`), Kurzkonzept, Prompt-Protokoll, später DV-Konzept und KI-Konzept |
 | `doku/prozesse/` | Prozessdiagramme für das Fachkonzept: `auftrag`, `checkliste`, `verbesserung`. `prozesse.js` erzeugt die HTML-Seiten, daraus entstehen die PNG-Bilder. Die Stammdatenpflege liegt vorerst in `zurueckgestellt/` |
-| `doku/fachkonzept/` | Inhalt des Fachkonzepts als `inhalt.json` und die Word-Skripte, die daraus das Dokument bauen |
+| `doku/datenmodell/` | ER-Diagramm des Datenmodells |
 
 ## Online ansehen und Feedback geben
 
@@ -45,7 +46,7 @@ Die Nummern beziehen sich auf die 18 Anwendungsfälle im Fachkonzept (`doku/Fach
 
 ## Technik
 
-HTML und CSS. Später PHP mit PDO und MariaDB über XAMPP.
+HTML und CSS im Prototyp. Datenbank MariaDB 10.4 über XAMPP (`datenbank/`). Als Nächstes PHP mit PDO.
 
 ## Zusammenarbeit im Team
 
