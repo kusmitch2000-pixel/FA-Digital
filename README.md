@@ -10,9 +10,10 @@ Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Pr
 |---|---|
 | `prototyp/` | Klickbarer HTML-Prototyp, 11 Seiten und `style.css`, noch ohne Datenbank |
 | `laravel/` | Laravel-13-Anwendung mit Livewire, Anmeldung und MariaDB; Einrichtung siehe `laravel/README.md` |
-| `doku/` | **Fachkonzept** (`Fachkonzept_FA-Digital.docx` und `.pdf`), Kurzkonzept, Prompt-Protokoll, später DV-Konzept und KI-Konzept |
+| `datenbank/` | **Datenmodell als SQL**: Schema, Testdaten, Sichten, Beispielabfragen und -abläufe für MariaDB (XAMPP). Anleitung in `datenbank/README.md` |
+| `doku/` | **Fachkonzept** (`Fachkonzept_FA-Digital.docx` und `.pdf`), **Datenmodell** (`Datenmodell_FA-Digital.docx` und `.pdf`), Kurzkonzept, Prompt-Protokoll, später DV-Konzept und KI-Konzept |
 | `doku/prozesse/` | Prozessdiagramme für das Fachkonzept: `auftrag`, `checkliste`, `verbesserung`. `prozesse.js` erzeugt die HTML-Seiten, daraus entstehen die PNG-Bilder. Die Stammdatenpflege liegt vorerst in `zurueckgestellt/` |
-| `doku/fachkonzept/` | Inhalt des Fachkonzepts als `inhalt.json` und die Word-Skripte, die daraus das Dokument bauen |
+| `doku/datenmodell/` | ER-Diagramm des Datenmodells |
 
 ## Online ansehen und Feedback geben
 
@@ -46,7 +47,7 @@ Die Nummern beziehen sich auf die 18 Anwendungsfälle im Fachkonzept (`doku/Fach
 
 ## Technik
 
-Der ursprüngliche Prototyp besteht aus HTML und CSS. Die neue Anwendung in `laravel/` verwendet Laravel, Livewire und MariaDB.
+Der ursprüngliche Prototyp besteht aus HTML und CSS. Die neue Anwendung in `laravel/` verwendet Laravel, Livewire und MariaDB. Das Datenmodell liegt als SQL in `datenbank/`.
 
 ## Zusammenarbeit im Team
 
