@@ -13,6 +13,8 @@ MariaDB 10.4 aus XAMPP, Datenbank `fa_digital`. Die Beschreibung des Datenmodell
 | `05_beispielablaeufe.sql` | acht schreibende Abläufe als Transaktion mit ROLLBACK, die Testdaten bleiben unverändert |
 | `hilfsskripte/erzeuge-testdaten.js` | erzeugt `02_testdaten.sql` neu (`node erzeuge-testdaten.js`) |
 
+Wie alle in der Gruppe mit denselben Datensätzen arbeiten und wer was wo ändert: `zusammenarbeit.md`.
+
 ## Import
 
 XAMPP Control Panel öffnen und Apache und MySQL starten. Dann in phpMyAdmin unter „Importieren“ die Dateien 01, 02 und 03 nacheinander einspielen. Schritt für Schritt mit Datensätze ansehen und Fehlerhilfe: `anleitung-phpmyadmin.md`. Alternativ in der Kommandozeile:
