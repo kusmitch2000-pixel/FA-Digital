@@ -13,12 +13,14 @@
     <h1>FA-Digital</h1>
     <p class="leise">Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation</p>
 
-    <!-- Im Prototyp führt das Formular ohne Prüfung zur Hallenansicht.
-         Später prüft PHP die E-Mail und das Passwort gegen die Datenbank. -->
-    <form action="dashboard.html" method="post">
+    <!-- Im Prototyp bestimmt die E-Mail die Rolle, das Passwort wird nicht geprüft (prototyp.js).
+         Die echte Anmeldung gegen die Tabelle benutzer macht die Laravel-App. -->
+    <form id="anmeldung" action="dashboard.html" method="post">
+      <p id="anmeldung-fehler" class="hinweis fehler" hidden></p>
+
       <div class="feld">
         <label for="email">E-Mail</label>
-        <input type="email" id="email" name="email" value="sven.petersen@fa-digital.de" required>
+        <input type="email" id="email" name="email" placeholder="name@fa-digital.de" required>
       </div>
 
       <div class="feld">
@@ -29,9 +31,16 @@
       <button type="submit" class="btn btn-primaer btn-breit">Anmelden</button>
     </form>
 
-    <p class="leise klein" style="margin-top: 1rem;">
-      Prototyp: Die Anmeldung wird noch nicht geprüft.
-    </p>
+    <!-- Ein Klick meldet direkt an. Jede Rolle sieht nur ihre Menüpunkte und landet auf ihrer Startseite. -->
+    <section class="testkonten">
+      <h2>Als Test-Benutzer anmelden</h2>
+      <button type="button" class="btn btn-sekundaer btn-breit" data-email="jonas.wolff@fa-digital.de"><strong>Werker</strong> <span>Jonas Wolff</span></button>
+      <button type="button" class="btn btn-sekundaer btn-breit" data-email="lena.hoffmann@fa-digital.de"><strong>Meister</strong> <span>Lena Hoffmann</span></button>
+      <button type="button" class="btn btn-sekundaer btn-breit" data-email="anna.becker@fa-digital.de"><strong>Arbeitsvorbereitung</strong> <span>Anna Becker</span></button>
+      <button type="button" class="btn btn-sekundaer btn-breit" data-email="tobias.krueger@fa-digital.de"><strong>Controlling</strong> <span>Tobias Krüger</span></button>
+      <button type="button" class="btn btn-sekundaer btn-breit" data-email="sven.petersen@fa-digital.de"><strong>Admin</strong> <span>Sven Petersen</span></button>
+      <p class="leise klein">Prototyp: Das Passwort wird nicht geprüft. Katrin Wagner (katrin.wagner@fa-digital.de) ist gesperrt und kommt nicht hinein.</p>
+    </section>
   </main>
 
 </body>

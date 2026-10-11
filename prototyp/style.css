@@ -764,6 +764,36 @@ legend {
   font-size: 1.8rem;
 }
 
+/* Test-Benutzer im Prototyp: ein Knopf je Rolle */
+.testkonten {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rand);
+}
+
+.testkonten h2 {
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
+}
+
+.testkonten .btn {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.testkonten .btn span {
+  color: var(--text-leise);
+  font-weight: normal;
+}
+
+.testkonten p {
+  margin: 0.4rem 0 0;
+}
+
 /* ---------- Schmale Bildschirme (Tablet, Handy) ---------- */
 
 @media (max-width: 800px) {

@@ -50,7 +50,7 @@
         </div>
         <!-- Welche Aktion möglich ist, hängt vom Status ab -->
         <div class="knopfleiste">
-          <button type="button" class="btn btn-gefahr" disabled title="Nur möglich, solange noch kein Arbeitsgang gestartet wurde">Stornieren</button>
+          <button type="button" class="btn btn-gefahr" data-recht="auftrag.freigeben" disabled title="Nur möglich, solange noch kein Arbeitsgang gestartet wurde">Stornieren</button>
           <button type="button" class="btn btn-sekundaer" disabled title="Erst möglich, wenn alle Arbeitsgänge erledigt sind">Auftrag abschließen</button>
         </div>
       </div>
@@ -197,8 +197,8 @@
         </div>
       </section>
 
-      <!-- Nur für die Rolle Meister: vergessene Buchungen nachtragen -->
-      <section class="karte">
+      <!-- Nur für Meister und Admin: vergessene Buchungen nachtragen -->
+      <section class="karte" data-recht="buchung.korrigieren">
         <h2>Buchung nachtragen oder korrigieren</h2>
         <p class="leise klein">Nur für Meister. Jede Korrektur wird mit Begründung gespeichert und im Ereignis-Feed angezeigt.</p>
         <form action="auftrag-detail.html" method="post">

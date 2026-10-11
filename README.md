@@ -23,9 +23,19 @@ Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Pr
 
 ## Prototyp lokal öffnen
 
-`prototyp/index.html` doppelt anklicken. Die Anmeldung ist noch nicht geprüft, „Anmelden“ führt direkt zur Hallenansicht.
+`prototyp/index.html` doppelt anklicken und einen Test-Benutzer wählen. Die E-Mail bestimmt die Rolle, das Passwort wird nicht geprüft.
 
-`prototyp/prototyp.js` gibt es nur, solange die Seiten statisch sind. Es leitet abgesendete Formulare direkt auf die Zielseite weiter, weil GitHub Pages keine POST-Anfragen annimmt. Mit PHP fällt die Datei weg.
+| Rolle | Test-Benutzer | Startseite | Menü |
+|---|---|---|---|
+| Werker | Jonas Wolff | Werker-Terminal | Werker-Terminal, Aufträge |
+| Meister | Lena Hoffmann | Hallenansicht | Hallenansicht, Aufträge, Werker-Terminal, Nachkalkulation, Auswertung. Im Auftragsdetail Buchungen nachtragen |
+| Arbeitsvorbereitung | Anna Becker | Aufträge | Hallenansicht, Aufträge, Auftrag anlegen, Artikel & Arbeitspläne, Arbeitsplätze |
+| Controlling | Tobias Krüger | Nachkalkulation | Hallenansicht, Aufträge, Nachkalkulation (abschließen), Auswertung, Arbeitsplätze |
+| Admin | Sven Petersen | Hallenansicht | alles |
+
+Die Zuordnung ist dieselbe wie in der Laravel-App (`laravel/config/fa.php`). Ruft eine Rolle die Adresse einer fremden Seite auf, zeigt der Prototyp „Kein Zugriff“. Ohne Anmeldung, z. B. über einen direkten Link, gilt der Admin.
+
+`prototyp/prototyp.js` gibt es nur, solange die Seiten statisch sind. Es merkt sich den Test-Benutzer im Browser, blendet fremde Menüpunkte und Aktionen aus und leitet abgesendete Formulare direkt auf die Zielseite weiter, weil GitHub Pages keine POST-Anfragen annimmt. Das ist nur Darstellung. Die echte Anmeldung mit Passwort und Rechteprüfung macht die Laravel-App.
 
 ## Seiten
 
