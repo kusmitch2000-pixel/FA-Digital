@@ -12,7 +12,7 @@ Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Pr
 | `datenbank/` | **Datenmodell als SQL**: Schema, Testdaten, Sichten, Beispielabfragen und -abläufe für MariaDB (XAMPP). Anleitung in `datenbank/README.md` |
 | `doku/` | **Fachkonzept** (`Fachkonzept_FA-Digital.docx` und `.pdf`), **Datenmodell** (`Datenmodell_FA-Digital.docx` und `.pdf`), Kurzkonzept, Prompt-Protokoll, später DV-Konzept und KI-Konzept |
 | `doku/prozesse/` | Prozessdiagramme für das Fachkonzept: `auftrag`, `checkliste`, `verbesserung`. `prozesse.js` erzeugt die HTML-Seiten, daraus entstehen die PNG-Bilder. Die Stammdatenpflege liegt vorerst in `zurueckgestellt/` |
-| `doku/datenmodell/` | ER-Diagramm des Datenmodells |
+| `doku/datenmodell/` | ER-Diagramm des Datenmodells und die Gesamtübersicht mit allen Spalten und Verweisen (Querformat-Seite im Datenmodell). `er-diagramm-detail.js` erzeugt die HTML-Seite, daraus entsteht das PNG |
 
 ## Online ansehen und Feedback geben
 
