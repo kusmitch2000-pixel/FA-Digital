@@ -239,6 +239,11 @@ function seiteEinrichten() {
 document.addEventListener("submit", function (ereignis) {
   const formular = ereignis.target;
 
+  // Formulare mit eigener Verarbeitung (stammdaten.js) nicht umleiten
+  if (ereignis.defaultPrevented) {
+    return;
+  }
+
   if (formular.id === "anmeldung") {
     ereignis.preventDefault();
     anmelden(formular);

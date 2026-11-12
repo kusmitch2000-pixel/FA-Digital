@@ -57,6 +57,8 @@ Der statische Prototyp und die Laravel-App können sich bei Rollen und Funktione
 
 `prototyp/prototyp.js` gibt es nur, solange die Seiten statisch sind. Es merkt sich den Test-Benutzer im Browser, blendet fremde Menüpunkte und Aktionen aus und leitet abgesendete Formulare direkt auf die Zielseite weiter, weil GitHub Pages keine POST-Anfragen annimmt. Das ist nur Darstellung. Die echte Anmeldung mit Passwort und Rechteprüfung macht die Laravel-App.
 
+`prototyp/stammdaten.js` macht Artikel, Arbeitspläne und das Anlegen von Aufträgen ausprobierbar. Das Rohteil (meist Blech) durchläuft die Stationen Auslasern, Umformen (Kanten), Bearbeitung (Schweißen), Zerspanung (Drehen, Fräsen), Lackierung und Versand. Produkte sind Verkleidungsteile für Zerspanungsmaschinen und Zerspanteile wie Welle oder Flansch. Neue Artikel, geänderte Arbeitspläne und angelegte Aufträge speichert nur der eigene Browser.
+
 ## Seiten
 
 | Datei | Seite | Anwendungsfälle |
@@ -64,14 +66,14 @@ Der statische Prototyp und die Laravel-App können sich bei Rollen und Funktione
 | `index.html` | Anmeldung | Login |
 | `dashboard.html` | Hallenansicht: eine Karte je Arbeitsplatz mit Ampel | 12 |
 | `auftraege.html` | Auftragsübersicht | 13 |
-| `auftrag-anlegen.html` | Neuer Fertigungsauftrag | 4, 5 |
+| `auftrag-anlegen.html` | Neuer Fertigungsauftrag: Artikel, Menge und Liefertermin wählen, Vorschau der Arbeitsgänge und Soll-Kosten rechnet live | 4, 5 |
 | `auftrag-detail.html` | Auftragsdetail FA-1002 | 5, 11, 14 |
 | `werker.html` | Werker-Terminal mit Unterbrechungsgrund und Notizen | 6, 7, 8, 10 |
 | `messung.html` | Messung für das Werkszertifikat nach „Arbeit beenden und messen“ | 9, 15 |
 | `nachkalkulation.html` | Nachkalkulation FA-1001 | 16 |
 | `auswertung.html` | Auswertung, Unterbrechungen nach Grund, CSV-Export | 17 |
-| `artikel.html` | Artikel, Arbeitspläne, Soll-Zeit-Vorschläge | 1, 2 |
-| `arbeitsplaetze.html` | Arbeitsplätze und Stundensätze | 3 |
+| `artikel.html` | Artikel anlegen und jedem Artikel seine Arbeitsschritte zuordnen (Station, Arbeitsplatz, Rüst- und Stückzeit), Soll-Zeit-Vorschläge | 1, 2 |
+| `arbeitsplaetze.html` | Arbeitsplätze mit Station und Stundensatz | 3 |
 | `benutzer.html` | Benutzerverwaltung | 18 |
 
 Die Nummern beziehen sich auf die 18 Anwendungsfälle im Fachkonzept (`doku/Fachkonzept_FA-Digital.pdf`). Anwendungsfall 9 (Checkliste) und 15 (Werkszertifikat) zeigt der Prototyp mit der Messseite, die Freigabe des Zertifikats noch nicht.
