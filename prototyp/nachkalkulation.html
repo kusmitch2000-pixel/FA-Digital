@@ -27,6 +27,7 @@
       <p class="menue-titel">Arbeitsvorbereitung</p>
       <a href="auftrag-anlegen.html">Auftrag anlegen</a>
       <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="zertifikate.html">Zertifikate</a>
       <a href="arbeitsplaetze.html">Arbeitsplätze</a>
 
       <p class="menue-titel">Werkstatt</p>
@@ -44,14 +45,14 @@
       <div class="seitenkopf">
         <div>
           <h1>Nachkalkulation FA-1001 <span class="badge fertig">fertig</span></h1>
-          <p class="leise">W-200 Antriebswelle Ø40 · 50 Stück bestellt · 48 Gut, 2 Ausschuss · abgeschlossen am 28.09.2026</p>
+          <p class="leise">V-410 Seitenverkleidung Fräszentrum · 50 Stück bestellt · 48 Gut, 2 Ausschuss · abgeschlossen am 28.09.2026</p>
         </div>
         <form action="nachkalkulation.html" method="get" class="knopfleiste">
           <label for="auftrag" class="leise" style="margin: 0; align-self: center;">Auftrag</label>
           <select id="auftrag" name="auftrag" style="width: auto;">
-            <option value="FA-1001" selected>FA-1001 · W-200 (fertig)</option>
+            <option value="FA-1001" selected>FA-1001 · V-410 (fertig)</option>
             <option value="FA-0999">FA-0999 · F-310 (nachkalkuliert)</option>
-            <option value="FA-0998">FA-0998 · W-200 (nachkalkuliert)</option>
+            <option value="FA-0998">FA-0998 · V-410 (nachkalkuliert)</option>
           </select>
           <button type="submit" class="btn btn-sekundaer">Anzeigen</button>
         </form>
@@ -60,23 +61,23 @@
       <section class="kacheln">
         <div class="kachel">
           <span class="text">Soll-Kosten</span>
-          <span class="zahl">431,25 €</span>
-          <span class="text">365 min geplant</span>
+          <span class="zahl">755,00 €</span>
+          <span class="text">570 min geplant</span>
         </div>
         <div class="kachel in-arbeit">
           <span class="text">Ist-Kosten</span>
-          <span class="zahl">468,67 €</span>
-          <span class="text"><span class="ampel gelb"></span><span class="ueber">+37,42 € (+8,7 %)</span></span>
+          <span class="zahl">799,67 €</span>
+          <span class="text"><span class="ampel gelb"></span><span class="ueber">+44,67 € (+5,9 %)</span></span>
         </div>
         <div class="kachel">
           <span class="text">Ist-Zeit</span>
-          <span class="zahl">387 min</span>
-          <span class="text"><span class="ueber">+22 min (+6,0 %)</span></span>
+          <span class="zahl">607 min</span>
+          <span class="text"><span class="ueber">+37 min (+6,5 %)</span></span>
         </div>
         <div class="kachel verzug">
           <span class="text">Kosten pro Gutstück</span>
-          <span class="zahl">9,76 €</span>
-          <span class="text">Soll 8,63 € · <span class="ueber">+13,2 %</span></span>
+          <span class="zahl">16,66 €</span>
+          <span class="text">Soll 15,10 € · <span class="ueber">+10,3 %</span></span>
         </div>
       </section>
 
@@ -102,51 +103,63 @@
             </thead>
             <tbody>
               <tr>
-                <td>10 Sägen</td>
-                <td>Säge</td>
-                <td class="zahl">45,00 €/h</td>
-                <td class="zahl">85 min</td>
-                <td class="zahl">80 min</td>
-                <td class="zahl unter">−5,9 %</td>
-                <td class="zahl">63,75 €</td>
-                <td class="zahl">60,00 €</td>
-                <td class="zahl unter">−3,75 €</td>
+                <td>10 Auslasern</td>
+                <td>Laserschneidanlage</td>
+                <td class="zahl">110,00 €/h</td>
+                <td class="zahl">140 min</td>
+                <td class="zahl">140 min</td>
+                <td class="zahl unter">±0,0 %</td>
+                <td class="zahl">256,67 €</td>
+                <td class="zahl">256,67 €</td>
+                <td class="zahl unter">±0,00 €</td>
                 <td><span class="ampel gruen"></span>im Plan</td>
               </tr>
               <tr>
-                <td>20 Drehen</td>
-                <td>CNC-Drehmaschine</td>
-                <td class="zahl">85,00 €/h</td>
-                <td class="zahl">230 min</td>
-                <td class="zahl">262 min</td>
-                <td class="zahl ueber">+13,9 %</td>
-                <td class="zahl">325,83 €</td>
-                <td class="zahl">371,17 €</td>
-                <td class="zahl ueber">+45,33 €</td>
+                <td>20 Kanten</td>
+                <td>Abkantpresse</td>
+                <td class="zahl">75,00 €/h</td>
+                <td class="zahl">170 min</td>
+                <td class="zahl">182 min</td>
+                <td class="zahl ueber">+7,1 %</td>
+                <td class="zahl">212,50 €</td>
+                <td class="zahl">227,50 €</td>
+                <td class="zahl ueber">+15,00 €</td>
+                <td><span class="ampel gelb"></span>leicht über Plan</td>
+              </tr>
+              <tr>
+                <td>30 Lackieren</td>
+                <td>Lackieranlage</td>
+                <td class="zahl">70,00 €/h</td>
+                <td class="zahl">225 min</td>
+                <td class="zahl">251 min</td>
+                <td class="zahl ueber">+11,6 %</td>
+                <td class="zahl">262,50 €</td>
+                <td class="zahl">292,83 €</td>
+                <td class="zahl ueber">+30,33 €</td>
                 <td><span class="ampel rot"></span>deutlich über Plan</td>
               </tr>
               <tr>
-                <td>30 Prüfen</td>
-                <td>Messplatz</td>
-                <td class="zahl">50,00 €/h</td>
-                <td class="zahl">50 min</td>
-                <td class="zahl">45 min</td>
-                <td class="zahl unter">−10,0 %</td>
-                <td class="zahl">41,67 €</td>
-                <td class="zahl">37,50 €</td>
-                <td class="zahl unter">−4,17 €</td>
+                <td>40 Verpacken und versenden</td>
+                <td>Versandplatz</td>
+                <td class="zahl">40,00 €/h</td>
+                <td class="zahl">35 min</td>
+                <td class="zahl">34 min</td>
+                <td class="zahl unter">−2,9 %</td>
+                <td class="zahl">23,33 €</td>
+                <td class="zahl">22,67 €</td>
+                <td class="zahl unter">−0,66 €</td>
                 <td><span class="ampel gruen"></span>im Plan</td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <td colspan="3">Summe</td>
-                <td class="zahl">365 min</td>
-                <td class="zahl">387 min</td>
-                <td class="zahl ueber">+6,0 %</td>
-                <td class="zahl">431,25 €</td>
-                <td class="zahl">468,67 €</td>
-                <td class="zahl ueber">+37,42 €</td>
+                <td class="zahl">570 min</td>
+                <td class="zahl">607 min</td>
+                <td class="zahl ueber">+6,5 %</td>
+                <td class="zahl">755,00 €</td>
+                <td class="zahl">799,67 €</td>
+                <td class="zahl ueber">+44,67 €</td>
                 <td><span class="ampel gelb"></span>leicht über Plan</td>
               </tr>
             </tfoot>
@@ -168,19 +181,24 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>10 Sägen</td>
-                  <td class="zahl">10 / 8 min</td>
-                  <td class="zahl">75 / 72 min</td>
+                  <td>10 Auslasern</td>
+                  <td class="zahl">15 / 14 min</td>
+                  <td class="zahl">125 / 126 min</td>
                 </tr>
                 <tr>
-                  <td>20 Drehen</td>
-                  <td class="zahl">30 / <span class="ueber">42 min</span></td>
-                  <td class="zahl">200 / <span class="ueber">220 min</span></td>
+                  <td>20 Kanten</td>
+                  <td class="zahl">20 / <span class="ueber">32 min</span></td>
+                  <td class="zahl">150 / 150 min</td>
                 </tr>
                 <tr>
-                  <td>30 Prüfen</td>
-                  <td class="zahl">0 / 0 min</td>
-                  <td class="zahl">50 / 45 min</td>
+                  <td>30 Lackieren</td>
+                  <td class="zahl">25 / 26 min</td>
+                  <td class="zahl">200 / <span class="ueber">225 min</span></td>
+                </tr>
+                <tr>
+                  <td>40 Verpacken und versenden</td>
+                  <td class="zahl">10 / 9 min</td>
+                  <td class="zahl">25 / 25 min</td>
                 </tr>
               </tbody>
             </table>
@@ -189,10 +207,10 @@
 
         <section class="karte">
           <h2>Ergebnis</h2>
-          <p>Die Mehrkosten entstehen fast vollständig beim <strong>Drehen</strong>: Das Rüsten hat 12 min länger gedauert als geplant (+40 %), die Bearbeitung 20 min (+10 %).</p>
+          <p>Die Mehrkosten entstehen beim <strong>Lackieren</strong> und beim <strong>Kanten</strong>: Das Lackieren hat in der Bearbeitung 25 min länger gedauert als geplant (+12,5 %), beim Kanten hat das Rüsten 12 min länger gedauert (+60 %).</p>
           <p>Durch 2 Ausschussteile verteilen sich die Kosten auf nur 48 Gutstücke. Deshalb steigen die Kosten pro Stück stärker als die Gesamtkosten.</p>
-          <p>Die Rüstzeit beim Drehen liegt auch im Schnitt aller W-200-Aufträge über Plan. Der Arbeitsplan schlägt deshalb 39 statt 30 min vor: <a href="artikel.html#abgleich">Vorschlag ansehen</a>.</p>
-          <p class="leise klein">AG 20 war einmal 12 min unterbrochen (Werkzeug fehlt). Diese Zeit steckt nicht in der Ist-Zeit, sie erscheint in der <a href="auswertung.html">Auswertung der Unterbrechungen</a>. Eine Buchung an AG 20 hat Lena Hoffmann korrigiert (Stempeln vergessen).</p>
+          <p>Die Rüstzeit beim Kanten liegt auch im Schnitt aller V-410-Aufträge über Plan. Der Arbeitsplan schlägt deshalb 29 statt 20 min vor: <a href="artikel.html#abgleich">Vorschlag ansehen</a>.</p>
+          <p class="leise klein">AG 20 war einmal 12 min unterbrochen (Werkzeug fehlt). Diese Zeit steckt nicht in der Ist-Zeit, sie erscheint in der <a href="auswertung.html">Auswertung der Unterbrechungen</a>. Eine Buchung an AG 20 hat Lena Hoffmann nachgetragen (Stempeln vergessen).</p>
         </section>
       </div>
 

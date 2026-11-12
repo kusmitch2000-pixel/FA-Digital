@@ -28,6 +28,7 @@
       <p class="menue-titel">Arbeitsvorbereitung</p>
       <a href="auftrag-anlegen.html">Auftrag anlegen</a>
       <a href="artikel.html" class="aktiv">Artikel &amp; Arbeitspläne</a>
+      <a href="zertifikate.html">Zertifikate</a>
       <a href="arbeitsplaetze.html">Arbeitsplätze</a>
 
       <p class="menue-titel">Werkstatt</p>
@@ -135,9 +136,9 @@
            Ø Rüstzeit  = Mittelwert der Rüstzeiten je Auftrag
            Ø Stückzeit = gesamte Bearbeitungszeit ÷ produzierte Menge (Gut + Ausschuss) -->
       <form id="abgleich" class="karte" action="artikel.html" method="post">
-        <h2>Soll-Zeiten mit Ist-Werten abgleichen: W-200</h2>
+        <h2>Soll-Zeiten mit Ist-Werten abgleichen: V-410</h2>
         <p class="leise klein">
-          Grundlage: 2 abgeschlossene Aufträge (FA-0998 mit 80 Stück, FA-1001 mit 50 Stück).
+          Grundlage: 2 abgeschlossene Aufträge (FA-0998 mit 60 Stück, FA-1001 mit 50 Stück).
           Ein Vorschlag erscheint, wenn der Durchschnitt mehr als 10 % von der Soll-Zeit abweicht.
         </p>
         <div class="tabelle-scroll">
@@ -154,29 +155,37 @@
             </thead>
             <tbody>
               <tr>
-                <td>10 Sägen</td>
-                <td class="zahl">10 min</td>
-                <td class="zahl">9,5 min</td>
-                <td class="zahl">1,5 min</td>
-                <td class="zahl">1,4 min</td>
+                <td>10 Auslasern</td>
+                <td class="zahl">15 min</td>
+                <td class="zahl">14,5 min</td>
+                <td class="zahl">2,5 min</td>
+                <td class="zahl">2,42 min</td>
                 <td><span class="badge erledigt">passt</span></td>
               </tr>
               <tr class="hervorgehoben">
-                <td>20 Drehen</td>
-                <td class="zahl">30 min</td>
-                <td class="zahl ueber">39,0 min (+30 %)</td>
-                <td class="zahl">4,0 min</td>
-                <td class="zahl">4,0 min</td>
+                <td>20 Kanten</td>
+                <td class="zahl">20 min</td>
+                <td class="zahl ueber">29,0 min (+45 %)</td>
+                <td class="zahl">3,0 min</td>
+                <td class="zahl">3,14 min</td>
                 <td>
-                  <button type="submit" name="uebernehmen" value="20-ruestzeit-39" class="btn btn-klein btn-primaer">39 min übernehmen</button>
+                  <button type="submit" name="uebernehmen" value="20-ruestzeit-29" class="btn btn-klein btn-primaer">29 min übernehmen</button>
                 </td>
               </tr>
               <tr>
-                <td>30 Prüfen</td>
-                <td class="zahl">0 min</td>
-                <td class="zahl">0 min</td>
-                <td class="zahl">1,0 min</td>
-                <td class="zahl">1,0 min</td>
+                <td>30 Lackieren</td>
+                <td class="zahl">25 min</td>
+                <td class="zahl">25,0 min</td>
+                <td class="zahl">4,0 min</td>
+                <td class="zahl">4,36 min</td>
+                <td><span class="badge erledigt">passt</span></td>
+              </tr>
+              <tr>
+                <td>40 Verpacken und versenden</td>
+                <td class="zahl">10 min</td>
+                <td class="zahl">9,5 min</td>
+                <td class="zahl">0,5 min</td>
+                <td class="zahl">0,49 min</td>
                 <td><span class="badge erledigt">passt</span></td>
               </tr>
             </tbody>
@@ -184,7 +193,7 @@
         </div>
         <p class="leise klein" style="margin: 0.75rem 0 0;">
           Ø Rüstzeit = Mittelwert der Rüstzeiten je Auftrag. Ø Stückzeit = gesamte Bearbeitungszeit ÷ produzierte Menge (Gut + Ausschuss).
-          Beispiel Drehen: Rüsten dauerte 36 und 42 min, im Schnitt also 39 statt geplanter 30 min.
+          Beispiel Kanten: Rüsten dauerte 26 und 32 min, im Schnitt also 29 statt geplanter 20 min.
         </p>
       </form>
     </main>

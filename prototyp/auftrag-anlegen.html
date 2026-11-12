@@ -28,6 +28,7 @@
       <p class="menue-titel">Arbeitsvorbereitung</p>
       <a href="auftrag-anlegen.html" class="aktiv">Auftrag anlegen</a>
       <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="zertifikate.html">Zertifikate</a>
       <a href="arbeitsplaetze.html">Arbeitsplätze</a>
 
       <p class="menue-titel">Werkstatt</p>
@@ -74,6 +75,14 @@
             <label for="bemerkung">Bemerkung</label>
             <textarea id="bemerkung" name="bemerkung" placeholder="z. B. Sonderwunsch des Kunden"></textarea>
           </div>
+        </section>
+
+        <!-- Rückmeldung vom 01.10.: Zertifikate schon bei der Auftragsanlage angeben.
+             Angeboten werden nur Zertifikate, die für den gewählten Artikel gelten. -->
+        <section class="karte">
+          <h2>Geforderte Zertifikate</h2>
+          <p class="leise klein">Die Prüfmerkmale eines Zertifikats kommen zusätzlich in die Checkliste der Werker. Eigene Zertifikate pflegt die Arbeitsvorbereitung unter <a href="zertifikate.html">Zertifikate</a>.</p>
+          <div class="auswahl-gruppe" id="zertifikat-auswahl"></div>
         </section>
 
         <!-- Vorkalkulation: Soll-Zeit = Rüstzeit + Menge × Stückzeit,

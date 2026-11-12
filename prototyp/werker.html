@@ -27,6 +27,7 @@
       <p class="menue-titel">Arbeitsvorbereitung</p>
       <a href="auftrag-anlegen.html">Auftrag anlegen</a>
       <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="zertifikate.html">Zertifikate</a>
       <a href="arbeitsplaetze.html">Arbeitsplätze</a>
 
       <p class="menue-titel">Werkstatt</p>
@@ -50,11 +51,13 @@
         <form action="werker.html" method="get" class="knopfleiste" data-nicht-rolle="werker">
           <label for="arbeitsplatz" class="leise" style="margin: 0; align-self: center;">Arbeitsplatz</label>
           <select id="arbeitsplatz" name="arbeitsplatz" style="width: auto;">
-            <option value="AP-10">Säge (AP-10)</option>
-            <option value="AP-20" selected>CNC-Drehmaschine (AP-20)</option>
-            <option value="AP-30">CNC-Fräsmaschine (AP-30)</option>
-            <option value="AP-40">Messplatz (AP-40)</option>
-            <option value="AP-50">Montage (AP-50)</option>
+            <option value="AP-10">Laserschneidanlage (AP-10)</option>
+            <option value="AP-20">Abkantpresse (AP-20)</option>
+            <option value="AP-30">Schweißplatz (AP-30)</option>
+            <option value="AP-40" selected>CNC-Drehmaschine (AP-40)</option>
+            <option value="AP-50">CNC-Fräsmaschine (AP-50)</option>
+            <option value="AP-60">Lackieranlage (AP-60)</option>
+            <option value="AP-70">Versandplatz (AP-70)</option>
           </select>
           <button type="submit" class="btn btn-sekundaer">Wechseln</button>
         </form>
@@ -162,28 +165,12 @@
                 <td></td>
               </tr>
               <tr>
-                <td><strong>FA-1003</strong></td>
-                <td>20 Drehen</td>
-                <td>CNC-Drehmaschine</td>
-                <td>B-050 Distanzbuchse</td>
-                <td class="zahl">200</td>
-                <td class="zahl">320 min</td>
-                <td>09.10.2026</td>
-                <td><span class="badge erledigt">bereit</span></td>
-                <td>
-                  <form action="werker.html" method="post" class="knopfleiste" style="margin: 0;">
-                    <button type="submit" name="aktion" value="ruesten" class="btn btn-klein btn-primaer">Rüsten starten</button>
-                    <button type="submit" name="aktion" value="bearbeiten" class="btn btn-klein btn-sekundaer">Bearbeiten starten</button>
-                  </form>
-                </td>
-              </tr>
-              <tr>
                 <td><strong>FA-1004</strong></td>
                 <td>20 Drehen</td>
                 <td>CNC-Drehmaschine</td>
-                <td>W-200 Antriebswelle Ø40</td>
+                <td>F-310 Flansch DN80</td>
                 <td class="zahl">40</td>
-                <td class="zahl">190 min</td>
+                <td class="zahl">145 min</td>
                 <td>14.10.2026</td>
                 <td><span class="badge offen">wartet auf AG 10</span></td>
                 <td>
@@ -191,6 +178,23 @@
                     <button type="button" class="btn btn-klein btn-primaer" disabled>Rüsten starten</button>
                     <button type="button" class="btn btn-klein btn-sekundaer" disabled>Bearbeiten starten</button>
                   </div>
+                </td>
+              </tr>
+              <!-- Nur in Jonas' eigener Liste: zugeordnet an einem anderen Arbeitsplatz -->
+              <tr data-rolle="werker">
+                <td><strong>FA-1003</strong></td>
+                <td>20 Kanten</td>
+                <td>Abkantpresse</td>
+                <td>V-430 Schutztür mit Sichtfenster</td>
+                <td class="zahl">12</td>
+                <td class="zahl">80 min</td>
+                <td>09.10.2026</td>
+                <td><span class="badge erledigt">bereit</span></td>
+                <td>
+                  <form action="werker.html" method="post" class="knopfleiste" style="margin: 0;">
+                    <button type="submit" name="aktion" value="ruesten" class="btn btn-klein btn-primaer">Rüsten starten</button>
+                    <button type="submit" name="aktion" value="bearbeiten" class="btn btn-klein btn-sekundaer">Bearbeiten starten</button>
+                  </form>
                 </td>
               </tr>
             </tbody>

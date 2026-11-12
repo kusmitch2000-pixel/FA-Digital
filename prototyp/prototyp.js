@@ -37,6 +37,8 @@ const RECHTE = {
   "auftrag.zuordnen": ["meister", "arbeitsvorbereitung", "admin"],
   "auftrag.freigeben": ["arbeitsvorbereitung", "admin"],
   "buchung.korrigieren": ["meister", "admin"],
+  "zertifikate": ["meister", "arbeitsvorbereitung", "admin"],
+  "zertifikat.anlegen": ["arbeitsvorbereitung", "admin"],
   "nachkalkulation": ["meister", "controlling", "admin"],
   "nachkalkulation.abschliessen": ["controlling", "admin"],
   "auswertung": ["meister", "controlling", "admin"],
@@ -56,6 +58,7 @@ const SEITEN = {
   "nachkalkulation.html": "nachkalkulation",
   "auswertung.html": "auswertung",
   "artikel.html": "arbeitsplaene",
+  "zertifikate.html": "zertifikate",
   "arbeitsplaetze.html": "arbeitsplaetze",
   "benutzer.html": "benutzer",
 };

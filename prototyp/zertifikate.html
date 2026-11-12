@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zertifikate – FA-Digital</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="prototyp.js" defer></script>
+  <script src="stammdaten.js" defer></script>
+</head>
+<body>
+
+  <header class="kopf">
+    <a class="logo" href="dashboard.html">FA-Digital</a>
+    <span class="untertitel">Digitaler Fertigungsauftrag</span>
+    <div class="benutzer">
+      Sven Petersen · Admin
+      <a href="index.html">Abmelden</a>
+    </div>
+  </header>
+
+  <div class="rahmen">
+    <nav class="menue">
+      <p class="menue-titel">Übersicht</p>
+      <a href="dashboard.html">Hallenansicht</a>
+      <a href="auftraege.html">Aufträge</a>
+
+      <p class="menue-titel">Arbeitsvorbereitung</p>
+      <a href="auftrag-anlegen.html">Auftrag anlegen</a>
+      <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="zertifikate.html" class="aktiv">Zertifikate</a>
+      <a href="arbeitsplaetze.html">Arbeitsplätze</a>
+
+      <p class="menue-titel">Werkstatt</p>
+      <a href="werker.html">Werker-Terminal</a>
+
+      <p class="menue-titel">Controlling</p>
+      <a href="nachkalkulation.html">Nachkalkulation</a>
+      <a href="auswertung.html">Auswertung</a>
+
+      <p class="menue-titel">Verwaltung</p>
+      <a href="benutzer.html">Benutzer</a>
+    </nav>
+    <main class="inhalt">
+      <div class="seitenkopf">
+        <div>
+          <h1>Zertifikate</h1>
+          <p class="leise">Welche Zertifikate ein Kunde bei der Auftragsanlage fordern kann. Neben den Zertifikaten nach DIN EN 10204 legt die Arbeitsvorbereitung eigene Prüfprotokolle für bestimmte Artikel an.</p>
+        </div>
+        <button type="button" class="btn btn-primaer" id="neues-zertifikat" data-recht="zertifikat.anlegen">+ Neues Zertifikat</button>
+      </div>
+
+      <section class="karte">
+        <h2>Alle Zertifikate</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Kürzel</th>
+                <th>Bezeichnung</th>
+                <th>Herkunft</th>
+                <th>Gilt für</th>
+                <th class="zahl">Prüfmerkmale</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="zertifikat-liste"></tbody>
+          </table>
+        </div>
+        <p class="leise klein" style="margin: 0.75rem 0 0;">
+          Fordert ein Kunde ein Zertifikat, kommen seine Prüfmerkmale beim Anlegen des Auftrags zusätzlich in die Checkliste des passenden Arbeitsgangs. Die Werker messen sie, die Meisterin gibt das Zertifikat danach frei.
+        </p>
+      </section>
+
+      <!-- Eigenes Zertifikat: gilt für ausgewählte Artikel, Prüfmerkmale je Artikel und Arbeitsgang -->
+      <form class="karte" id="zertifikat-formular" action="zertifikate.html" method="post" data-recht="zertifikat.anlegen">
+        <h2 id="zertifikat-titel">Neues Zertifikat</h2>
+        <p id="zertifikat-meldung" class="hinweis" hidden></p>
+        <div class="formular-raster">
+          <div class="feld">
+            <label for="kuerzel">Kürzel</label>
+            <input type="text" id="kuerzel" name="kuerzel" maxlength="10" placeholder="z. B. MP" required>
+          </div>
+          <div class="feld">
+            <label for="bezeichnung">Bezeichnung</label>
+            <input type="text" id="bezeichnung" name="bezeichnung" placeholder="z. B. Maßprotokoll" required>
+          </div>
+        </div>
+        <div class="feld">
+          <label for="beschreibung">Beschreibung</label>
+          <input type="text" id="beschreibung" name="beschreibung" maxlength="255" placeholder="Was das Zertifikat dem Kunden bestätigt">
+        </div>
+
+        <fieldset>
+          <legend>Gilt für diese Artikel</legend>
+          <div class="auswahl-gruppe" id="zertifikat-artikel"></div>
+        </fieldset>
+
+        <h2 style="margin-top: 0.5rem;">Prüfmerkmale</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Artikel</th>
+                <th>Arbeitsgang</th>
+                <th>Prüfmerkmal</th>
+                <th>Art</th>
+                <th>Soll</th>
+                <th>untere Grenze</th>
+                <th>obere Grenze</th>
+                <th>Einheit</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="merkmal-zeilen"></tbody>
+          </table>
+        </div>
+
+        <div class="knopfleiste" style="margin-top: 1rem;">
+          <button type="button" class="btn btn-sekundaer" id="merkmal-hinzufuegen">+ Prüfmerkmal hinzufügen</button>
+          <button type="submit" class="btn btn-primaer">Speichern</button>
+          <button type="button" class="btn btn-sekundaer" id="zertifikate-zuruecksetzen">Beispieldaten wiederherstellen</button>
+        </div>
+        <p class="leise klein" style="margin: 0.75rem 0 0;">
+          Prototyp: Neue Zertifikate speichert nur dieser Browser. Bei „Auftrag anlegen“ stehen sie danach für die ausgewählten Artikel zur Wahl.
+        </p>
+      </form>
+    </main>
+  </div>
+
+  <footer class="fuss">
+    Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
+  </footer>
+
+</body>
+</html>

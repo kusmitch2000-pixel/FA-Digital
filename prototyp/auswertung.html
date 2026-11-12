@@ -27,6 +27,7 @@
       <p class="menue-titel">Arbeitsvorbereitung</p>
       <a href="auftrag-anlegen.html">Auftrag anlegen</a>
       <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="zertifikate.html">Zertifikate</a>
       <a href="arbeitsplaetze.html">Arbeitsplätze</a>
 
       <p class="menue-titel">Werkstatt</p>
@@ -62,10 +63,11 @@
             <label for="artikel">Artikel</label>
             <select id="artikel" name="artikel">
               <option value="">alle</option>
-              <option value="W-200">W-200 Antriebswelle Ø40</option>
+              <option value="V-410">V-410 Seitenverkleidung Fräszentrum</option>
+              <option value="V-420">V-420 Späneschutzwanne</option>
+              <option value="V-430">V-430 Schutztür mit Sichtfenster</option>
               <option value="F-310">F-310 Flansch DN80</option>
-              <option value="G-120">G-120 Lagergehäuse</option>
-              <option value="B-050">B-050 Distanzbuchse</option>
+              <option value="W-200">W-200 Antriebswelle Ø40</option>
             </select>
           </div>
           <div class="feld feld-knopf">
@@ -94,13 +96,13 @@
             <tbody>
               <tr>
                 <td><a href="nachkalkulation.html">FA-0998</a></td>
-                <td>W-200</td>
-                <td class="zahl">80 / 0</td>
+                <td>V-410</td>
+                <td class="zahl">60 / 0</td>
                 <td>18.09.2026</td>
-                <td class="zahl">660,00 €</td>
-                <td class="zahl">642,58 €</td>
-                <td class="zahl"><span class="ampel gruen"></span><span class="unter">−2,6 %</span></td>
-                <td class="zahl">8,25 € / 8,03 €</td>
+                <td class="zahl">888,33 €</td>
+                <td class="zahl">905,42 €</td>
+                <td class="zahl"><span class="ampel gruen"></span><span class="ueber">+1,9 %</span></td>
+                <td class="zahl">14,81 € / 15,09 €</td>
                 <td><span class="badge nachkalkuliert">nachkalkuliert</span></td>
               </tr>
               <tr>
@@ -108,30 +110,30 @@
                 <td>F-310</td>
                 <td class="zahl">19 / 1</td>
                 <td>23.09.2026</td>
-                <td class="zahl">389,58 €</td>
-                <td class="zahl">449,58 €</td>
-                <td class="zahl"><span class="ampel rot"></span><span class="ueber">+15,4 %</span></td>
-                <td class="zahl">19,48 € / 23,66 €</td>
+                <td class="zahl">447,08 €</td>
+                <td class="zahl">450,83 €</td>
+                <td class="zahl"><span class="ampel gruen"></span><span class="ueber">+0,8 %</span></td>
+                <td class="zahl">22,35 € / 23,73 €</td>
                 <td><span class="badge nachkalkuliert">nachkalkuliert</span></td>
               </tr>
               <tr>
                 <td><a href="nachkalkulation.html">FA-1001</a></td>
-                <td>W-200</td>
+                <td>V-410</td>
                 <td class="zahl">48 / 2</td>
                 <td>28.09.2026</td>
-                <td class="zahl">431,25 €</td>
-                <td class="zahl">468,67 €</td>
-                <td class="zahl"><span class="ampel gelb"></span><span class="ueber">+8,7 %</span></td>
-                <td class="zahl">8,63 € / 9,76 €</td>
+                <td class="zahl">755,00 €</td>
+                <td class="zahl">799,67 €</td>
+                <td class="zahl"><span class="ampel gelb"></span><span class="ueber">+5,9 %</span></td>
+                <td class="zahl">15,10 € / 16,66 €</td>
                 <td><span class="badge fertig">fertig</span></td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <td colspan="4">Summe</td>
-                <td class="zahl">1.480,83 €</td>
-                <td class="zahl">1.560,83 €</td>
-                <td class="zahl"><span class="ueber">+5,4 %</span></td>
+                <td class="zahl">2.090,41 €</td>
+                <td class="zahl">2.155,92 €</td>
+                <td class="zahl"><span class="ueber">+3,1 %</span></td>
                 <td colspan="2"></td>
               </tr>
             </tfoot>
@@ -154,38 +156,52 @@
             </thead>
             <tbody>
               <tr>
-                <td>Säge (AP-10)</td>
-                <td class="zahl">245 min</td>
-                <td class="zahl">233 min</td>
-                <td class="zahl unter">−4,9 %</td>
+                <td>Laserschneidanlage (AP-10)</td>
+                <td class="zahl">355 min</td>
+                <td class="zahl">342 min</td>
+                <td class="zahl unter">−3,7 %</td>
                 <td><span class="ampel gruen"></span>im Plan</td>
               </tr>
               <tr>
-                <td>CNC-Drehmaschine (AP-20)</td>
-                <td class="zahl">665 min</td>
-                <td class="zahl">692 min</td>
-                <td class="zahl ueber">+4,1 %</td>
-                <td><span class="ampel gruen"></span>im Plan</td>
+                <td>Abkantpresse (AP-20)</td>
+                <td class="zahl">370 min</td>
+                <td class="zahl">403 min</td>
+                <td class="zahl ueber">+8,9 %</td>
+                <td><span class="ampel gelb"></span>leicht über Plan</td>
               </tr>
               <tr>
-                <td>CNC-Fräsmaschine (AP-30)</td>
+                <td>CNC-Drehmaschine (AP-40)</td>
+                <td class="zahl">85 min</td>
+                <td class="zahl">92 min</td>
+                <td class="zahl ueber">+8,2 %</td>
+                <td><span class="ampel gelb"></span>leicht über Plan</td>
+              </tr>
+              <tr>
+                <td>CNC-Fräsmaschine (AP-50)</td>
                 <td class="zahl">140 min</td>
-                <td class="zahl">171 min</td>
-                <td class="zahl ueber">+22,1 %</td>
-                <td><span class="ampel rot"></span>Arbeitsplan prüfen</td>
+                <td class="zahl">140 min</td>
+                <td class="zahl unter">±0,0 %</td>
+                <td><span class="ampel gruen"></span>im Plan</td>
               </tr>
               <tr>
-                <td>Messplatz (AP-40)</td>
-                <td class="zahl">160 min</td>
-                <td class="zahl">162 min</td>
-                <td class="zahl ueber">+1,3 %</td>
+                <td>Lackieranlage (AP-60)</td>
+                <td class="zahl">490 min</td>
+                <td class="zahl">525 min</td>
+                <td class="zahl ueber">+7,1 %</td>
+                <td><span class="ampel gelb"></span>leicht über Plan</td>
+              </tr>
+              <tr>
+                <td>Versandplatz (AP-70)</td>
+                <td class="zahl">95 min</td>
+                <td class="zahl">91 min</td>
+                <td class="zahl unter">−4,2 %</td>
                 <td><span class="ampel gruen"></span>im Plan</td>
               </tr>
             </tbody>
           </table>
         </div>
         <div class="hinweis warnung" style="margin: 1rem 0 0;">
-          <p>An der CNC-Fräsmaschine liegt die Ist-Zeit 22 % über Plan. Die Soll-Zeiten für das Fräsen im <a href="artikel.html">Arbeitsplan von F-310</a> sollten geprüft werden.</p>
+          <p>An der Abkantpresse liegt die Ist-Zeit 8,9 % über Plan, vor allem weil das Rüsten beim Kanten der V-410 länger dauert. Der <a href="artikel.html#abgleich">Arbeitsplan von V-410</a> schlägt deshalb eine neue Rüstzeit vor.</p>
         </div>
       </section>
 
@@ -210,8 +226,8 @@
                 <td class="zahl">3</td>
                 <td class="zahl">145 min</td>
                 <td>
-                  <div class="balken"><span style="width: 45%;"></span></div>
-                  <span class="leise klein">45 %</span>
+                  <div class="balken"><span style="width: 48%;"></span></div>
+                  <span class="leise klein">48 %</span>
                 </td>
                 <td>CNC-Fräsmaschine</td>
               </tr>
@@ -220,44 +236,34 @@
                 <td class="zahl">2</td>
                 <td class="zahl">95 min</td>
                 <td>
-                  <div class="balken"><span style="width: 30%;"></span></div>
-                  <span class="leise klein">30 %</span>
+                  <div class="balken"><span style="width: 32%;"></span></div>
+                  <span class="leise klein">32 %</span>
                 </td>
-                <td>Säge</td>
+                <td>Laserschneidanlage</td>
               </tr>
               <tr>
                 <td>Werkzeug fehlt</td>
                 <td class="zahl">3</td>
                 <td class="zahl">60 min</td>
                 <td>
-                  <div class="balken"><span style="width: 19%;"></span></div>
-                  <span class="leise klein">19 %</span>
+                  <div class="balken"><span style="width: 20%;"></span></div>
+                  <span class="leise klein">20 %</span>
                 </td>
-                <td>CNC-Drehmaschine</td>
-              </tr>
-              <tr>
-                <td>Sonstiges</td>
-                <td class="zahl">1</td>
-                <td class="zahl">20 min</td>
-                <td>
-                  <div class="balken"><span style="width: 6%;"></span></div>
-                  <span class="leise klein">6 %</span>
-                </td>
-                <td>Messplatz</td>
+                <td>Abkantpresse</td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <td>Summe ungeplant</td>
-                <td class="zahl">9</td>
-                <td class="zahl">320 min</td>
-                <td colspan="2">5:20 h</td>
+                <td class="zahl">8</td>
+                <td class="zahl">300 min</td>
+                <td colspan="2">5:00 h</td>
               </tr>
             </tfoot>
           </table>
         </div>
         <p class="leise klein" style="margin: 0.75rem 0 0;">
-          Pausen (14-mal, zusammen 420 min) sind geplant und zählen nicht als Verlust.
+          Pausen (4-mal, zusammen 120 min) sind geplant und zählen nicht als Verlust.
           Unterbrechungen fließen nicht in die Ist-Zeit der Arbeitsgänge ein.
         </p>
         <div class="hinweis warnung" style="margin: 1rem 0 0;">

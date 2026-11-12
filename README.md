@@ -48,8 +48,8 @@ Anschließend <http://localhost:8000> öffnen. Der Seeder lädt optionale Entwic
 | Rolle | Test-Benutzer | Startseite | Menü |
 |---|---|---|---|
 | Werker | Jonas Wolff | Werker-Terminal | nur Werker-Terminal mit den zugeordneten Arbeitsgängen, Notizen und Messseite |
-| Meister | Lena Hoffmann | Hallenansicht | Hallenansicht, Aufträge, Werker-Terminal, Nachkalkulation, Auswertung. Im Auftragsdetail Werker zuordnen und Buchungen nachtragen |
-| Arbeitsvorbereitung | Anna Becker | Aufträge | Hallenansicht, Aufträge, Auftrag anlegen, Artikel & Arbeitspläne, Arbeitsplätze. Im Auftragsdetail Werker zuordnen |
+| Meister | Lena Hoffmann | Hallenansicht | Hallenansicht, Aufträge, Zertifikate (nur ansehen), Werker-Terminal, Nachkalkulation, Auswertung. Im Auftragsdetail Werker zuordnen und Buchungen nachtragen |
+| Arbeitsvorbereitung | Anna Becker | Aufträge | Hallenansicht, Aufträge, Auftrag anlegen, Artikel & Arbeitspläne, Zertifikate (eigene anlegen), Arbeitsplätze. Im Auftragsdetail Werker zuordnen |
 | Controlling | Tobias Krüger | Nachkalkulation | Hallenansicht, Aufträge, Nachkalkulation (abschließen), Auswertung, Arbeitsplätze |
 | Admin | Sven Petersen | Hallenansicht | alles |
 
@@ -57,7 +57,7 @@ Der statische Prototyp und die Laravel-App können sich bei Rollen und Funktione
 
 `prototyp/prototyp.js` gibt es nur, solange die Seiten statisch sind. Es merkt sich den Test-Benutzer im Browser, blendet fremde Menüpunkte und Aktionen aus und leitet abgesendete Formulare direkt auf die Zielseite weiter, weil GitHub Pages keine POST-Anfragen annimmt. Das ist nur Darstellung. Die echte Anmeldung mit Passwort und Rechteprüfung macht die Laravel-App.
 
-`prototyp/stammdaten.js` macht Artikel, Arbeitspläne und das Anlegen von Aufträgen ausprobierbar. Das Rohteil (meist Blech) durchläuft die Stationen Auslasern, Umformen (Kanten), Bearbeitung (Schweißen), Zerspanung (Drehen, Fräsen), Lackierung und Versand. Produkte sind Verkleidungsteile für Zerspanungsmaschinen und Zerspanteile wie Welle oder Flansch. Neue Artikel, geänderte Arbeitspläne und angelegte Aufträge speichert nur der eigene Browser.
+`prototyp/stammdaten.js` macht Artikel, Arbeitspläne, Zertifikate und das Anlegen von Aufträgen ausprobierbar. Die Beispieldaten aller Seiten sind dieselben wie in `datenbank/02_testdaten.sql`. Das Rohteil (meist Blech) durchläuft die Stationen Auslasern, Umformen (Kanten), Bearbeitung (Schweißen), Zerspanung (Drehen, Fräsen), Lackierung und Versand. Produkte sind Verkleidungsteile für Zerspanungsmaschinen und Zerspanteile wie Welle oder Flansch. Neue Artikel, Zertifikate, geänderte Arbeitspläne und angelegte Aufträge speichert nur der eigene Browser.
 
 ## Seiten
 
@@ -73,6 +73,7 @@ Der statische Prototyp und die Laravel-App können sich bei Rollen und Funktione
 | `nachkalkulation.html` | Nachkalkulation FA-1001 | 16 |
 | `auswertung.html` | Auswertung, Unterbrechungen nach Grund, CSV-Export | 17 |
 | `artikel.html` | Artikel anlegen und jedem Artikel seine Arbeitsschritte zuordnen (Station, Arbeitsplatz, Rüst- und Stückzeit), Soll-Zeit-Vorschläge | 1, 2 |
+| `zertifikate.html` | Zertifikate nach DIN EN 10204 und eigene Prüfprotokolle der Arbeitsvorbereitung für bestimmte Artikel, mit Prüfmerkmalen je Arbeitsgang | Rückmeldung |
 | `arbeitsplaetze.html` | Arbeitsplätze mit Station und Stundensatz | 3 |
 | `benutzer.html` | Benutzerverwaltung | 18 |
 
