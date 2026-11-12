@@ -80,6 +80,50 @@
         </div>
     </section>
 
+    <section class="karte">
+        <h2>Werker zuordnen</h2>
+        <p class="leise klein">Zugeordnete Arbeitsgänge erscheinen im persönlichen Werker-Terminal, sobald der Auftrag freigegeben ist.</p>
+        @foreach ($auftrag->arbeitsgaenge as $ag)
+            <p><strong>AG {{ $ag->ag_nummer }} {{ $ag->bezeichnung }}:</strong>
+                @forelse ($zuordnungen->get($ag->id, collect()) as $zuordnung)
+                    {{ $zuordnung->vorname }} {{ $zuordnung->nachname }}
+                    @if (auth()->user()->darf('auftrag.zuordnen'))
+                        <button type="button" class="btn btn-klein btn-sekundaer" wire:click="zuordnungEntfernen({{ $ag->id }}, {{ $zuordnung->benutzer_id }})">Entfernen</button>
+                    @endif
+                @empty
+                    <span class="leise">Noch niemand zugeordnet</span>
+                @endforelse
+            </p>
+        @endforeach
+        @if (auth()->user()->darf('auftrag.zuordnen'))
+            <form wire:submit="zuordnen" class="knopfleiste">
+                <label for="zuordnung-ag">Arbeitsgang</label>
+                <select id="zuordnung-ag" wire:model="zuordnungArbeitsgang" required>
+                    <option value="">Bitte wählen</option>
+                    @foreach ($auftrag->arbeitsgaenge as $ag)
+                        @if ($ag->status !== 'erledigt')<option value="{{ $ag->id }}">AG {{ $ag->ag_nummer }} {{ $ag->bezeichnung }}</option>@endif
+                    @endforeach
+                </select>
+                <label for="zuordnung-werker">Werker</label>
+                <select id="zuordnung-werker" wire:model="zuordnungWerker" required>
+                    <option value="">Bitte wählen</option>
+                    @foreach ($zuordnungsWerker as $person)<option value="{{ $person->id }}">{{ $person->name }}</option>@endforeach
+                </select>
+                <button type="submit" class="btn btn-primaer">Zuordnen</button>
+            </form>
+            @error('zuordnungArbeitsgang')<small class="ueber">{{ $message }}</small>@enderror
+            @error('zuordnungWerker')<small class="ueber">{{ $message }}</small>@enderror
+        @endif
+    </section>
+    @if ($notizen->isNotEmpty())
+        <section class="karte">
+            <h2>Notizen aus der Werkstatt</h2>
+            @foreach ($notizen as $notiz)
+                <p><strong>AG {{ $notiz->ag_nummer }} · {{ $notiz->vorname }} {{ $notiz->nachname }}</strong> · {{ zeitpunkt($notiz->erstellt_am) }}<br>{{ $notiz->text }}</p>
+            @endforeach
+        </section>
+    @endif
+
     @if ($checkliste->isNotEmpty())
         <section class="karte">
             <h2>Checkliste</h2>

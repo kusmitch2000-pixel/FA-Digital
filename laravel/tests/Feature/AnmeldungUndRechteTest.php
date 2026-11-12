@@ -24,6 +24,25 @@ class AnmeldungUndRechteTest extends TestCase
         $this->get('/login')->assertOk()->assertSee('Anmelden');
     }
 
+    public function test_demo_zugangsdaten_erscheinen_nur_lokal(): void
+    {
+        $ursprung = $this->app['env'];
+        try {
+            $this->app['env'] = 'local';
+            $this->get('/login')->assertOk()
+                ->assertSee('Administration')->assertSee('Arbeitsvorbereitung')->assertSee('Meister')->assertSee('Controlling')->assertSee('Werker')
+                ->assertSee('sven.petersen@fa-digital.de')->assertSee('fa-digital')
+                ->assertSee('demo.werker@fa-digital.local')->assertSee('WerkerDemo123!')
+                ->assertSee('demo.messung@fa-digital.local')->assertSee('MessungDemo123!')
+                ->assertSee('mehmet.yilmaz@fa-digital.de')->assertSee('paul.schneider@fa-digital.de');
+            $this->app['env'] = 'production';
+            $this->get('/login')->assertOk()->assertDontSee('Anmeldedaten für die Entwicklung')
+                ->assertDontSee('WerkerDemo123!')->assertDontSee('MessungDemo123!');
+        } finally {
+            $this->app['env'] = $ursprung;
+        }
+    }
+
     public static function startseiten(): array
     {
         return [
@@ -85,7 +104,7 @@ class AnmeldungUndRechteTest extends TestCase
         $this->alsBenutzer('1042');
         $this->get('/werker')->assertOk()->assertSee('Werker-Terminal')->assertDontSee('Hallenansicht');
         $this->get('/halle')->assertForbidden();
-        $this->get('/auftraege/FA-1002')->assertOk()->assertDontSee('Buchung nachtragen');
+        $this->get('/auftraege/FA-1002')->assertForbidden();
         $this->get('/auswertung/auftraege.csv')->assertForbidden();
 
         $this->alsBenutzer('1002');

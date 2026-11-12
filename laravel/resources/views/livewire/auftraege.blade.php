@@ -18,7 +18,7 @@
             <label for="status">Status</label>
             <select id="status" wire:model.live="status">
                 <option value="">alle</option>
-                @foreach (['angelegt', 'freigegeben', 'in_arbeit', 'fertig', 'storniert'] as $wert)
+                @foreach (['angelegt', 'freigegeben', 'in_arbeit', 'messen', 'fertig', 'storniert'] as $wert)
                     <option value="{{ $wert }}">{{ status_text($wert) }}</option>
                 @endforeach
             </select>

@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $menge
  * @property string|null $kunde
  * @property CarbonImmutable $liefertermin
- * @property 'angelegt'|'freigegeben'|'in_arbeit'|'fertig'|'nachkalkuliert'|'storniert' $status
+ * @property 'angelegt'|'freigegeben'|'in_arbeit'|'messen'|'fertig'|'nachkalkuliert'|'storniert' $status
  * @property string|null $bemerkung
  * @property int $angelegt_von
  * @property CarbonImmutable $angelegt_am

@@ -37,8 +37,9 @@ return [
     'rechte' => [
         'terminal' => ['werker', 'meister', 'admin'],
         'halle' => ['meister', 'arbeitsvorbereitung', 'controlling', 'admin'],
-        'auftraege' => ['werker', 'meister', 'arbeitsvorbereitung', 'controlling', 'admin'],
+        'auftraege' => ['meister', 'arbeitsvorbereitung', 'controlling', 'admin'],
         'auftrag.anlegen' => ['arbeitsvorbereitung', 'admin'],
+        'auftrag.zuordnen' => ['meister', 'arbeitsvorbereitung', 'admin'],
         'auftrag.freigeben' => ['arbeitsvorbereitung', 'admin'],
         'buchung.korrigieren' => ['meister', 'admin'],
         'zertifikate' => ['meister', 'arbeitsvorbereitung', 'admin'],

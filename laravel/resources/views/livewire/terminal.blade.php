@@ -4,6 +4,7 @@
             <h1>Werker-Terminal</h1>
             <p class="leise">{{ $benutzer->name }} · Personalnummer {{ $benutzer->personalnummer }}</p>
         </div>
+        @if ($benutzer->rolle !== 'werker')
         <div class="knopfleiste">
             <label for="arbeitsplatz" class="leise ohne-abstand">Arbeitsplatz</label>
             <select id="arbeitsplatz" wire:model.live="arbeitsplatz" class="schmal">
@@ -12,6 +13,7 @@
                 @endforeach
             </select>
         </div>
+        @endif
     </div>
 
     @error('aktion')<div class="hinweis fehler" role="alert">{{ $message }}</div>@enderror
@@ -71,10 +73,10 @@
                                 <label for="bemerkung">Bemerkung</label>
                                 <input type="text" id="bemerkung" wire:model="bemerkung" placeholder="optional" maxlength="255">
                             </div>
-                            @if ($offen > 0)
+                            @if ($offen > 0 && ! $mitZertifikat)
                                 <p class="klein ueber">Erst die Checkliste abarbeiten: {{ $offen }} {{ $offen === 1 ? 'Prüfpunkt ist' : 'Prüfpunkte sind' }} noch offen.</p>
                             @endif
-                            <button type="submit" class="btn btn-erfolg btn-gross btn-breit" wire:loading.attr="disabled" @disabled($offen > 0)>Arbeitsgang fertig melden</button>
+                            <button type="submit" class="btn btn-erfolg btn-gross btn-breit" wire:loading.attr="disabled" @disabled($offen > 0 && ! $mitZertifikat)>{{ $mitZertifikat ? 'Arbeit beenden und messen' : 'Arbeitsgang fertig melden' }}</button>
                         </form>
                     @endif
                 </div>
@@ -95,14 +97,27 @@
                     @error('grund')<small class="ueber">{{ $message }}</small>@enderror
                     <div class="knopfleiste">
                         <input type="text" wire:model="unterbrechungBemerkung" placeholder="Bemerkung (optional)" maxlength="255" class="schmal">
-                        <button type="submit" class="btn btn-sekundaer btn-gross" wire:loading.attr="disabled">Unterbrechen</button>
+                        <button type="submit" class="btn btn-sekundaer btn-gross" wire:loading.attr="disabled">Arbeit unterbrechen</button>
                     </div>
                 </form>
             @endunless
         </section>
 
+        <section class="karte">
+            <h2>Notizen zum Arbeitsgang</h2>
+            <form wire:submit="notizSpeichern">
+                <label for="notiz">Was ist passiert?</label>
+                <textarea id="notiz" wire:model="notiz" maxlength="1000" required></textarea>
+                @error('notiz')<small class="ueber">{{ $message }}</small>@enderror
+                <button type="submit" class="btn btn-sekundaer" wire:loading.attr="disabled">Notiz speichern</button>
+            </form>
+            @foreach ($notizen as $eintrag)
+                <p><strong>{{ $eintrag->vorname }} {{ $eintrag->nachname }}</strong> · {{ zeitpunkt($eintrag->erstellt_am) }}<br>{{ $eintrag->text }}</p>
+            @endforeach
+        </section>
+
         {{-- Checkliste: liefert die Daten für das Werkszertifikat (Anwendungsfall 4) --}}
-        @if ($aktuell->pruefpunkte->isNotEmpty())
+        @if (! $mitZertifikat && $aktuell->pruefpunkte->isNotEmpty())
             <section class="karte">
                 <h2>Checkliste AG {{ $aktuell->ag_nummer }} {{ $aktuell->bezeichnung }}</h2>
                 <p class="leise klein">Messwerte werden automatisch mit der Toleranz verglichen. Nach Nacharbeit einfach neu messen.</p>
@@ -156,21 +171,32 @@
         @endif
     @endif
 
+    @if ($messungen->isNotEmpty())
+        <section class="karte">
+            <h2>Offene Messungen</h2>
+            @foreach ($messungen as $messung)
+                <p><span class="badge angelegt">Messen</span> {{ $messung->auftrag->auftragsnummer }} · AG {{ $messung->ag_nummer }} {{ $messung->bezeichnung }}
+                    <a class="btn btn-klein btn-primaer" href="{{ route('terminal.messung', $messung->id) }}">Messung öffnen</a></p>
+            @endforeach
+        </section>
+    @endif
+
     <section class="karte">
-        <h2>Arbeitsvorrat an {{ $plaetze->firstWhere('nummer', $arbeitsplatz)?->bezeichnung ?? 'diesem Arbeitsplatz' }}</h2>
+        <h2>{{ $benutzer->rolle === 'werker' ? 'Meine zugeordneten Arbeitsgänge' : 'Arbeitsvorrat an '.($plaetze->firstWhere('nummer', $arbeitsplatz)?->bezeichnung ?? 'diesem Arbeitsplatz') }}</h2>
         <div class="tabelle-scroll">
             <table>
                 <thead>
                     <tr>
-                        <th>Auftrag</th><th>Arbeitsgang</th><th>Artikel</th><th class="zahl">Menge</th>
+                        <th>Auftrag</th><th>Arbeitsgang</th><th>Arbeitsplatz</th><th>Artikel</th><th class="zahl">Menge</th>
                         <th class="zahl">Soll-Zeit</th><th>Liefertermin</th><th>Bereit?</th><th>Starten</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($vorrat as $zeile)
                         <tr wire:key="vorrat-{{ $zeile->arbeitsgang_id }}" @class(['hervorgehoben' => $aktuell?->id === $zeile->arbeitsgang_id])>
-                            <td><a href="{{ route('auftrag', $zeile->auftragsnummer) }}"><strong>{{ $zeile->auftragsnummer }}</strong></a></td>
+                            <td><strong>{{ $zeile->auftragsnummer }}</strong></td>
                             <td>{{ $zeile->ag_nummer }} {{ $zeile->arbeitsgang }}</td>
+                            <td>{{ $zeile->arbeitsplatz }}</td>
                             <td>{{ $zeile->artikelnummer }} {{ $zeile->artikel }}</td>
                             <td class="zahl">{{ $zeile->menge }}</td>
                             <td class="zahl">{{ minuten($zeile->soll_zeit_min) }}</td>
@@ -183,14 +209,14 @@
                             <td>
                                 @if ($zeile->bereitschaft === 'bereit' && ! $aktuell)
                                     <div class="knopfleiste ohne-abstand">
-                                        <button wire:click="starten({{ $zeile->arbeitsgang_id }}, 'ruesten')" class="btn btn-klein btn-primaer" wire:loading.attr="disabled">Rüsten</button>
-                                        <button wire:click="starten({{ $zeile->arbeitsgang_id }}, 'bearbeiten')" class="btn btn-klein btn-sekundaer" wire:loading.attr="disabled">Bearbeiten</button>
+                                        <button wire:click="starten({{ $zeile->arbeitsgang_id }}, 'ruesten')" class="btn btn-klein btn-primaer" wire:loading.attr="disabled">Rüsten starten</button>
+                                        <button wire:click="starten({{ $zeile->arbeitsgang_id }}, 'bearbeiten')" class="btn btn-klein btn-sekundaer" wire:loading.attr="disabled">Bearbeiten starten</button>
                                     </div>
                                 @endif
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="8">Kein freigegebener Arbeitsvorrat an diesem Arbeitsplatz.</td></tr>
+                        <tr><td colspan="9">Keine freigegebenen Arbeitsgänge vorhanden.</td></tr>
                     @endforelse
                 </tbody>
             </table>

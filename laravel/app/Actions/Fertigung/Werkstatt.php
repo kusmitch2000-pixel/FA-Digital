@@ -41,13 +41,17 @@ class Werkstatt
                 Fachfehler::melden('Sie haben schon einen Arbeitsgang begonnen. Bitte ihn erst fertig melden.');
             }
 
+            if ($werker->rolle === 'werker' && ! DB::table('arbeitsgang_zuordnung')->where('arbeitsgang_id', $arbeitsgang->id)->where('benutzer_id', $werker->id)->exists()) {
+                Fachfehler::melden('Dieser Arbeitsgang ist Ihnen nicht zugeordnet.');
+            }
+
             // Die Sicht v_arbeitsvorrat entscheidet, ob der Arbeitsgang an der Reihe ist
             $bereitschaft = DB::table('v_arbeitsvorrat')->where('arbeitsgang_id', $arbeitsgang->id)->value('bereitschaft');
 
             if ($bereitschaft !== 'bereit') {
                 Fachfehler::melden(match ($bereitschaft) {
                     'wartet' => 'Der vorherige Arbeitsgang ist noch nicht fertig gemeldet.',
-                    'laeuft', 'unterbrochen' => 'An diesem Arbeitsgang arbeitet schon jemand.',
+                    'laeuft', 'unterbrochen', 'messen' => 'An diesem Arbeitsgang arbeitet schon jemand.',
                     default => 'Dieser Arbeitsgang ist nicht freigegeben.',
                 });
             }
@@ -138,6 +142,44 @@ class Werkstatt
             Fachfehler::melden('Prüfpunkte lassen sich nur im eigenen laufenden Arbeitsgang erfassen.');
         }
 
+        $this->pruefpunktSpeichern($werker, $pruefpunkt, $istwert, $ergebnis, $bemerkung);
+    }
+
+    public function messen(Benutzer $werker, int $arbeitsgangId, int $pruefpunktId, ?string $istwert, ?string $ergebnis, ?string $bemerkung): void
+    {
+        $arbeitsgang = $this->messArbeitsgang($werker, $arbeitsgangId);
+        $pruefpunkt = $arbeitsgang->pruefpunkte()->findOrFail($pruefpunktId);
+        $this->pruefpunktSpeichern($werker, $pruefpunkt, $istwert, $ergebnis, $bemerkung);
+    }
+
+    public function messArbeitsgang(Benutzer $werker, int $arbeitsgangId): Arbeitsgang
+    {
+        $arbeitsgang = Arbeitsgang::with(['auftrag.artikel', 'auftrag.zertifikate.zertifikatsart'])->findOrFail($arbeitsgangId);
+        abort_unless($arbeitsgang->status === 'messen' && $arbeitsgang->fertig_gemeldet_von === $werker->id, 403);
+
+        return $arbeitsgang;
+    }
+
+    public function messenAbschliessen(Benutzer $werker, int $arbeitsgangId): void
+    {
+        DB::transaction(function () use ($werker, $arbeitsgangId) {
+            $arbeitsgang = Arbeitsgang::whereKey($arbeitsgangId)->lockForUpdate()->firstOrFail();
+            abort_unless($arbeitsgang->status === 'messen' && $arbeitsgang->fertig_gemeldet_von === $werker->id, 403);
+            if (! $arbeitsgang->pruefpunkte()->exists() || $arbeitsgang->pruefpunkte()->where('ergebnis', 'offen')->exists()) {
+                Fachfehler::melden('Bitte alle erforderlichen Prüfpunkte erfassen. Fehlen Prüfpunkte, wenden Sie sich an die Arbeitsvorbereitung.');
+            }
+            $arbeitsgang->update(['status' => 'erledigt', 'fertig_gemeldet_am' => now()]);
+            $auftrag = $arbeitsgang->auftrag()->lockForUpdate()->firstOrFail();
+            if (! $auftrag->arbeitsgaenge()->where('status', '<>', 'erledigt')->exists()) {
+                $auftrag->update(['status' => 'fertig', 'abgeschlossen_von' => $werker->id, 'abgeschlossen_am' => now()]);
+            } elseif ($auftrag->status === 'messen') {
+                $auftrag->update(['status' => 'in_arbeit']);
+            }
+        });
+    }
+
+    private function pruefpunktSpeichern(Benutzer $werker, Pruefpunkt $pruefpunkt, ?string $istwert, ?string $ergebnis, ?string $bemerkung): void
+    {
         $feld = 'istwert.'.$pruefpunkt->id;
 
         if ($pruefpunkt->art === 'messwert') {
@@ -174,9 +216,13 @@ class Werkstatt
             $buchung = $this->laufendeBuchung($werker);
             $arbeitsgang = Arbeitsgang::with('auftrag')->lockForUpdate()->findOrFail($buchung->arbeitsgang_id);
 
+            $mitZertifikat = $arbeitsgang->auftrag->zertifikate()->exists();
             $offen = $arbeitsgang->pruefpunkte()->where('ergebnis', 'offen')->count();
+            $messungErforderlich = $mitZertifikat && (
+                $arbeitsgang->pruefpunkte()->exists() || ! DB::table('pruefpunkt')->join('arbeitsgang', 'arbeitsgang.id', '=', 'pruefpunkt.arbeitsgang_id')->where('arbeitsgang.fertigungsauftrag_id', $arbeitsgang->auftrag->id)->exists()
+            );
 
-            if ($offen > 0) {
+            if (! $mitZertifikat && $offen > 0) {
                 Fachfehler::melden("Die Checkliste ist noch nicht fertig: {$offen} ".($offen === 1 ? 'Prüfpunkt ist' : 'Prüfpunkte sind').' offen.');
             }
 
@@ -189,6 +235,18 @@ class Werkstatt
             }
 
             $ende = $this->buchungBeenden($buchung, now());
+
+            if ($messungErforderlich) {
+                $arbeitsgang->update([
+                    'status' => 'messen', 'gutmenge' => $gutmenge, 'ausschuss' => $ausschuss,
+                    'fertig_gemeldet_von' => $werker->id, 'bemerkung' => $bemerkung ?: null,
+                ]);
+                if (! $arbeitsgang->auftrag->arbeitsgaenge()->whereNotIn('status', ['messen', 'erledigt'])->exists()) {
+                    $arbeitsgang->auftrag->update(['status' => 'messen']);
+                }
+
+                return;
+            }
 
             $arbeitsgang->update([
                 'status' => 'erledigt',

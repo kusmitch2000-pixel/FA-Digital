@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $soll_ruestzeit_min
  * @property string $soll_stueckzeit_min
  * @property string $stundensatz
- * @property 'offen'|'laeuft'|'unterbrochen'|'erledigt' $status
+ * @property 'offen'|'laeuft'|'unterbrochen'|'messen'|'erledigt' $status
  * @property int|null $gutmenge
  * @property int|null $ausschuss
  * @property int|null $fertig_gemeldet_von

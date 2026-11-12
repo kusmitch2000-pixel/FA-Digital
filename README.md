@@ -4,6 +4,26 @@ Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Pr
 
 **Schwerpunkt:** FA-Digital deckt ab, was während und nach der Produktion passiert. Werker buchen Zeiten, am Ende stehen Soll-Ist-Vergleich und Kosten.
 
+## Docker-Schnellstart
+
+Eine kurze Erklärung der Änderungen und des Wechsels von XAMPP zu Docker steht in [Docker-Änderungen kurz erklärt](docs/docker-aenderungen-kurz.md).
+
+Nach Installation und Start von Docker mit Compose v2:
+
+```sh
+cd laravel
+cp .env.example .env
+docker compose up -d --build
+docker compose exec app composer install --no-interaction
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate
+docker compose exec app php artisan db:seed
+docker compose run --rm node ci
+docker compose run --rm node run build
+```
+
+Anschließend <http://localhost:8000> öffnen. Der Seeder lädt optionale Entwicklungsdaten. Eine [technische Übergabe für die Weiterentwicklung](docs/entwickler-uebergabe.md) beschreibt Aufbau, Entscheidungen und offene Punkte. Details, Zugangsdaten, sichere Tests und tägliche Befehle stehen in der [Docker-Team-Anleitung](docs/docker-team-guide.md); Hintergründe und Datenmigration in [Docker-Migration](docs/docker-migration.md).
+
 ## Ordner
 
 | Ordner | Inhalt |
@@ -33,7 +53,7 @@ Digitaler Fertigungsauftrag mit Zeiterfassung und Nachkalkulation. Projekt im Pr
 | Controlling | Tobias Krüger | Nachkalkulation | Hallenansicht, Aufträge, Nachkalkulation (abschließen), Auswertung, Arbeitsplätze |
 | Admin | Sven Petersen | Hallenansicht | alles |
 
-Die Zuordnung ist dieselbe wie in der Laravel-App (`laravel/config/fa.php`). Ruft eine Rolle die Adresse einer fremden Seite auf, zeigt der Prototyp „Kein Zugriff“. Ohne Anmeldung, z. B. über einen direkten Link, gilt der Admin.
+Der statische Prototyp und die Laravel-App können sich bei Rollen und Funktionen unterscheiden; maßgeblich für die App ist `laravel/config/fa.php`. Ruft eine Rolle die Adresse einer fremden Seite auf, zeigt der Prototyp „Kein Zugriff“. Ohne Anmeldung, z. B. über einen direkten Link, gilt der Admin.
 
 `prototyp/prototyp.js` gibt es nur, solange die Seiten statisch sind. Es merkt sich den Test-Benutzer im Browser, blendet fremde Menüpunkte und Aktionen aus und leitet abgesendete Formulare direkt auf die Zielseite weiter, weil GitHub Pages keine POST-Anfragen annimmt. Das ist nur Darstellung. Die echte Anmeldung mit Passwort und Rechteprüfung macht die Laravel-App.
 
@@ -59,7 +79,7 @@ Die Nummern beziehen sich auf die 18 Anwendungsfälle im Fachkonzept (`doku/Fach
 
 - **Prototyp** (`prototyp/`): HTML und CSS, ohne Datenbank, online über GitHub Pages
 - **Datenmodell** (`datenbank/`): MariaDB mit 14 Tabellen und 14 Sichten. Die Sichten rechnen Soll-/Ist-Zeiten, Kosten, Ampeln und Vorschläge
-- **Anwendung** (`laravel/`): PHP mit Laravel 13, Livewire 4 für die Seiten und Fortify für die Anmeldung. Die Migrationen führen die SQL-Skripte aus `datenbank/` aus, es gibt das Datenmodell also nur einmal. Start mit Docker (`docker compose up`) oder mit PHP 8.4 und der MariaDB aus XAMPP
+- **Anwendung** (`laravel/`): PHP mit Laravel 13, Livewire 4 für die Seiten und Fortify für die Anmeldung. Die Migrationen führen die SQL-Skripte aus `datenbank/` aus, weitere Migrationen ergänzen Zuordnungen, Notizen und Statuswerte. Start und Einrichtung mit Docker stehen oben
 
 ## Zusammenarbeit im Team
 

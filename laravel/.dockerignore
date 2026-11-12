@@ -10,4 +10,3 @@ public/build
 public/hot
 storage/logs/*
 storage/app/.docker-app-key
-tests

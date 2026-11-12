@@ -62,7 +62,7 @@ SELECT
   z.soll_zeit_min,
   z.ist_zeit_min,
   CASE
-    WHEN ag.status IN ('laeuft', 'unterbrochen') THEN ag.status
+    WHEN ag.status IN ('laeuft', 'unterbrochen', 'messen') THEN ag.status
     WHEN EXISTS (SELECT 1 FROM arbeitsgang v
                  WHERE v.fertigungsauftrag_id = ag.fertigungsauftrag_id
                    AND v.ag_nummer < ag.ag_nummer AND v.status <> 'erledigt') THEN 'wartet'
@@ -72,7 +72,7 @@ SELECT
    WHERE v.fertigungsauftrag_id = ag.fertigungsauftrag_id
      AND v.ag_nummer < ag.ag_nummer AND v.status <> 'erledigt') AS wartet_auf_ag
 FROM arbeitsgang ag
-JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id AND fa.status IN ('freigegeben', 'in_arbeit')
+JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id AND fa.status IN ('freigegeben', 'in_arbeit', 'messen')
 JOIN artikel ar           ON ar.id = fa.artikel_id
 JOIN arbeitsplatz ap      ON ap.id = ag.arbeitsplatz_id
 JOIN v_arbeitsgang_zeit z ON z.arbeitsgang_id = ag.id
@@ -196,7 +196,7 @@ SELECT
   fa.kunde,
   fa.liefertermin,
   fa.status,
-  (fa.liefertermin < CURDATE() AND fa.status IN ('angelegt', 'freigegeben', 'in_arbeit')) AS verzug,
+  (fa.liefertermin < CURDATE() AND fa.status IN ('angelegt', 'freigegeben', 'in_arbeit', 'messen')) AS verzug,
   SUM(z.status = 'erledigt')   AS ag_erledigt,
   COUNT(*)                     AS ag_gesamt,
   SUM(z.soll_zeit_min)         AS soll_zeit_min,
@@ -236,7 +236,7 @@ SELECT
   pruefpunkte_nicht_in_ordnung,
   zertifikate
 FROM v_auftragsuebersicht
-WHERE status IN ('freigegeben', 'in_arbeit', 'fertig');
+WHERE status IN ('freigegeben', 'in_arbeit', 'messen', 'fertig');
 
 -- ---------------------------------------------------------------------
 -- Anwendungsfall 9: Stand der Werkszertifikate
