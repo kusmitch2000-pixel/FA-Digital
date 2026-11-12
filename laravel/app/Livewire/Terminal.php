@@ -25,7 +25,7 @@ class Terminal extends Component
 
     protected string $recht = 'terminal';
 
-    /** Gewählter Arbeitsplatz, steht in der Adresse, z. B. /werker?arbeitsplatz=AP-20 */
+    /** Gewählter Arbeitsplatz, steht in der Adresse, z. B. /werker?arbeitsplatz=AP-40 */
     #[Url(as: 'arbeitsplatz')]
     public string $arbeitsplatz = '';
 

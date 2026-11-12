@@ -34,7 +34,7 @@
         <div class="formular-raster">
             <div class="feld">
                 <label for="nummer">Nummer</label>
-                <input id="nummer" wire:model="nummer" maxlength="10" placeholder="z. B. AP-60">
+                <input id="nummer" wire:model="nummer" maxlength="10" placeholder="z. B. AP-80">
                 @error('nummer')<small class="ueber">{{ $message }}</small>@enderror
             </div>
             <div class="feld">

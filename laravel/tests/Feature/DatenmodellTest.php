@@ -33,20 +33,20 @@ class DatenmodellTest extends TestCase
     {
         $fa1001 = DB::table('v_nachkalkulation_auftrag')->where('auftragsnummer', 'FA-1001')->first();
 
-        $this->assertEquals(431.25, $fa1001->soll_kosten);
-        $this->assertEquals(468.67, $fa1001->ist_kosten);
-        $this->assertEquals(8.7, $fa1001->abweichung_prozent);
+        $this->assertEquals(755.00, $fa1001->soll_kosten);
+        $this->assertEquals(799.67, $fa1001->ist_kosten);
+        $this->assertEquals(5.9, $fa1001->abweichung_prozent);
         $this->assertSame('gelb', $fa1001->ampel);
-        $this->assertEquals(8.63, $fa1001->soll_kosten_je_stueck);
-        $this->assertEquals(9.76, $fa1001->ist_kosten_je_gutstueck);
+        $this->assertEquals(15.10, $fa1001->soll_kosten_je_stueck);
+        $this->assertEquals(16.66, $fa1001->ist_kosten_je_gutstueck);
     }
 
     public function test_sollzeit_vorschlag_ab_zehn_prozent_abweichung(): void
     {
-        $drehen = DB::table('v_sollzeit_vorschlag')->where('artikelnummer', 'W-200')->where('ag_nummer', 20)->first();
+        $kanten = DB::table('v_sollzeit_vorschlag')->where('artikelnummer', 'V-410')->where('ag_nummer', 20)->first();
 
-        $this->assertEquals(30, $drehen->soll_ruestzeit_min);
-        $this->assertEquals(39, $drehen->vorschlag_ruestzeit_min);
-        $this->assertNull($drehen->vorschlag_stueckzeit_min);
+        $this->assertEquals(20, $kanten->soll_ruestzeit_min);
+        $this->assertEquals(29, $kanten->vorschlag_ruestzeit_min);
+        $this->assertNull($kanten->vorschlag_stueckzeit_min);
     }
 }

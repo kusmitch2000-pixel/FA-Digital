@@ -57,37 +57,52 @@ sql(benutzer.map(([nr, v, n, rolle, aktiv]) => `  (${text(nr)}, ${text(v)}, ${te
 for (const [nr, , , , , kurz] of benutzer) sql(`SET @${kurz} = (SELECT id FROM benutzer WHERE personalnummer = '${nr}');`);
 sql("");
 
-sql("-- Arbeitsplätze");
+sql("-- Arbeitsplätze: Stationen vom Blech-Rohteil bis zum Versand");
 sql(`INSERT INTO arbeitsplatz (nummer, bezeichnung, kostenstelle, stundensatz, aktiv) VALUES
-  ('AP-10', 'Säge', '4100', 45.00, 1),
-  ('AP-20', 'CNC-Drehmaschine', '4200', 85.00, 1),
-  ('AP-30', 'CNC-Fräsmaschine', '4300', 95.00, 1),
-  ('AP-40', 'Messplatz', '4400', 50.00, 1),
-  ('AP-50', 'Montage', '4500', 55.00, 1),
-  ('AP-60', 'Konventionelle Drehmaschine', '4210', 60.00, 0);
+  ('AP-10', 'Laserschneidanlage', '4100', 110.00, 1),
+  ('AP-20', 'Abkantpresse', '4200', 75.00, 1),
+  ('AP-30', 'Schweißplatz', '4300', 65.00, 1),
+  ('AP-40', 'CNC-Drehmaschine', '4400', 85.00, 1),
+  ('AP-50', 'CNC-Fräsmaschine', '4500', 95.00, 1),
+  ('AP-60', 'Lackieranlage', '4600', 70.00, 1),
+  ('AP-70', 'Versandplatz', '4700', 40.00, 1),
+  ('AP-90', 'Konventionelle Drehmaschine', '4410', 60.00, 0);
 `);
 
-sql("-- Artikel");
+sql("-- Artikel: Verkleidungsteile für Zerspanungsmaschinen (V) und Zerspanteile");
 sql(`INSERT INTO artikel (artikelnummer, bezeichnung) VALUES
-  ('W-200', 'Antriebswelle Ø40'),
+  ('V-410', 'Seitenverkleidung Fräszentrum'),
+  ('V-420', 'Späneschutzwanne'),
+  ('V-430', 'Schutztür mit Sichtfenster'),
   ('F-310', 'Flansch DN80'),
-  ('G-120', 'Lagergehäuse'),
-  ('B-050', 'Distanzbuchse');
+  ('W-200', 'Antriebswelle Ø40');
 `);
 
+// Stationen: Auslasern (AP-10), Umformen (AP-20), Bearbeitung/Schweißen (AP-30),
+// Zerspanung (AP-40 Drehen, AP-50 Fräsen), Lackierung (AP-60), Versand (AP-70)
 const arbeitsplan = [
-  ["W-200", 10, "Sägen", "AP-10", 10, 1.5],
-  ["W-200", 20, "Drehen", "AP-20", 30, 4.0],
-  ["W-200", 30, "Prüfen", "AP-40", 0, 1.0],
-  ["F-310", 10, "Sägen", "AP-10", 10, 1.0],
-  ["F-310", 20, "Drehen", "AP-20", 25, 3.0],
-  ["F-310", 30, "Fräsen", "AP-30", 40, 5.0],
-  ["F-310", 40, "Prüfen", "AP-40", 0, 1.5],
-  ["G-120", 10, "Fräsen", "AP-30", 45, 8.0],
-  ["G-120", 20, "Montage", "AP-50", 15, 6.0],
-  ["G-120", 30, "Prüfen", "AP-40", 0, 2.0],
-  ["B-050", 10, "Sägen", "AP-10", 5, 0.5],
-  ["B-050", 20, "Drehen", "AP-20", 20, 1.5],
+  ["V-410", 10, "Auslasern", "AP-10", 15, 2.5],
+  ["V-410", 20, "Kanten", "AP-20", 20, 3.0],
+  ["V-410", 30, "Lackieren", "AP-60", 25, 4.0],
+  ["V-410", 40, "Verpacken und versenden", "AP-70", 10, 0.5],
+  ["V-420", 10, "Auslasern", "AP-10", 15, 3.0],
+  ["V-420", 20, "Kanten zur Wanne", "AP-20", 25, 6.0],
+  ["V-420", 30, "Ecken verschweißen", "AP-30", 20, 12.0],
+  ["V-420", 40, "Lackieren", "AP-60", 25, 5.0],
+  ["V-420", 50, "Verpacken und versenden", "AP-70", 10, 1.0],
+  ["V-430", 10, "Auslasern", "AP-10", 15, 4.0],
+  ["V-430", 20, "Kanten", "AP-20", 20, 5.0],
+  ["V-430", 30, "Scharniere anschweißen", "AP-30", 15, 8.0],
+  ["V-430", 40, "Fenstersitz fräsen", "AP-50", 30, 6.0],
+  ["V-430", 50, "Lackieren", "AP-60", 25, 5.0],
+  ["V-430", 60, "Verpacken und versenden", "AP-70", 10, 1.0],
+  ["F-310", 10, "Ronde auslasern", "AP-10", 10, 2.0],
+  ["F-310", 20, "Drehen", "AP-40", 25, 3.0],
+  ["F-310", 30, "Lochkreis fräsen", "AP-50", 40, 5.0],
+  ["F-310", 40, "Verpacken und versenden", "AP-70", 10, 0.5],
+  ["W-200", 10, "Drehen", "AP-40", 30, 4.0],
+  ["W-200", 20, "Passfedernut fräsen", "AP-50", 20, 2.0],
+  ["W-200", 30, "Verpacken und versenden", "AP-70", 10, 0.5],
 ];
 sql("-- Arbeitspläne: Soll-Rüstzeit je Auftrag und Soll-Stückzeit in Minuten");
 sql(`INSERT INTO arbeitsplan_position (artikel_id, ag_nummer, bezeichnung, arbeitsplatz_id, ruestzeit_min, stueckzeit_min)
@@ -99,11 +114,13 @@ JOIN artikel a      ON a.artikelnummer = v.art
 JOIN arbeitsplatz p ON p.nummer = v.ap;
 `);
 
-sql("-- Zertifikatsarten nach DIN EN 10204");
+sql("-- Zertifikatsarten: nach DIN EN 10204 und eigene Prüfprotokolle der Arbeitsvorbereitung");
 sql(`INSERT INTO zertifikatsart (kuerzel, bezeichnung, beschreibung) VALUES
   ('2.1', 'Werksbescheinigung 2.1', 'Bestätigung, dass die Lieferung der Bestellung entspricht, ohne Prüfergebnisse'),
   ('2.2', 'Werkszeugnis 2.2', 'Bestätigung mit Ergebnissen nichtspezifischer Prüfungen'),
-  ('3.1', 'Abnahmeprüfzeugnis 3.1', 'Ergebnisse spezifischer Prüfungen, bestätigt durch einen von der Fertigung unabhängigen Abnahmebeauftragten');
+  ('3.1', 'Abnahmeprüfzeugnis 3.1', 'Ergebnisse spezifischer Prüfungen, bestätigt durch einen von der Fertigung unabhängigen Abnahmebeauftragten'),
+  ('LP', 'Lackprüfprotokoll', 'Eigenes Protokoll für lackierte Verkleidungsteile: Schichtdicke und Oberfläche'),
+  ('DP', 'Dichtheitsprotokoll', 'Eigenes Protokoll für Späneschutzwannen: Wasserprobe der Schweißnähte');
 `);
 
 sql("-- Unterbrechungsgründe am Werker-Terminal");
@@ -117,18 +134,24 @@ sql(`INSERT INTO unterbrechungsgrund (bezeichnung, geplant) VALUES
 
 // Prüfmerkmale: [Artikel, AG, Reihenfolge, Bezeichnung, Art, Soll, untere, obere, Einheit, Zertifikat]
 const merkmale = [
-  ["W-200", 20, 1, "Durchmesser Lagersitz Ø40 h6", "messwert", 40.0, 39.984, 40.0, "mm", null],
-  ["W-200", 20, 2, "Gesamtlänge 250 ±0,2", "messwert", 250.0, 249.8, 250.2, "mm", null],
-  ["W-200", 30, 1, "Sichtprüfung: Kanten entgratet, keine Riefen", "sichtpruefung", null, null, null, null, null],
-  ["W-200", 30, 2, "Rundlauf Lagersitz", "messwert", 0.0, 0.0, 0.02, "mm", "2.2"],
-  ["W-200", 30, 3, "Rauheit Lagersitz Ra", "messwert", 0.4, 0.0, 0.8, "µm", "2.2"],
+  ["V-410", 20, 1, "Kantwinkel 90° ±1°", "messwert", 90.0, 89.0, 91.0, "°", null],
+  ["V-410", 30, 1, "Sichtprüfung Lackoberfläche", "sichtpruefung", null, null, null, null, null],
+  ["V-410", 30, 2, "Schichtdicke Lack", "messwert", 80.0, 60.0, 100.0, "µm", "LP"],
+  ["V-420", 20, 1, "Innenmaß Wanne 600 ±1", "messwert", 600.0, 599.0, 601.0, "mm", null],
+  ["V-420", 30, 1, "Sichtprüfung Schweißnähte", "sichtpruefung", null, null, null, null, null],
+  ["V-420", 30, 2, "Dichtheit: Wasserprobe 30 min", "sichtpruefung", null, null, null, null, "DP"],
+  ["V-420", 40, 1, "Schichtdicke Lack", "messwert", 80.0, 60.0, 100.0, "µm", "LP"],
+  ["V-430", 20, 1, "Kantwinkel 90° ±1°", "messwert", 90.0, 89.0, 91.0, "°", null],
+  ["V-430", 40, 1, "Tiefe Fenstersitz 5 ±0,1", "messwert", 5.0, 4.9, 5.1, "mm", null],
+  ["V-430", 50, 1, "Schichtdicke Lack", "messwert", 80.0, 60.0, 100.0, "µm", "LP"],
   ["F-310", 20, 1, "Außendurchmesser Ø200 ±0,1", "messwert", 200.0, 199.9, 200.1, "mm", null],
+  ["F-310", 20, 2, "Planlauf Dichtfläche", "messwert", 0.0, 0.0, 0.05, "mm", "2.2"],
   ["F-310", 30, 1, "Lochkreis Ø160 ±0,05", "messwert", 160.0, 159.95, 160.05, "mm", null],
-  ["F-310", 40, 1, "Sichtprüfung Dichtfläche", "sichtpruefung", null, null, null, null, null],
-  ["F-310", 40, 2, "Planlauf Dichtfläche", "messwert", 0.0, 0.0, 0.05, "mm", "2.2"],
-  ["G-120", 10, 1, "Bohrung Ø62 H7", "messwert", 62.0, 62.0, 62.03, "mm", null],
-  ["G-120", 30, 1, "Sichtprüfung: Montage vollständig", "sichtpruefung", null, null, null, null, null],
-  ["B-050", 20, 1, "Länge 30 ±0,1", "messwert", 30.0, 29.9, 30.1, "mm", null],
+  ["W-200", 10, 1, "Durchmesser Lagersitz Ø40 h6", "messwert", 40.0, 39.984, 40.0, "mm", null],
+  ["W-200", 10, 2, "Gesamtlänge 250 ±0,2", "messwert", 250.0, 249.8, 250.2, "mm", null],
+  ["W-200", 10, 3, "Rundlauf Lagersitz", "messwert", 0.0, 0.0, 0.02, "mm", "2.2"],
+  ["W-200", 10, 4, "Rauheit Lagersitz Ra", "messwert", 0.4, 0.0, 0.8, "µm", "2.2"],
+  ["W-200", 20, 1, "Nutbreite 12 ±0,05", "messwert", 12.0, 11.95, 12.05, "mm", null],
 ];
 const zahl = (z) => (z === null ? "NULL" : String(z));
 sql("-- Prüfmerkmale: Vorlage der Checklisten. Mit Zertifikatsart = nur, wenn der Kunde dieses Zertifikat fordert");
@@ -149,15 +172,15 @@ LEFT JOIN zertifikatsart za   ON za.kuerzel = v.zert;
 // ---------------------------------------------------------------------
 const auftraege = [
   ["FA-0997", "F-310", 16, "Hansa Pumpen AG", 9, "storniert", 9 * TAG + 300, null, null, null, []],
-  ["FA-0998", "W-200", 80, "Nordwerk Maschinenbau GmbH", -8, "nachkalkuliert", 14 * TAG + 500, 14 * TAG + 450, 10 * TAG + 200, 9 * TAG + 300, [["2.2", "freigegeben", 10 * TAG + 150]]],
+  ["FA-0998", "V-410", 60, "Nordwerk Maschinenbau GmbH", -8, "nachkalkuliert", 14 * TAG + 500, 14 * TAG + 450, 10 * TAG + 200, 9 * TAG + 300, [["LP", "freigegeben", 10 * TAG + 150]]],
   ["FA-0999", "F-310", 20, "Hansa Pumpen AG", -2, "nachkalkuliert", 10 * TAG + 500, 10 * TAG + 450, 5 * TAG + 200, 4 * TAG + 300, [["2.1", "freigegeben", 5 * TAG + 150]]],
-  ["FA-1000", "G-120", 10, "Baltic Lager GmbH", -3, "in_arbeit", 8 * TAG + 500, 7 * TAG + 450, null, null, []],
-  ["FA-1001", "W-200", 50, "Nordwerk Maschinenbau GmbH", 4, "fertig", 6 * TAG + 500, 6 * TAG + 450, 30, null, [["2.2", "gefordert", null]]],
+  ["FA-1000", "V-420", 10, "Baltic Werkzeugmaschinen GmbH", -3, "in_arbeit", 8 * TAG + 500, 7 * TAG + 450, null, null, [["DP", "gefordert", null]]],
+  ["FA-1001", "V-410", 50, "Nordwerk Maschinenbau GmbH", 4, "fertig", 6 * TAG + 500, 6 * TAG + 450, 30, null, [["LP", "gefordert", null]]],
   ["FA-1002", "F-310", 30, "Hansa Pumpen AG", 8, "in_arbeit", 4 * TAG + 500, 4 * TAG + 450, null, null, [["2.2", "gefordert", null]]],
-  ["FA-1003", "B-050", 200, "Kieler Werft Service", 11, "in_arbeit", 3 * TAG + 500, 3 * TAG + 450, null, null, []],
-  ["FA-1004", "W-200", 40, "Nordwerk Maschinenbau GmbH", 16, "in_arbeit", 2 * TAG + 500, 50, null, null, [["3.1", "gefordert", null]]],
-  ["FA-1005", "G-120", 8, "Baltic Lager GmbH", 18, "freigegeben", 1 * TAG + 300, 120, null, null, []],
-  ["FA-1006", "B-050", 120, "Kieler Werft Service", 23, "angelegt", 10, null, null, null, [["2.2", "gefordert", null]]],
+  ["FA-1003", "V-430", 12, "Kieler Werft Service", 11, "in_arbeit", 3 * TAG + 500, 3 * TAG + 450, null, null, []],
+  ["FA-1004", "F-310", 40, "Hansa Pumpen AG", 16, "in_arbeit", 2 * TAG + 500, 50, null, null, [["3.1", "gefordert", null]]],
+  ["FA-1005", "V-420", 8, "Baltic Werkzeugmaschinen GmbH", 18, "freigegeben", 1 * TAG + 300, 120, null, null, []],
+  ["FA-1006", "W-200", 120, "Kieler Werft Service", 23, "angelegt", 10, null, null, null, [["2.2", "gefordert", null]]],
 ];
 const oder = (m) => (m === null ? "NULL" : zeit(m));
 sql("-- Fertigungsaufträge");
@@ -206,21 +229,24 @@ ORDER BY ag.id, pm.reihenfolge;
 // Abschluss: { gut, ausschuss } oder "laeuft" oder "unterbrochen"
 // ---------------------------------------------------------------------
 const ablaeufe = [
-  ["FA-0998", 10, "mehmet", 13 * TAG + 400, [["R", 11], ["U", "Material fehlt", 55], ["B", 60], ["U", "Pause", 30], ["B", 54]], { gut: 80, ausschuss: 0 }],
-  ["FA-0998", 20, "jonas", 12 * TAG + 420, [["R", 36], ["U", "Werkzeug fehlt", 30], ["B", 100], ["U", "Maschinenstörung", 25], ["B", 50], ["U", "Pause", 30], ["B", 152]], { gut: 80, ausschuss: 0 }],
-  ["FA-0998", 30, "paul", 11 * TAG + 400, [["B", 40], ["U", "Sonstiges", 20], ["B", 44]], { gut: 80, ausschuss: 0 }],
-  ["FA-0999", 10, "mehmet", 9 * TAG + 400, [["R", 9], ["B", 19]], { gut: 20, ausschuss: 0 }],
+  ["FA-0998", 10, "mehmet", 13 * TAG + 400, [["R", 15], ["U", "Material fehlt", 55], ["B", 140]], { gut: 60, ausschuss: 0 }],
+  ["FA-0998", 20, "jonas", 12 * TAG + 420, [["R", 26], ["U", "Werkzeug fehlt", 30], ["B", 100], ["U", "Maschinenstörung", 25], ["B", 95]], { gut: 60, ausschuss: 0 }],
+  ["FA-0998", 30, "paul", 11 * TAG + 400, [["R", 24], ["B", 120], ["U", "Pause", 30], ["B", 130]], { gut: 60, ausschuss: 0 }],
+  ["FA-0998", 40, "paul", 10 * TAG + 600, [["R", 10], ["B", 28]], { gut: 60, ausschuss: 0 }],
+  ["FA-0999", 10, "mehmet", 9 * TAG + 400, [["R", 9], ["B", 38]], { gut: 20, ausschuss: 0 }],
   ["FA-0999", 20, "jonas", 8 * TAG + 420, [["R", 27], ["U", "Werkzeug fehlt", 18], ["B", 65]], { gut: 20, ausschuss: 0 }],
-  ["FA-0999", 30, "mehmet", 7 * TAG + 400, [["R", 40], ["U", "Maschinenstörung", 70], ["B", 60], ["U", "Pause", 30], ["B", 40], ["U", "Maschinenstörung", 50], ["B", 31]], { gut: 19, ausschuss: 1 }],
-  ["FA-0999", 40, "paul", 6 * TAG + 400, [["B", 33]], { gut: 19, ausschuss: 0 }],
-  ["FA-1001", 10, "mehmet", 5 * TAG + 400, [["R", 8], ["U", "Pause", 30], ["B", 72]], { gut: 50, ausschuss: 0 }],
-  ["FA-1001", 20, "jonas", 4 * TAG + 420, [["R", 42, { nachtrag: "lena", begruendung: "Stempeln vergessen", erfasstVorMin: 100 }], ["U", "Werkzeug fehlt", 12], ["B", 110], ["U", "Pause", 30], ["B", 110]], { gut: 49, ausschuss: 1 }],
-  ["FA-1001", 30, "paul", 1 * TAG + 400, [["B", 45]], { gut: 48, ausschuss: 1 }],
-  ["FA-1002", 10, "mehmet", 3 * TAG + 300, [["R", 8], ["B", 29, { korrigiert: 45, begruendung: "Ausstempeln vergessen, Ende laut Werker nach 29 min" }]], { gut: 30, ausschuss: 0 }],
+  ["FA-0999", 30, "mehmet", 7 * TAG + 400, [["R", 40], ["U", "Maschinenstörung", 70], ["B", 50], ["U", "Pause", 30], ["B", 30], ["U", "Maschinenstörung", 50], ["B", 20]], { gut: 19, ausschuss: 1 }],
+  ["FA-0999", 40, "paul", 6 * TAG + 400, [["R", 10], ["B", 9]], { gut: 19, ausschuss: 0 }],
+  ["FA-1001", 10, "mehmet", 5 * TAG + 400, [["R", 14], ["U", "Pause", 30], ["B", 126]], { gut: 50, ausschuss: 0 }],
+  ["FA-1001", 20, "jonas", 4 * TAG + 420, [["R", 32, { nachtrag: "lena", begruendung: "Stempeln vergessen", erfasstVorMin: 100 }], ["U", "Werkzeug fehlt", 12], ["B", 70], ["U", "Pause", 30], ["B", 80]], { gut: 49, ausschuss: 1 }],
+  ["FA-1001", 30, "paul", 2 * TAG + 400, [["R", 26], ["B", 225]], { gut: 48, ausschuss: 1 }],
+  ["FA-1001", 40, "paul", 1 * TAG + 400, [["R", 9], ["B", 25]], { gut: 48, ausschuss: 0 }],
+  ["FA-1002", 10, "mehmet", 3 * TAG + 300, [["R", 9], ["B", 59, { korrigiert: 75, begruendung: "Ausstempeln vergessen, Ende laut Werker nach 59 min" }]], { gut: 30, ausschuss: 0 }],
   ["FA-1002", 20, "jonas", 120, [["R", 28], ["B", 92]], "laeuft"],
-  ["FA-1003", 10, "mehmet", 1 * TAG + 300, [["R", 5], ["U", "Material fehlt", 40], ["B", 60], ["U", "Pause", 30], ["B", 33]], { gut: 200, ausschuss: 0 }],
+  ["FA-1003", 10, "mehmet", 1 * TAG + 300, [["R", 14], ["U", "Material fehlt", 40], ["B", 45]], { gut: 12, ausschuss: 0 }],
+  ["FA-1000", 10, "mehmet", 2 * TAG + 300, [["R", 13], ["B", 31]], { gut: 10, ausschuss: 0 }],
   ["FA-1004", 10, "paul", 42, [["R", 10], ["B", 32]], "laeuft"],
-  ["FA-1000", 10, "mehmet", 85, [["R", 48], ["B", 15], ["U", "Maschinenstörung", 22]], "unterbrochen"],
+  ["FA-1000", 20, "mehmet", 85, [["R", 48], ["B", 15], ["U", "Maschinenstörung", 22]], "unterbrochen"],
 ];
 
 sql("-- Zeitbuchungen und Unterbrechungen je Arbeitsgang");
@@ -285,11 +311,11 @@ JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id
 SET pp.istwert = 200.040, pp.ergebnis = 'in_ordnung', pp.geprueft_von = @jonas, pp.geprueft_am = @jetzt - INTERVAL 30 MINUTE
 WHERE fa.auftragsnummer = 'FA-1002' AND ag.ag_nummer = 20 AND pp.reihenfolge = 1;
 
--- Historie: Die Rüstzeit für das Drehen der B-050 wurde schon einmal aus Ist-Werten angepasst
+-- Historie: Die Rüstzeit für das Lackieren der V-410 wurde schon einmal aus Ist-Werten angepasst
 INSERT INTO arbeitsplan_aenderung (arbeitsplan_position_id, feld, alter_wert, neuer_wert, begruendung, geaendert_von, geaendert_am)
-SELECT pos.id, 'ruestzeit', 15.00, 20.00, 'Ø Ist-Rüstzeit aus 3 Aufträgen lag bei 20 min', @anna, @jetzt - INTERVAL 30 DAY
+SELECT pos.id, 'ruestzeit', 20.00, 25.00, 'Ø Ist-Rüstzeit aus 3 Aufträgen lag bei 25 min', @anna, @jetzt - INTERVAL 30 DAY
 FROM arbeitsplan_position pos JOIN artikel a ON a.id = pos.artikel_id
-WHERE a.artikelnummer = 'B-050' AND pos.ag_nummer = 20;
+WHERE a.artikelnummer = 'V-410' AND pos.ag_nummer = 30;
 `);
 
 fs.writeFileSync(path.join(__dirname, "..", "02_testdaten.sql"), zeilen.join("\n") + "\n");

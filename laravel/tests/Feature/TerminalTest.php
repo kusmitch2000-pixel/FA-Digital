@@ -22,19 +22,19 @@ class TerminalTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * In den Testdaten sind Säge, Dreh- und Fräsmaschine belegt. Der Testauftrag läuft deshalb
-     * über Messplatz (AG 10, mit Checkliste) und Montage (AG 20).
+     * In den Testdaten sind Laser, Abkantpresse und Drehmaschine belegt. Der Testauftrag läuft deshalb
+     * über die Lackieranlage (AG 10, mit Checkliste) und den Versandplatz (AG 20).
      */
     private function auftragAnFreienPlaetzen(int $menge = 10): Fertigungsauftrag
     {
         $artikel = Artikel::create(['artikelnummer' => 'T-100', 'bezeichnung' => 'Testteil']);
         $messen = $artikel->positionen()->create([
             'ag_nummer' => 10, 'bezeichnung' => 'Messen', 'ruestzeit_min' => 10, 'stueckzeit_min' => 2,
-            'arbeitsplatz_id' => Arbeitsplatz::where('nummer', 'AP-40')->value('id'),
+            'arbeitsplatz_id' => Arbeitsplatz::where('nummer', 'AP-60')->value('id'),
         ]);
         $artikel->positionen()->create([
             'ag_nummer' => 20, 'bezeichnung' => 'Montieren', 'ruestzeit_min' => 0, 'stueckzeit_min' => 1,
-            'arbeitsplatz_id' => Arbeitsplatz::where('nummer', 'AP-50')->value('id'),
+            'arbeitsplatz_id' => Arbeitsplatz::where('nummer', 'AP-70')->value('id'),
         ]);
         $messen->pruefmerkmale()->create(['reihenfolge' => 1, 'bezeichnung' => 'Länge 30 ±0,05', 'art' => 'messwert',
             'sollwert' => 30, 'untere_grenze' => 29.95, 'obere_grenze' => 30.05, 'einheit' => 'mm']);
@@ -66,7 +66,7 @@ class TerminalTest extends TestCase
         $this->actingAs($werker);
         $this->travelTo(now()->startOfMinute());
 
-        $terminal = Livewire::test(Terminal::class)->set('arbeitsplatz', 'AP-40');
+        $terminal = Livewire::test(Terminal::class)->set('arbeitsplatz', 'AP-60');
         $terminal->assertSee('T-100 Testteil')->call('starten', $messen->id, 'ruesten')->assertHasNoErrors();
 
         $this->assertSame('laeuft', $messen->fresh()->status);
@@ -79,7 +79,7 @@ class TerminalTest extends TestCase
         $this->travel(20)->minutes();
         $terminal->set('grund', Unterbrechungsgrund::where('bezeichnung', 'Material fehlt')->value('id'))->call('unterbrechen')->assertHasNoErrors();
         $this->assertSame('unterbrochen', $messen->fresh()->status);
-        $this->assertSame('unterbrochen', DB::table('v_hallenansicht')->where('arbeitsplatz_nummer', 'AP-40')->value('zustand'));
+        $this->assertSame('unterbrochen', DB::table('v_hallenansicht')->where('arbeitsplatz_nummer', 'AP-60')->value('zustand'));
 
         $this->travel(15)->minutes();
         $terminal->call('fortsetzen')->assertHasNoErrors();
@@ -111,7 +111,7 @@ class TerminalTest extends TestCase
 
         // AG 20 ist jetzt an der Reihe. Nach der letzten Fertigmeldung ist der Auftrag fertig.
         $this->assertSame('bereit', DB::table('v_arbeitsvorrat')->where('arbeitsgang_id', $montieren->id)->value('bereitschaft'));
-        $terminal->call('starten', $montieren->id, 'bearbeiten')->assertHasNoErrors()->assertSet('arbeitsplatz', 'AP-50');
+        $terminal->call('starten', $montieren->id, 'bearbeiten')->assertHasNoErrors()->assertSet('arbeitsplatz', 'AP-70');
         $this->travel(10)->minutes();
         $terminal->set('gutmenge', 9)->set('ausschuss', 0)->call('fertigMelden')->assertHasNoErrors();
 
@@ -280,7 +280,7 @@ class TerminalTest extends TestCase
         $artikel = Artikel::create(['artikelnummer' => 'T-200', 'bezeichnung' => 'Zweites Testteil']);
         $artikel->positionen()->create([
             'ag_nummer' => 10, 'bezeichnung' => 'Messen', 'ruestzeit_min' => 5, 'stueckzeit_min' => 1,
-            'arbeitsplatz_id' => Arbeitsplatz::where('nummer', 'AP-40')->value('id'),
+            'arbeitsplatz_id' => Arbeitsplatz::where('nummer', 'AP-60')->value('id'),
         ]);
 
         return app(AuftragAnlegen::class)($this->benutzer('1001'), [

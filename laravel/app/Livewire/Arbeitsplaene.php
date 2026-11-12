@@ -23,7 +23,7 @@ class Arbeitsplaene extends Component
 
     protected string $recht = 'arbeitsplaene';
 
-    /** Gewählter Artikel, z. B. /artikel?artikel=W-200 */
+    /** Gewählter Artikel, z. B. /artikel?artikel=V-410 */
     #[Url]
     public string $artikel = '';
 

@@ -100,9 +100,9 @@ class MeisterUndControllingTest extends TestCase
         Livewire::test(Werkszertifikate::class)->call('freigeben', $fa1001->id)->assertHasNoErrors();
         $fa1001->refresh();
         $this->assertSame('freigegeben', $fa1001->status);
-        $this->assertSame('WZ_FA-1001_2.2.pdf', $fa1001->dateiname);
+        $this->assertSame('WZ_FA-1001_LP.pdf', $fa1001->dateiname);
 
-        $this->get(route('zertifikat.druck', $fa1001))->assertOk()->assertSee('Werkszeugnis 2.2')->assertSee('Freigegeben am');
+        $this->get(route('zertifikat.druck', $fa1001))->assertOk()->assertSee('Lackprüfprotokoll')->assertSee('Freigegeben am');
 
         // Die Arbeitsvorbereitung sieht Zertifikate, gibt sie aber nicht frei
         $this->alsBenutzer('1001');
@@ -113,7 +113,7 @@ class MeisterUndControllingTest extends TestCase
     {
         $this->alsBenutzer('1002');
         Livewire::withQueryParams(['auftrag' => 'FA-1001'])->test(Nachkalkulation::class)
-            ->assertSee('468,67 €')
+            ->assertSee('799,67 €')
             ->call('abschliessen')
             ->assertForbidden();
 
@@ -128,21 +128,21 @@ class MeisterUndControllingTest extends TestCase
     public function test_abweichung_in_die_neue_kalkulation_uebernehmen(): void
     {
         $anna = $this->alsBenutzer('1001');
-        $position = DB::table('v_sollzeit_vorschlag')->where('artikelnummer', 'W-200')->where('ag_nummer', 20)->value('arbeitsplan_position_id');
+        $position = DB::table('v_sollzeit_vorschlag')->where('artikelnummer', 'V-410')->where('ag_nummer', 20)->value('arbeitsplan_position_id');
 
-        Livewire::withQueryParams(['artikel' => 'W-200'])->test(Arbeitsplaene::class)
-            ->assertSee('Rüstzeit 39,0 min übernehmen')
+        Livewire::withQueryParams(['artikel' => 'V-410'])->test(Arbeitsplaene::class)
+            ->assertSee('Rüstzeit 29,0 min übernehmen')
             ->call('uebernehmen', $position, 'ruestzeit')
             ->assertHasNoErrors()
-            ->assertDontSee('Rüstzeit 39,0 min übernehmen');
+            ->assertDontSee('Rüstzeit 29,0 min übernehmen');
 
         $aenderung = ArbeitsplanAenderung::where('arbeitsplan_position_id', $position)->latest('id')->firstOrFail();
-        $this->assertEquals([30, 39], [$aenderung->alter_wert, $aenderung->neuer_wert]);
+        $this->assertEquals([20, 29], [$aenderung->alter_wert, $aenderung->neuer_wert]);
         $this->assertSame($anna->id, $aenderung->geaendert_von);
 
-        // Laufende Aufträge behalten ihre Soll-Zeit, der Arbeitsplan hat den neuen Wert
-        $this->assertEquals(39, DB::table('arbeitsplan_position')->where('id', $position)->value('ruestzeit_min'));
-        $this->assertEquals(30, $this->auftrag('FA-1004')->arbeitsgaenge()->where('ag_nummer', 20)->value('soll_ruestzeit_min'));
+        // Bestehende Aufträge behalten ihre Soll-Zeit, der Arbeitsplan hat den neuen Wert
+        $this->assertEquals(29, DB::table('arbeitsplan_position')->where('id', $position)->value('ruestzeit_min'));
+        $this->assertEquals(20, $this->auftrag('FA-1001')->arbeitsgaenge()->where('ag_nummer', 20)->value('soll_ruestzeit_min'));
     }
 
     public function test_csv_export_fuer_excel(): void
@@ -153,8 +153,8 @@ class MeisterUndControllingTest extends TestCase
         $this->assertStringStartsWith('text/csv', $antwort->headers->get('Content-Type'));
         $csv = $antwort->getContent();
         $this->assertStringStartsWith("\xEF\xBB\xBFAuftrag;Artikel-Nr.;", $csv);
-        $this->assertStringContainsString('FA-1001;W-200;Antriebswelle Ø40;50;', $csv);
-        $this->assertStringContainsString(';431,25;468,67;8,7;8,63;9,76;fertig', $csv);
+        $this->assertStringContainsString('FA-1001;V-410;Seitenverkleidung Fräszentrum;50;', $csv);
+        $this->assertStringContainsString(';755,00;799,67;5,9;15,10;16,66;fertig', $csv);
 
         $this->get(route('auswertung.export', 'unterbrechungen'))->assertOk()->assertSee('Maschinenstörung;nein;3;145;', false);
         $this->get('/auswertung/unbekannt.csv')->assertNotFound();

@@ -16,14 +16,14 @@ WHERE email = 'jonas.wolff@fa-digital.de' AND aktiv = 1;
 -- AF 1: Arbeitsvorrat am Arbeitsplatz CNC-Drehmaschine
 SELECT auftragsnummer, ag_nummer, arbeitsgang, artikel, menge, soll_zeit_min, liefertermin, bereitschaft, wartet_auf_ag
 FROM v_arbeitsvorrat
-WHERE arbeitsplatz_nummer = 'AP-20'
+WHERE arbeitsplatz_nummer = 'AP-40'
 ORDER BY FIELD(bereitschaft, 'laeuft', 'unterbrochen', 'bereit', 'wartet'), liefertermin;
 
 -- AF 2: Laufender Arbeitsgang am Terminal mit verbrauchter Soll-Zeit
 SELECT auftragsnummer, ag_nummer, arbeitsgang, soll_zeit_min, ist_ruesten_min, ist_bearbeiten_min, ist_zeit_min,
        ROUND(100 * ist_zeit_min / soll_zeit_min) AS verbraucht_prozent
 FROM v_arbeitsgang_zeit
-WHERE arbeitsplatz_id = (SELECT id FROM arbeitsplatz WHERE nummer = 'AP-20') AND status = 'laeuft';
+WHERE arbeitsplatz_id = (SELECT id FROM arbeitsplatz WHERE nummer = 'AP-40') AND status = 'laeuft';
 
 -- AF 3: Auswahlliste der Unterbrechungsgründe
 SELECT id, bezeichnung FROM unterbrechungsgrund WHERE aktiv = 1 ORDER BY id;

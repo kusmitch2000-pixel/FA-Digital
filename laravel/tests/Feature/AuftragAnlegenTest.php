@@ -42,8 +42,8 @@ class AuftragAnlegenTest extends TestCase
         $this->assertSame([10, 20, 30], $auftrag->arbeitsgaenge->pluck('ag_nummer')->all());
         $this->assertSame('gefordert', $auftrag->zertifikate->first()->status);
 
-        // Soll-Zeit AG 20 Drehen: 30 min Rüsten + 60 Stück × 4 min, Stundensatz als Kopie
-        $drehen = DB::table('v_arbeitsgang_zeit')->where('arbeitsgang_id', $auftrag->arbeitsgaenge[1]->id)->first();
+        // Soll-Zeit AG 10 Drehen: 30 min Rüsten + 60 Stück × 4 min, Stundensatz als Kopie
+        $drehen = DB::table('v_arbeitsgang_zeit')->where('arbeitsgang_id', $auftrag->arbeitsgaenge[0]->id)->first();
         $this->assertEquals(270, $drehen->soll_zeit_min);
         $this->assertEquals(85, $drehen->stundensatz);
 

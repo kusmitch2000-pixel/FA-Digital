@@ -54,7 +54,8 @@ SELECT ag_nummer, pruefpunkt, art FROM v_checkliste WHERE auftragsnummer = 'FA-1
 ROLLBACK;
 
 -- ---------------------------------------------------------------------
--- Ablauf 2: Werker Jonas meldet FA-1002 · AG 20 fertig und startet danach FA-1003 · AG 20
+-- Ablauf 2: Werker Jonas misst den letzten Prüfpunkt, meldet FA-1002 · AG 20 Drehen fertig
+-- und startet danach FA-1002 · AG 30 Lochkreis fräsen
 -- ---------------------------------------------------------------------
 START TRANSACTION;
 
@@ -63,6 +64,12 @@ SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id =
 
 -- laufende Buchung beenden
 UPDATE zeitbuchung SET ende = NOW() WHERE arbeitsgang_id = @ag AND ende IS NULL AND gueltig = 1;
+
+-- letzten offenen Prüfpunkt messen (Planlauf Dichtfläche, gefordert wegen Werkszeugnis 2.2)
+UPDATE pruefpunkt
+SET istwert = 0.020, ergebnis = IF(0.020 BETWEEN untere_grenze AND obere_grenze, 'in_ordnung', 'nicht_in_ordnung'),
+    geprueft_von = @jonas, geprueft_am = NOW()
+WHERE arbeitsgang_id = @ag AND ergebnis = 'offen';
 
 -- fertig melden, aber nur wenn kein Prüfpunkt mehr offen ist
 UPDATE arbeitsgang
@@ -73,14 +80,14 @@ SELECT ROW_COUNT() AS fertig_gemeldet;   -- 1 = erfolgreich, 0 = es waren noch P
 
 -- neuen Arbeitsgang mit Rüsten starten
 SET @neu = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id
-            WHERE fa.auftragsnummer = 'FA-1003' AND ag.ag_nummer = 20);
+            WHERE fa.auftragsnummer = 'FA-1002' AND ag.ag_nummer = 30);
 INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, erfasst_von)
 VALUES (@neu, @jonas, 'ruesten', NOW(), @jonas);
 UPDATE arbeitsgang SET status = 'laeuft' WHERE id = @neu;
 
--- Die Hallenansicht zeigt jetzt FA-1003 an der CNC-Drehmaschine
+-- Die Hallenansicht zeigt jetzt FA-1002 an der CNC-Fräsmaschine
 SELECT arbeitsplatz, zustand, auftragsnummer, ag_nummer, werker, laufende_taetigkeit, ampel
-FROM v_hallenansicht WHERE arbeitsplatz_nummer = 'AP-20';
+FROM v_hallenansicht WHERE arbeitsplatz_nummer = 'AP-50';
 
 ROLLBACK;
 
@@ -125,15 +132,15 @@ SET @pp = (SELECT pp.id FROM pruefpunkt pp
 
 -- Das Ergebnis ergibt sich direkt aus den Toleranzgrenzen
 UPDATE pruefpunkt
-SET istwert = 30.150,
-    ergebnis = IF(30.150 BETWEEN untere_grenze AND obere_grenze, 'in_ordnung', 'nicht_in_ordnung'),
-    bemerkung = 'zu lang, wird nachgearbeitet', geprueft_von = @jonas, geprueft_am = NOW()
+SET istwert = 91.500,
+    ergebnis = IF(91.500 BETWEEN untere_grenze AND obere_grenze, 'in_ordnung', 'nicht_in_ordnung'),
+    bemerkung = 'Winkel zu groß, wird nachgekantet', geprueft_von = @jonas, geprueft_am = NOW()
 WHERE id = @pp;
 SELECT pruefpunkt, istwert, in_toleranz, ergebnis FROM v_checkliste WHERE pruefpunkt_id = @pp;
 
 UPDATE pruefpunkt
-SET istwert = 30.040,
-    ergebnis = IF(30.040 BETWEEN untere_grenze AND obere_grenze, 'in_ordnung', 'nicht_in_ordnung'),
+SET istwert = 90.400,
+    ergebnis = IF(90.400 BETWEEN untere_grenze AND obere_grenze, 'in_ordnung', 'nicht_in_ordnung'),
     bemerkung = 'nach Nacharbeit gemessen', geprueft_am = NOW()
 WHERE id = @pp;
 SELECT pruefpunkt, istwert, in_toleranz, ergebnis FROM v_checkliste WHERE pruefpunkt_id = @pp;
@@ -164,7 +171,7 @@ FROM zeitbuchung WHERE id = @alt OR ersetzt_buchung_id = @alt;
 ROLLBACK;
 
 -- ---------------------------------------------------------------------
--- Ablauf 6: Werkszertifikat für FA-1001 freigeben, nur wenn alles in Ordnung ist
+-- Ablauf 6: Zertifikat für FA-1001 freigeben (eigenes Lackprüfprotokoll LP), nur wenn alles in Ordnung ist
 -- ---------------------------------------------------------------------
 START TRANSACTION;
 
@@ -180,12 +187,12 @@ ROLLBACK;
 
 -- ---------------------------------------------------------------------
 -- Ablauf 7: Übernahme einer Abweichung in die neue Kalkulation
--- Die Rüstzeit für das Drehen der W-200 steigt von 30 auf 39 min.
--- Laufende Aufträge behalten ihre Soll-Zeit, neue Aufträge rechnen mit 39 min.
+-- Die Rüstzeit für das Kanten der V-410 steigt von 20 auf 29 min.
+-- Bestehende Aufträge behalten ihre Soll-Zeit, neue Aufträge rechnen mit 29 min.
 -- ---------------------------------------------------------------------
 START TRANSACTION;
 
-SET @pos = (SELECT arbeitsplan_position_id FROM v_sollzeit_vorschlag WHERE artikelnummer = 'W-200' AND ag_nummer = 20);
+SET @pos = (SELECT arbeitsplan_position_id FROM v_sollzeit_vorschlag WHERE artikelnummer = 'V-410' AND ag_nummer = 20);
 
 INSERT INTO arbeitsplan_aenderung (arbeitsplan_position_id, feld, alter_wert, neuer_wert, begruendung, geaendert_von)
 SELECT arbeitsplan_position_id, 'ruestzeit', soll_ruestzeit_min, vorschlag_ruestzeit_min,
@@ -197,7 +204,7 @@ WHERE id = @pos;
 
 SELECT pos.ruestzeit_min AS neu_im_arbeitsplan,
        (SELECT ag.soll_ruestzeit_min FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id
-        WHERE fa.auftragsnummer = 'FA-1004' AND ag.ag_nummer = 20) AS laufender_auftrag_fa_1004
+        WHERE fa.auftragsnummer = 'FA-1001' AND ag.ag_nummer = 20) AS bestehender_auftrag_fa_1001
 FROM arbeitsplan_position pos WHERE pos.id = @pos;
 
 ROLLBACK;
