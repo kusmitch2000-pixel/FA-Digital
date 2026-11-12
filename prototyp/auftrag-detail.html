@@ -64,6 +64,7 @@
           <div><dt>Liefertermin</dt><dd>06.10.2026</dd></div>
           <div><dt>Angelegt</dt><dd>24.09.2026, Anna Becker</dd></div>
           <div><dt>Freigegeben</dt><dd>24.09.2026, Anna Becker</dd></div>
+          <div><dt>Werkszertifikat</dt><dd>Werkszeugnis 2.2 · gefordert</dd></div>
         </dl>
         <div style="margin-top: 1.25rem;">
           <div class="balken gross"><span style="width: 40%;"></span></div>
@@ -138,6 +139,40 @@
             </tfoot>
           </table>
         </div>
+      </section>
+
+      <!-- Werker sehen im Terminal nur Arbeitsgänge, die ihnen hier zugeordnet wurden -->
+      <section class="karte">
+        <h2>Werker zuordnen</h2>
+        <p class="leise klein">Zugeordnete Arbeitsgänge erscheinen im persönlichen Werker-Terminal, sobald der Auftrag freigegeben ist.</p>
+        <p><strong>AG 10 Sägen:</strong> Mehmet Yilmaz</p>
+        <p><strong>AG 20 Drehen:</strong> Jonas Wolff</p>
+        <p><strong>AG 30 Fräsen:</strong> Mehmet Yilmaz
+          <button type="button" class="btn btn-klein btn-sekundaer" data-recht="auftrag.zuordnen">Entfernen</button></p>
+        <p><strong>AG 40 Prüfen:</strong> <span class="leise">Noch niemand zugeordnet</span></p>
+        <form action="auftrag-detail.html" method="post" class="knopfleiste" data-recht="auftrag.zuordnen">
+          <label for="zuordnung-ag" class="leise" style="margin: 0; align-self: center;">Arbeitsgang</label>
+          <select id="zuordnung-ag" name="arbeitsgang" style="width: auto;" required>
+            <option value="">Bitte wählen</option>
+            <option>AG 20 Drehen</option>
+            <option>AG 30 Fräsen</option>
+            <option>AG 40 Prüfen</option>
+          </select>
+          <label for="zuordnung-werker" class="leise" style="margin: 0; align-self: center;">Werker</label>
+          <select id="zuordnung-werker" name="werker" style="width: auto;" required>
+            <option value="">Bitte wählen</option>
+            <option>Jonas Wolff</option>
+            <option>Mehmet Yilmaz</option>
+            <option>Paul Schneider</option>
+          </select>
+          <button type="submit" class="btn btn-primaer">Zuordnen</button>
+        </form>
+      </section>
+
+      <section class="karte">
+        <h2>Notizen aus der Werkstatt</h2>
+        <p style="margin: 0;"><strong>AG 20 · Jonas Wolff</strong> · 28.09.2026, 08:15<br>
+          Drehmeißel gewechselt, die Schneide war ausgebrochen. Deshalb hat das Rüsten länger gedauert.</p>
       </section>
 
       <section class="karte">

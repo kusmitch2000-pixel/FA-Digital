@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Messung – FA-Digital</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="prototyp.js" defer></script>
+</head>
+<body>
+
+  <header class="kopf">
+    <a class="logo" href="dashboard.html">FA-Digital</a>
+    <span class="untertitel">Digitaler Fertigungsauftrag</span>
+    <div class="benutzer">
+      Sven Petersen · Admin
+      <a href="index.html">Abmelden</a>
+    </div>
+  </header>
+
+  <div class="rahmen">
+    <nav class="menue">
+      <p class="menue-titel">Übersicht</p>
+      <a href="dashboard.html">Hallenansicht</a>
+      <a href="auftraege.html">Aufträge</a>
+
+      <p class="menue-titel">Arbeitsvorbereitung</p>
+      <a href="auftrag-anlegen.html">Auftrag anlegen</a>
+      <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="arbeitsplaetze.html">Arbeitsplätze</a>
+
+      <p class="menue-titel">Werkstatt</p>
+      <a href="werker.html" class="aktiv">Werker-Terminal</a>
+
+      <p class="menue-titel">Controlling</p>
+      <a href="nachkalkulation.html">Nachkalkulation</a>
+      <a href="auswertung.html">Auswertung</a>
+
+      <p class="menue-titel">Verwaltung</p>
+      <a href="benutzer.html">Benutzer</a>
+    </nav>
+
+    <main class="inhalt">
+      <p class="klein"><a href="werker.html">← Zurück zum Werker-Terminal</a></p>
+
+      <div class="seitenkopf">
+        <div>
+          <h1>Messung für das Werkszertifikat <span class="badge angelegt">Messen</span></h1>
+          <p class="leise">FA-1002 · AG 20 Drehen · F-310 Flansch DN80 · Werkszeugnis 2.2</p>
+        </div>
+      </div>
+
+      <!-- Nach „Arbeit beenden und messen“ steht der Arbeitsgang auf „Messen“, bis alle Prüfpunkte
+           gespeichert sind. Die Freigabe des Werkszertifikats ist ein eigener Schritt des Meisters. -->
+      <section class="karte">
+        <p>Erfassen und speichern Sie alle Prüfpunkte. Der Auftrag bleibt bis zum Abschluss der Messung offen. Abweichungen werden dokumentiert, die Freigabe des Werkszertifikats erfolgt anschließend durch die Meisterin.</p>
+        <form action="werker.html" method="post">
+          <div class="tabelle-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Prüfpunkt</th>
+                  <th>Soll / Toleranz</th>
+                  <th>Ist</th>
+                  <th>Bemerkung</th>
+                  <th>Ergebnis</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Außendurchmesser Ø200 ±0,1</td>
+                  <td>199,900 bis 200,100 mm</td>
+                  <td><input type="text" inputmode="decimal" name="istwert" placeholder="Messwert" aria-label="Messwert Außendurchmesser" style="width: 7rem;"></td>
+                  <td><input type="text" name="bemerkung" maxlength="255" placeholder="optional" aria-label="Bemerkung Außendurchmesser"></td>
+                  <td><span class="badge offen">offen</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="knopfleiste" style="margin-top: 1rem;">
+            <button type="submit" name="aktion" value="speichern" class="btn btn-primaer">Messwert speichern</button>
+            <button type="submit" name="aktion" value="abschliessen" class="btn btn-erfolg btn-gross">Messung abschließen</button>
+          </div>
+        </form>
+        <p class="leise klein" style="margin: 0.75rem 0 0;">Liegt ein Wert außerhalb der Toleranz, wird er als „n. i. O.“ gespeichert. Die Messung kann trotzdem abgeschlossen werden, das Zertifikat ist dann aber nicht freigabefähig.</p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="fuss">
+    Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
+  </footer>
+
+</body>
+</html>

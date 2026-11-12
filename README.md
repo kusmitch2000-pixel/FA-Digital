@@ -47,9 +47,9 @@ Anschließend <http://localhost:8000> öffnen. Der Seeder lädt optionale Entwic
 
 | Rolle | Test-Benutzer | Startseite | Menü |
 |---|---|---|---|
-| Werker | Jonas Wolff | Werker-Terminal | Werker-Terminal, Aufträge |
-| Meister | Lena Hoffmann | Hallenansicht | Hallenansicht, Aufträge, Werker-Terminal, Nachkalkulation, Auswertung. Im Auftragsdetail Buchungen nachtragen |
-| Arbeitsvorbereitung | Anna Becker | Aufträge | Hallenansicht, Aufträge, Auftrag anlegen, Artikel & Arbeitspläne, Arbeitsplätze |
+| Werker | Jonas Wolff | Werker-Terminal | nur Werker-Terminal mit den zugeordneten Arbeitsgängen, Notizen und Messseite |
+| Meister | Lena Hoffmann | Hallenansicht | Hallenansicht, Aufträge, Werker-Terminal, Nachkalkulation, Auswertung. Im Auftragsdetail Werker zuordnen und Buchungen nachtragen |
+| Arbeitsvorbereitung | Anna Becker | Aufträge | Hallenansicht, Aufträge, Auftrag anlegen, Artikel & Arbeitspläne, Arbeitsplätze. Im Auftragsdetail Werker zuordnen |
 | Controlling | Tobias Krüger | Nachkalkulation | Hallenansicht, Aufträge, Nachkalkulation (abschließen), Auswertung, Arbeitsplätze |
 | Admin | Sven Petersen | Hallenansicht | alles |
 
@@ -66,14 +66,15 @@ Der statische Prototyp und die Laravel-App können sich bei Rollen und Funktione
 | `auftraege.html` | Auftragsübersicht | 13 |
 | `auftrag-anlegen.html` | Neuer Fertigungsauftrag | 4, 5 |
 | `auftrag-detail.html` | Auftragsdetail FA-1002 | 5, 11, 14 |
-| `werker.html` | Werker-Terminal mit Unterbrechungsgrund | 6, 7, 8, 10 |
+| `werker.html` | Werker-Terminal mit Unterbrechungsgrund und Notizen | 6, 7, 8, 10 |
+| `messung.html` | Messung für das Werkszertifikat nach „Arbeit beenden und messen“ | 9, 15 |
 | `nachkalkulation.html` | Nachkalkulation FA-1001 | 16 |
 | `auswertung.html` | Auswertung, Unterbrechungen nach Grund, CSV-Export | 17 |
 | `artikel.html` | Artikel, Arbeitspläne, Soll-Zeit-Vorschläge | 1, 2 |
 | `arbeitsplaetze.html` | Arbeitsplätze und Stundensätze | 3 |
 | `benutzer.html` | Benutzerverwaltung | 18 |
 
-Die Nummern beziehen sich auf die 18 Anwendungsfälle im Fachkonzept (`doku/Fachkonzept_FA-Digital.pdf`). Anwendungsfall 9 (Checkliste im Arbeitsgang) und 15 (Werkszertifikat) sind im Prototyp noch nicht umgesetzt.
+Die Nummern beziehen sich auf die 18 Anwendungsfälle im Fachkonzept (`doku/Fachkonzept_FA-Digital.pdf`). Anwendungsfall 9 (Checkliste) und 15 (Werkszertifikat) zeigt der Prototyp mit der Messseite, die Freigabe des Zertifikats noch nicht.
 
 ## Technik
 

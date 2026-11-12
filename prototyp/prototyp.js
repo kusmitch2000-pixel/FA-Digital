@@ -4,6 +4,8 @@
 //    an (Fehler 405). Das Skript fängt das Absenden ab und öffnet die Zielseite aus "action".
 // 2. Rollen: Die Anmeldung merkt sich den Test-Benutzer im Browser. Jede Seite zeigt oben Name
 //    und Rolle, blendet fremde Menüpunkte und Aktionen aus und sperrt Seiten der anderen Rollen.
+//    data-recht="…" zeigt ein Element nur mit diesem Recht, data-rolle="…" nur dieser Rolle,
+//    data-nicht-rolle="…" allen anderen Rollen.
 //    Das ist nur Darstellung, kein Schutz. Die echte Prüfung macht die Laravel-App.
 
 // Test-Benutzer wie in datenbank/02_testdaten.sql. Das Passwort prüft der Prototyp nicht.
@@ -30,8 +32,9 @@ const ROLLEN = {
 const RECHTE = {
   "terminal": ["werker", "meister", "admin"],
   "halle": ["meister", "arbeitsvorbereitung", "controlling", "admin"],
-  "auftraege": ["werker", "meister", "arbeitsvorbereitung", "controlling", "admin"],
+  "auftraege": ["meister", "arbeitsvorbereitung", "controlling", "admin"],
   "auftrag.anlegen": ["arbeitsvorbereitung", "admin"],
+  "auftrag.zuordnen": ["meister", "arbeitsvorbereitung", "admin"],
   "auftrag.freigeben": ["arbeitsvorbereitung", "admin"],
   "buchung.korrigieren": ["meister", "admin"],
   "nachkalkulation": ["meister", "controlling", "admin"],
@@ -45,6 +48,7 @@ const RECHTE = {
 // Welches Recht eine Seite braucht
 const SEITEN = {
   "werker.html": "terminal",
+  "messung.html": "terminal",
   "dashboard.html": "halle",
   "auftraege.html": "auftraege",
   "auftrag-detail.html": "auftraege",
@@ -200,6 +204,18 @@ function seiteEinrichten() {
   // Aktionen, die ein eigenes Recht brauchen, z. B. data-recht="buchung.korrigieren"
   inhalt.querySelectorAll("[data-recht]").forEach(function (element) {
     if (!darf(rolle, element.dataset.recht)) {
+      element.remove();
+    }
+  });
+
+  // Inhalte nur für bestimmte Rollen, z. B. data-rolle="werker" oder data-nicht-rolle="werker"
+  inhalt.querySelectorAll("[data-rolle]").forEach(function (element) {
+    if (!element.dataset.rolle.split(" ").includes(rolle)) {
+      element.remove();
+    }
+  });
+  inhalt.querySelectorAll("[data-nicht-rolle]").forEach(function (element) {
+    if (element.dataset.nichtRolle.split(" ").includes(rolle)) {
       element.remove();
     }
   });
