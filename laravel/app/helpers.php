@@ -69,6 +69,7 @@ if (! function_exists('status_klasse')) {
     {
         return [
             'in_arbeit' => 'in-arbeit',
+            'messen' => 'angelegt',
             'in_ordnung' => 'erledigt',
             'nicht_in_ordnung' => 'verzug',
             'gefordert' => 'offen',
@@ -85,6 +86,7 @@ if (! function_exists('status_text')) {
     {
         return [
             'in_arbeit' => 'in Arbeit',
+            'messen' => 'Messen',
             'laeuft' => 'läuft',
             'in_ordnung' => 'i. O.',
             'nicht_in_ordnung' => 'n. i. O.',

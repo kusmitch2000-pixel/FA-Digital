@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Actions\Fertigung\AuftragAnlegen;
+use App\Livewire\AuftragDetail;
+use App\Livewire\Messung;
 use App\Livewire\Terminal;
 use App\Models\Arbeitsplatz;
 use App\Models\Artikel;
@@ -58,6 +60,9 @@ class TerminalTest extends TestCase
         $auftrag = $this->auftragAnFreienPlaetzen();
         [$messen, $montieren] = $auftrag->arbeitsgaenge;
         $werker = $this->freierWerker();
+        foreach ($auftrag->arbeitsgaenge as $ag) {
+            DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $ag->id, 'benutzer_id' => $werker->id]);
+        }
         $this->actingAs($werker);
         $this->travelTo(now()->startOfMinute());
 
@@ -121,7 +126,11 @@ class TerminalTest extends TestCase
         $auftrag = $this->auftragAnFreienPlaetzen();
         [$messen, $montieren] = $auftrag->arbeitsgaenge;
 
-        $this->actingAs($this->freierWerker('1098'));
+        $werker = $this->freierWerker('1098');
+        foreach ($auftrag->arbeitsgaenge as $ag) {
+            DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $ag->id, 'benutzer_id' => $werker->id]);
+        }
+        $this->actingAs($werker);
         Livewire::test(Terminal::class)->call('starten', $montieren->id, 'ruesten')
             ->assertHasErrors(['aktion' => 'Der vorherige Arbeitsgang ist noch nicht fertig gemeldet.']);
 
@@ -129,10 +138,13 @@ class TerminalTest extends TestCase
 
         // Ein Werker hat immer nur einen Arbeitsgang
         $zweiter = $this->zweiterAuftrag();
+        DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $zweiter->arbeitsgaenge[0]->id, 'benutzer_id' => $werker->id]);
         Livewire::test(Terminal::class)->call('starten', $zweiter->arbeitsgaenge[0]->id, 'ruesten')->assertHasErrors('aktion');
 
         // Ein Arbeitsplatz hat immer nur einen laufenden Arbeitsgang
-        $this->actingAs($this->freierWerker('1097'));
+        $zweiterWerker = $this->freierWerker('1097');
+        DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $zweiter->arbeitsgaenge[0]->id, 'benutzer_id' => $zweiterWerker->id]);
+        $this->actingAs($zweiterWerker);
         Livewire::test(Terminal::class)->call('starten', $zweiter->arbeitsgaenge[0]->id, 'ruesten')
             ->assertHasErrors(['aktion' => 'An diesem Arbeitsplatz läuft schon ein anderer Arbeitsgang.']);
     }
@@ -141,7 +153,9 @@ class TerminalTest extends TestCase
     {
         $auftrag = $this->auftragAnFreienPlaetzen(5);
         $messen = $auftrag->arbeitsgaenge[0];
-        $this->actingAs($this->freierWerker());
+        $werker = $this->freierWerker();
+        DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $messen->id, 'benutzer_id' => $werker->id]);
+        $this->actingAs($werker);
 
         $terminal = Livewire::test(Terminal::class)->call('starten', $messen->id, 'bearbeiten');
 
@@ -158,6 +172,107 @@ class TerminalTest extends TestCase
         // n. i. O. blockiert die Fertigmeldung nicht, aber später die Freigabe des Werkszertifikats
         $terminal->set('gutmenge', 4)->set('ausschuss', 1)->call('fertigMelden')->assertHasNoErrors();
         $this->assertSame('erledigt', $messen->fresh()->status);
+    }
+
+    public function test_zuordnung_schuetzt_arbeitsgang_und_notizen_sind_sichtbar(): void
+    {
+        $auftrag = $this->auftragAnFreienPlaetzen();
+        $ag = $auftrag->arbeitsgaenge[0];
+        $werker = $this->freierWerker();
+        $anderer = $this->freierWerker('1096');
+        $this->actingAs($this->benutzer('1000'));
+        Livewire::test(AuftragDetail::class, ['auftrag' => $auftrag])
+            ->set('zuordnungArbeitsgang', $ag->id)->set('zuordnungWerker', $werker->id)
+            ->call('zuordnen')->assertHasNoErrors();
+        $this->actingAs($anderer);
+        Livewire::test(Terminal::class)->assertDontSee('T-100 Testteil')
+            ->call('starten', $ag->id, 'bearbeiten')->assertHasErrors('aktion');
+        $this->actingAs($werker);
+        $terminal = Livewire::test(Terminal::class)->assertSee('T-100 Testteil')
+            ->call('starten', $ag->id, 'bearbeiten')->assertHasNoErrors()
+            ->set('notiz', 'Material beschädigt')->call('notizSpeichern')->assertHasNoErrors();
+        $terminal->set('grund', Unterbrechungsgrund::where('bezeichnung', 'Material fehlt')->value('id'))
+            ->set('unterbrechungBemerkung', 'Warte auf Lieferung')->call('unterbrechen')->assertHasNoErrors();
+        $this->assertDatabaseHas('arbeitsgang_notiz', ['arbeitsgang_id' => $ag->id, 'benutzer_id' => $werker->id, 'text' => 'Material beschädigt']);
+        $this->assertDatabaseHas('unterbrechung', ['arbeitsgang_id' => $ag->id, 'bemerkung' => 'Warte auf Lieferung']);
+        $this->get('/auftraege')->assertForbidden();
+        $this->actingAs($this->benutzer('1000'));
+        Livewire::test(AuftragDetail::class, ['auftrag' => $auftrag])->assertSee('Material beschädigt')
+            ->call('zuordnungEntfernen', $ag->id, $werker->id)->assertHasErrors('aktion');
+    }
+
+    public function test_zertifikatsauftrag_bleibt_bis_zur_vollstaendigen_messung_offen(): void
+    {
+        $auftrag = $this->auftragAnFreienPlaetzen();
+        $auftrag->zertifikate()->create(['zertifikatsart_id' => DB::table('zertifikatsart')->where('kuerzel', '2.2')->value('id')]);
+        [$messen, $montieren] = $auftrag->arbeitsgaenge;
+        $werker = $this->freierWerker();
+        foreach ($auftrag->arbeitsgaenge as $ag) {
+            DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $ag->id, 'benutzer_id' => $werker->id]);
+        }
+        $this->actingAs($werker);
+        $terminal = Livewire::test(Terminal::class)->call('starten', $messen->id, 'bearbeiten')
+            ->set('gutmenge', 10)->set('ausschuss', 0)->call('fertigMelden')->assertHasNoErrors()
+            ->assertRedirect(route('terminal.messung', $messen->id));
+        $this->assertSame('messen', $messen->fresh()->status);
+        $this->assertNull($auftrag->fresh()->abgeschlossen_am);
+        $this->assertSame('wartet', DB::table('v_arbeitsvorrat')->where('arbeitsgang_id', $montieren->id)->value('bereitschaft'));
+        Livewire::test(Terminal::class)->assertSee('Offene Messungen')->assertSee('Messen');
+        [$laenge, $kanten] = $messen->pruefpunkte;
+        $messung = Livewire::test(Messung::class, ['arbeitsgang' => $messen->id]);
+        $messung->call('abschliessen')->assertHasErrors('aktion');
+        $messung->set("istwert.{$laenge->id}", 'ungültig')->call('speichern', $laenge->id)->assertHasErrors("istwert.{$laenge->id}");
+        $messung->set("istwert.{$laenge->id}", '30,00')->call('speichern', $laenge->id)->assertHasNoErrors();
+        $messung->call('abschliessen')->assertHasErrors('aktion');
+        $anderer = $this->freierWerker('1096');
+        $this->actingAs($anderer);
+        $this->get(route('terminal.messung', $messen->id))->assertForbidden();
+        $this->actingAs($werker);
+        Livewire::test(Messung::class, ['arbeitsgang' => $messen->id])
+            ->assertSee('30,000')->call('speichern', $kanten->id, 'in_ordnung')->assertHasNoErrors()
+            ->call('abschliessen')->assertHasNoErrors()->assertRedirect(route('terminal'));
+        $this->assertSame('erledigt', $messen->fresh()->status);
+        $this->assertSame('bereit', DB::table('v_arbeitsvorrat')->where('arbeitsgang_id', $montieren->id)->value('bereitschaft'));
+        Livewire::test(Terminal::class)->call('starten', $montieren->id, 'bearbeiten')
+            ->set('gutmenge', 10)->call('fertigMelden')->assertHasNoErrors();
+        // Ein weiterer Arbeitsgang ohne Prüfpunkte ist fertig, wenn die übrigen Messungen vorliegen.
+        $this->assertSame('fertig', $auftrag->fresh()->status);
+        $this->assertSame(1, (int) DB::table('v_zertifikat_status')->where('auftragsnummer', $auftrag->auftragsnummer)->value('bereit_zur_freigabe'));
+        $this->assertSame($werker->id, $laenge->fresh()->geprueft_von);
+        $this->assertNotNull($laenge->fresh()->geprueft_am);
+    }
+
+    public function test_zertifikatsauftrag_ohne_pruefpunkte_bleibt_offen(): void
+    {
+        $auftrag = $this->zweiterAuftrag();
+        $auftrag->zertifikate()->create(['zertifikatsart_id' => DB::table('zertifikatsart')->where('kuerzel', '2.2')->value('id')]);
+        $ag = $auftrag->arbeitsgaenge[0];
+        $werker = $this->freierWerker();
+        DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $ag->id, 'benutzer_id' => $werker->id]);
+        $this->actingAs($werker);
+        Livewire::test(Terminal::class)->call('starten', $ag->id, 'bearbeiten')->set('gutmenge', 3)->call('fertigMelden')->assertHasNoErrors();
+        $this->assertSame('messen', $auftrag->fresh()->status);
+        Livewire::test(Messung::class, ['arbeitsgang' => $ag->id])->call('abschliessen')->assertHasErrors('aktion');
+        $this->assertSame('messen', $auftrag->fresh()->status);
+    }
+
+    public function test_zertifikatsauftrag_wird_nach_letzter_messung_fertig_aber_nicht_automatisch_freigegeben(): void
+    {
+        $auftrag = $this->zweiterAuftrag();
+        $auftrag->zertifikate()->create(['zertifikatsart_id' => DB::table('zertifikatsart')->where('kuerzel', '2.2')->value('id')]);
+        $ag = $auftrag->arbeitsgaenge[0];
+        $punkt = $ag->pruefpunkte()->create(['reihenfolge' => 1, 'bezeichnung' => 'Oberfläche', 'art' => 'sichtpruefung', 'ergebnis' => 'offen']);
+        $werker = $this->freierWerker();
+        DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $ag->id, 'benutzer_id' => $werker->id]);
+        $this->actingAs($werker);
+        Livewire::test(Terminal::class)->call('starten', $ag->id, 'bearbeiten')->set('gutmenge', 3)->call('fertigMelden')->assertHasNoErrors();
+        $this->assertSame('messen', $auftrag->fresh()->status);
+        $this->assertSame(0, (int) DB::table('v_zertifikat_status')->where('auftragsnummer', $auftrag->auftragsnummer)->value('bereit_zur_freigabe'));
+        Livewire::test(Messung::class, ['arbeitsgang' => $ag->id])
+            ->call('speichern', $punkt->id, 'nicht_in_ordnung')->call('abschliessen')->assertHasNoErrors();
+        $this->assertSame('fertig', $auftrag->fresh()->status);
+        $this->assertSame('gefordert', $auftrag->zertifikate()->first()->status);
+        $this->assertSame(0, (int) DB::table('v_zertifikat_status')->where('auftragsnummer', $auftrag->auftragsnummer)->value('bereit_zur_freigabe'));
     }
 
     private function zweiterAuftrag(): Fertigungsauftrag

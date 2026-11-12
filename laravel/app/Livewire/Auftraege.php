@@ -32,7 +32,7 @@ class Auftraege extends Component
                 ->orWhere('artikel', 'like', $suche)
                 ->orWhere('kunde', 'like', $suche)))
             ->when($this->status !== '', fn ($abfrage) => $abfrage->where('status', $this->status))
-            ->orderByRaw("FIELD(status, 'in_arbeit', 'freigegeben', 'angelegt', 'fertig', 'storniert')")
+            ->orderByRaw("FIELD(status, 'messen', 'in_arbeit', 'freigegeben', 'angelegt', 'fertig', 'storniert')")
             ->orderBy('liefertermin')
             ->get();
 

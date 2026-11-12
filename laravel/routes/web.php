@@ -10,6 +10,7 @@ use App\Livewire\AuftragDetail;
 use App\Livewire\Auswertung;
 use App\Livewire\Benutzerverwaltung;
 use App\Livewire\Hallenansicht;
+use App\Livewire\Messung;
 use App\Livewire\Nachkalkulation;
 use App\Livewire\Terminal;
 use App\Livewire\Werkszertifikate;
@@ -22,6 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/', fn () => redirect(auth()->user()->startseite()))->name('home');
 
     // Werkstatt
+    Route::livewire('werker/messung/{arbeitsgang}', Messung::class)->middleware('recht:terminal')->name('terminal.messung');
     Route::livewire('werker', Terminal::class)->middleware('recht:terminal')->name('terminal');
     Route::livewire('halle', Hallenansicht::class)->middleware('recht:halle')->name('halle');
 
