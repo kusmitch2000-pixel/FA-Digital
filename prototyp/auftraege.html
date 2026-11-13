@@ -76,6 +76,8 @@
         </div>
       </form>
 
+      <div class="hinweis" id="auftraege-meldung" hidden></div>
+
       <section class="karte">
         <div class="tabelle-scroll">
           <table>
@@ -92,7 +94,7 @@
                 <th></th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="auftrags-liste">
               <tr>
                 <td><a href="auftrag-detail.html"><strong>FA-1000</strong></a></td>
                 <td>V-420 Späneschutzwanne</td>
@@ -206,6 +208,7 @@
           </table>
         </div>
         <p class="leise klein" style="margin: 0.75rem 0 0;">
+          Löschen geht nur, solange noch kein Arbeitsgang gestartet wurde. Danach lässt sich ein Auftrag nur noch stornieren, damit die gebuchten Zeiten erhalten bleiben.
           Prototyp: Alle „Details“-Links führen zu FA-1002. Im fertigen System lassen sich die Spalten per Klick sortieren.
         </p>
       </section>

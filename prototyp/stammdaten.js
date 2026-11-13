@@ -124,10 +124,27 @@ const ZERTIFIKATE_BEISPIEL = [
   },
 ];
 
+// Die Aufträge der Beispieldaten (Tabelle auf auftraege.html): Artikel und geforderte Zertifikate.
+// loeschbar = noch kein Arbeitsgang gestartet (angelegt, freigegeben oder storniert).
+const BEISPIEL_AUFTRAEGE = [
+  { nummer: "FA-0997", artikel: "F-310", zertifikate: [], loeschbar: true },
+  { nummer: "FA-0998", artikel: "V-410", zertifikate: ["LP"] },
+  { nummer: "FA-0999", artikel: "F-310", zertifikate: ["2.1"] },
+  { nummer: "FA-1000", artikel: "V-420", zertifikate: ["DP"] },
+  { nummer: "FA-1001", artikel: "V-410", zertifikate: ["LP"] },
+  { nummer: "FA-1002", artikel: "F-310", zertifikate: ["2.2"] },
+  { nummer: "FA-1003", artikel: "V-430", zertifikate: [] },
+  { nummer: "FA-1004", artikel: "F-310", zertifikate: ["3.1"] },
+  { nummer: "FA-1005", artikel: "V-420", zertifikate: [], loeschbar: true },
+  { nummer: "FA-1006", artikel: "W-200", zertifikate: ["2.2"], loeschbar: true },
+];
+
 // Version im Namen: ältere Stände mit anderen Arbeitsplatznummern werden nicht mehr gelesen
 const SPEICHER_ARTIKEL = "fa-digital-artikel-v2";
 const SPEICHER_ZERTIFIKATE = "fa-digital-zertifikate-v1";
 const SPEICHER_AUFTRAEGE = "fa-digital-auftraege-v2";
+const SPEICHER_GELOESCHT = "fa-digital-auftraege-geloescht-v1";
+const SPEICHER_NUMMER = "fa-digital-auftragsnummer-v1";
 
 // ---------- Speicher im Browser ----------
 
@@ -158,6 +175,52 @@ function alleArtikel() {
 
 function arbeitsplatz(nummer) {
   return ARBEITSPLAETZE.find(function (platz) { return platz.nummer === nummer; });
+}
+
+// Alle Aufträge, die es gerade gibt: Beispieldaten ohne die gelöschten, dazu die neu angelegten
+function vorhandeneAuftraege() {
+  const geloescht = lesen(SPEICHER_GELOESCHT, []);
+  const beispiele = BEISPIEL_AUFTRAEGE.filter(function (auftrag) { return !geloescht.includes(auftrag.nummer); });
+  const neue = lesen(SPEICHER_AUFTRAEGE, []).map(function (auftrag) {
+    return { nummer: auftrag.nummer, artikel: auftrag.artikelnummer || auftrag.artikel.split(" ")[0], zertifikate: auftrag.zertifikate || [] };
+  });
+  return beispiele.concat(neue);
+}
+
+// Was in einem Auftrag vorkommt, lässt sich nicht löschen (in der Datenbank verhindert das der Fremdschlüssel)
+function auftraegeMitArtikel(artikelnummer) {
+  return vorhandeneAuftraege().filter(function (auftrag) { return auftrag.artikel === artikelnummer; })
+    .map(function (auftrag) { return auftrag.nummer; });
+}
+
+function auftraegeMitZertifikat(kuerzel) {
+  return vorhandeneAuftraege().filter(function (auftrag) { return auftrag.zertifikate.includes(kuerzel); })
+    .map(function (auftrag) { return auftrag.nummer; });
+}
+
+// Löschen in zwei Schritten: Der erste Klick fragt nach, der zweite löscht
+function loeschenBestaetigt(knopf) {
+  if (knopf.dataset.sicher === "1") {
+    return true;
+  }
+  const beschriftung = knopf.textContent;
+  knopf.dataset.sicher = "1";
+  knopf.textContent = "Wirklich löschen?";
+  setTimeout(function () {
+    if (knopf.isConnected) {
+      delete knopf.dataset.sicher;
+      knopf.textContent = beschriftung;
+    }
+  }, 4000);
+  return false;
+}
+
+// Knopf zum Löschen. Mit Aufträgen ist er gesperrt und nennt den Grund
+function loeschKnopf(attribut, wert, auftraege, recht) {
+  const gesperrt = auftraege.length > 0;
+  return '<button type="button" class="btn btn-klein btn-gefahr" ' + attribut + '="' + text(wert) + '"'
+    + (recht ? ' data-recht-js="' + recht + '"' : "")
+    + (gesperrt ? ' disabled title="Wird verwendet in ' + text(auftraege.join(", ")) + '"' : "") + ">Löschen</button>";
 }
 
 // ---------- Zahlen und Rechnung wie in den Sichten ----------
@@ -234,6 +297,7 @@ function zertifikateSeite() {
   const artikelFeld = document.getElementById("zertifikat-artikel");
   const merkmalZeilen = document.getElementById("merkmal-zeilen");
   const meldung = document.getElementById("zertifikat-meldung");
+  const listenMeldung = document.getElementById("zertifikat-liste-meldung");
   const artikel = alleArtikel();
   let zertifikate = alleZertifikate();
   let bearbeitet = null;
@@ -252,7 +316,11 @@ function zertifikateSeite() {
         + '<td><span class="badge ' + (eigen ? "freigegeben" : "offen") + '">' + (eigen ? "eigenes" : text(zertifikat.herkunft)) + "</span></td>"
         + '<td class="klein">' + (zertifikat.artikel.length === 0 ? "alle Artikel" : zertifikat.artikel.map(function (n) { return text(artikelName(n)); }).join("<br>")) + "</td>"
         + '<td class="zahl">' + zertifikat.merkmale.length + "</td>"
-        + "<td>" + (eigen ? '<button type="button" class="btn btn-klein btn-sekundaer" data-recht-js="zertifikat.anlegen" data-bearbeiten="' + index + '">Bearbeiten</button>' : '<span class="leise klein">Norm</span>') + "</td>"
+        + "<td>" + (eigen
+          ? '<div class="knopfleiste" style="margin: 0; flex-wrap: nowrap;">'
+            + '<button type="button" class="btn btn-klein btn-sekundaer" data-recht-js="zertifikat.anlegen" data-bearbeiten="' + index + '">Bearbeiten</button>'
+            + loeschKnopf("data-zertifikat-loeschen", index, auftraegeMitZertifikat(zertifikat.kuerzel), "zertifikat.anlegen") + "</div>"
+          : '<span class="leise klein">Norm</span>') + "</td>"
         + "</tr>";
     }).join("");
     rechteAnwenden(liste);
@@ -345,6 +413,7 @@ function zertifikateSeite() {
     formular.beschreibung.value = zertifikat.beschreibung;
     artikelZeigen(zertifikat.artikel);
     merkmaleZeigen(zertifikat.merkmale);
+    listenMeldung.hidden = true;
     meldung.hidden = true;
     listeZeigen();
   }
@@ -354,6 +423,15 @@ function zertifikateSeite() {
     if (knopf) {
       bearbeiten(Number(knopf.dataset.bearbeiten));
       formular.scrollIntoView({ behavior: "smooth" });
+    }
+
+    const loeschen = ereignis.target.closest("[data-zertifikat-loeschen]");
+    if (loeschen && loeschenBestaetigt(loeschen)) {
+      const entfernt = zertifikate.splice(Number(loeschen.dataset.zertifikatLoeschen), 1)[0];
+      schreiben(SPEICHER_ZERTIFIKATE, zertifikate);
+      bearbeiten(null);
+      listenMeldung.hidden = false;
+      listenMeldung.textContent = "Zertifikat " + entfernt.kuerzel + " " + entfernt.bezeichnung + " wurde gelöscht.";
     }
   });
 
@@ -481,6 +559,7 @@ function artikelSeite() {
   const formular = document.getElementById("artikel-formular");
   const planZeilen = document.getElementById("plan-zeilen");
   const meldung = document.getElementById("artikel-meldung");
+  const listenMeldung = document.getElementById("artikel-liste-meldung");
   let artikel = alleArtikel();
   let bearbeitet = null;
 
@@ -500,9 +579,36 @@ function artikelSeite() {
         + '<td class="zahl">' + minuten(ruesten) + "</td>"
         + '<td class="zahl">' + minuten(stueck) + "</td>"
         + '<td><span class="badge ' + (eintrag.aktiv ? "aktiv" : "inaktiv") + '">' + (eintrag.aktiv ? "aktiv" : "inaktiv") + "</span></td>"
-        + '<td><button type="button" class="btn btn-klein btn-sekundaer" data-bearbeiten="' + index + '">Bearbeiten</button></td>'
+        + '<td><div class="knopfleiste" style="margin: 0; flex-wrap: nowrap;">'
+        + '<button type="button" class="btn btn-klein btn-sekundaer" data-bearbeiten="' + index + '">Bearbeiten</button>'
+        + loeschKnopf("data-artikel-loeschen", index, auftraegeMitArtikel(eintrag.nummer)) + "</div></td>"
         + "</tr>";
     }).join("");
+  }
+
+  // Artikel löschen. Eigene Zertifikate, die nur für diesen Artikel gelten, müssen vorher weg
+  function artikelLoeschen(index) {
+    const nummer = artikel[index].nummer;
+    const zertifikate = alleZertifikate();
+    const allein = zertifikate.find(function (z) { return z.artikel.length === 1 && z.artikel[0] === nummer; });
+    listenMeldung.hidden = false;
+    if (allein) {
+      listenMeldung.className = "hinweis fehler";
+      listenMeldung.textContent = nummer + " ist der einzige Artikel des Zertifikats " + allein.kuerzel
+        + ". Bitte zuerst unter „Zertifikate“ das Zertifikat löschen oder ändern.";
+      return;
+    }
+    zertifikate.forEach(function (z) {
+      z.artikel = z.artikel.filter(function (n) { return n !== nummer; });
+      z.merkmale = z.merkmale.filter(function (m) { return m.artikel !== nummer; });
+    });
+    schreiben(SPEICHER_ZERTIFIKATE, zertifikate);
+    const entfernt = artikel.splice(index, 1)[0];
+    schreiben(SPEICHER_ARTIKEL, artikel);
+    bearbeiten(artikel.length > 0 ? 0 : null);
+    listenMeldung.hidden = false;
+    listenMeldung.className = "hinweis";
+    listenMeldung.textContent = "Artikel " + entfernt.nummer + " " + entfernt.bezeichnung + " wurde gelöscht.";
   }
 
   function planZeigen(plan) {
@@ -550,6 +656,7 @@ function artikelSeite() {
     formular.aktiv.checked = eintrag.aktiv;
     planZeigen(eintrag.plan);
     meldung.hidden = true;
+    listenMeldung.hidden = true;
     listeZeigen();
   }
 
@@ -558,6 +665,11 @@ function artikelSeite() {
     if (knopf) {
       bearbeiten(Number(knopf.dataset.bearbeiten));
       formular.scrollIntoView({ behavior: "smooth" });
+    }
+
+    const loeschen = ereignis.target.closest("[data-artikel-loeschen]");
+    if (loeschen && loeschenBestaetigt(loeschen)) {
+      artikelLoeschen(Number(loeschen.dataset.artikelLoeschen));
     }
   });
 
@@ -721,10 +833,14 @@ function auftragAnlegenSeite() {
     const gewaehlt = artikel.find(function (eintrag) { return eintrag.nummer === auswahl.value; });
     const menge = Math.floor(Number(formular.menge.value));
     const auftraege = lesen(SPEICHER_AUFTRAEGE, []);
-    // Nächste Auftragsnummer nach FA-1006, der höchsten in den Beispieldaten
-    const nummer = "FA-" + (1007 + auftraege.length);
+    // Nächste Auftragsnummer nach FA-1006, der höchsten in den Beispieldaten.
+    // Die Nummer eines gelöschten Auftrags wird nicht neu vergeben.
+    const laufend = Math.max(1006, Number(lesen(SPEICHER_NUMMER, 1006))) + 1;
+    schreiben(SPEICHER_NUMMER, laufend);
+    const nummer = "FA-" + laufend;
     auftraege.unshift({
       nummer: nummer,
+      artikelnummer: gewaehlt.nummer,
       artikel: gewaehlt.nummer + " " + gewaehlt.bezeichnung,
       menge: menge,
       liefertermin: formular.liefertermin.value,
@@ -739,17 +855,26 @@ function auftragAnlegenSeite() {
   });
 }
 
-// ---------- auftraege.html: neu angelegte Aufträge oben anzeigen ----------
+// ---------- auftraege.html: neue Aufträge anzeigen, Aufträge löschen ----------
 
 function auftraegeSeite() {
-  const auftraege = lesen(SPEICHER_AUFTRAEGE, []);
-  const tabelle = document.querySelector("main table tbody");
-  if (!tabelle || auftraege.length === 0) {
-    return;
-  }
+  const tabelle = document.getElementById("auftrags-liste");
+  const meldung = document.getElementById("auftraege-meldung");
   const neu = new URLSearchParams(window.location.search).get("neu");
+  const geloescht = lesen(SPEICHER_GELOESCHT, []);
 
-  auftraege.slice().reverse().forEach(function (auftrag) {
+  // Beispielaufträge: gelöschte ausblenden, bei noch nicht gestarteten einen Löschen-Knopf ergänzen
+  Array.from(tabelle.querySelectorAll("tr")).forEach(function (zeile) {
+    const nummer = zeile.querySelector("strong").textContent.trim();
+    const beispiel = BEISPIEL_AUFTRAEGE.find(function (auftrag) { return auftrag.nummer === nummer; });
+    if (geloescht.includes(nummer)) {
+      zeile.remove();
+    } else if (beispiel && beispiel.loeschbar) {
+      zeile.lastElementChild.insertAdjacentHTML("beforeend", " " + loeschKnopf("data-auftrag-loeschen", nummer, [], "auftrag.anlegen"));
+    }
+  });
+
+  lesen(SPEICHER_AUFTRAEGE, []).slice().reverse().forEach(function (auftrag) {
     const zeile = document.createElement("tr");
     if (auftrag.nummer === neu) {
       zeile.className = "hervorgehoben";
@@ -764,19 +889,43 @@ function auftraegeSeite() {
       + '<td><span class="badge ' + auftrag.status + '">' + auftrag.status + "</span></td>"
       + '<td><div class="balken"><span style="width: 0%;"></span></div><span class="leise klein">0 von ' + auftrag.arbeitsgaenge + " AG</span></td>"
       + '<td class="zahl">' + minuten(auftrag.sollZeit) + "</td>"
-      + '<td class="zahl">–</td><td></td>';
+      + '<td class="zahl">–</td><td>' + loeschKnopf("data-auftrag-loeschen", auftrag.nummer, [], "auftrag.anlegen") + "</td>";
     tabelle.prepend(zeile);
   });
+  rechteAnwenden(tabelle);
 
-  const hinweis = document.createElement("div");
-  hinweis.className = "hinweis";
-  hinweis.innerHTML = (neu ? "<p><strong>Auftrag " + text(neu) + " wurde angelegt.</strong> Die Arbeitsgänge kommen aus dem Arbeitsplan des Artikels.</p>" : "")
-    + '<p class="klein">Im Prototyp angelegte Aufträge speichert nur dieser Browser. '
-    + '<a href="auftraege.html" id="auftraege-zuruecksetzen">Wieder entfernen</a></p>';
-  tabelle.closest("section").before(hinweis);
-  document.getElementById("auftraege-zuruecksetzen").addEventListener("click", function () {
-    schreiben(SPEICHER_AUFTRAEGE, null);
+  function meldungZeigen(satz) {
+    const geaendert = lesen(SPEICHER_AUFTRAEGE, []).length > 0 || lesen(SPEICHER_GELOESCHT, []).length > 0;
+    meldung.hidden = !satz && !geaendert;
+    meldung.innerHTML = (satz ? "<p><strong>" + text(satz) + "</strong></p>" : "")
+      + (geaendert ? '<p class="klein">Angelegte und gelöschte Aufträge speichert im Prototyp nur dieser Browser. '
+        + '<a href="auftraege.html" id="auftraege-zuruecksetzen">Beispieldaten wiederherstellen</a></p>' : "");
+    const zurueck = document.getElementById("auftraege-zuruecksetzen");
+    if (zurueck) {
+      zurueck.addEventListener("click", function () {
+        schreiben(SPEICHER_AUFTRAEGE, null);
+        schreiben(SPEICHER_GELOESCHT, null);
+        schreiben(SPEICHER_NUMMER, null);
+      });
+    }
+  }
+
+  tabelle.addEventListener("click", function (ereignis) {
+    const knopf = ereignis.target.closest("[data-auftrag-loeschen]");
+    if (!knopf || !loeschenBestaetigt(knopf)) {
+      return;
+    }
+    const nummer = knopf.dataset.auftragLoeschen;
+    if (BEISPIEL_AUFTRAEGE.some(function (auftrag) { return auftrag.nummer === nummer; })) {
+      schreiben(SPEICHER_GELOESCHT, lesen(SPEICHER_GELOESCHT, []).concat(nummer));
+    } else {
+      schreiben(SPEICHER_AUFTRAEGE, lesen(SPEICHER_AUFTRAEGE, []).filter(function (auftrag) { return auftrag.nummer !== nummer; }));
+    }
+    knopf.closest("tr").remove();
+    meldungZeigen("Auftrag " + nummer + " wurde gelöscht.");
   });
+
+  meldungZeigen(neu ? "Auftrag " + neu + " wurde angelegt. Die Arbeitsgänge kommen aus dem Arbeitsplan des Artikels." : "");
 }
 
 // ---------- Start ----------
@@ -787,6 +936,6 @@ if (document.getElementById("artikel-formular")) {
   zertifikateSeite();
 } else if (document.getElementById("auftrag-formular")) {
   auftragAnlegenSeite();
-} else if (document.querySelector("main table tbody")) {
+} else if (document.getElementById("auftrags-liste")) {
   auftraegeSeite();
 }

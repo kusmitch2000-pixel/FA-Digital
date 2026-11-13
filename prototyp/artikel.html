@@ -54,6 +54,7 @@
       <section class="karte">
         <h2>Artikel</h2>
         <p class="leise klein">Verkleidungsteile für Zerspanungsmaschinen und Zerspanteile. Der Ablauf zeigt die Stationen in ihrer Reihenfolge.</p>
+        <p id="artikel-liste-meldung" class="hinweis" hidden></p>
         <div class="tabelle-scroll">
           <table>
             <thead>
@@ -71,6 +72,9 @@
             <tbody id="artikel-liste"></tbody>
           </table>
         </div>
+        <p class="leise klein" style="margin: 0.75rem 0 0;">
+          Löschen geht nur, wenn kein Auftrag den Artikel verwendet. Sonst zeigt der gesperrte Knopf die Aufträge an. Solche Artikel lassen sich über „Bearbeiten“ auf inaktiv setzen, dann können sie nicht mehr beauftragt werden.
+        </p>
       </section>
 
       <!-- Arbeitsschritte zuordnen: Station und Arbeitsplatz wählen, Reihenfolge mit Pfeilen ändern -->
