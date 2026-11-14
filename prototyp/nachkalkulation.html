@@ -227,3 +227,105 @@
 
 </body>
 </html>
+document.addEventListener("DOMContentLoaded", () => {
+  const selectAuftrag = document.getElementById("auftrag");
+  // Nur ausführen, wenn wir auf der Nachkalkulations-Seite sind
+  if (!selectAuftrag) return;
+
+  // Dummy-Daten für die 3 Aufträge
+  const auftraege = {
+    "FA-1001": {
+      titel: "Nachkalkulation FA-1001",
+      status: "fertig",
+      statusKlasse: "fertig",
+      untertitel: "V-410 Seitenverkleidung Fräszentrum · 50 Stück bestellt · 48 Gut, 2 Ausschuss · abgeschlossen am 28.09.2026",
+      sollKosten: "755,00 €",
+      sollZeitText: "570 min geplant",
+      istKosten: "799,67 €",
+      istKostenAbw: '<span class="ampel gelb"></span><span class="ueber">+44,67 € (+5,9 %)</span>',
+      istZeit: "607 min",
+      istZeitAbw: '<span class="ueber">+37 min (+6,5 %)</span>',
+      stueckKosten: "16,66 €",
+      stueckKostenSub: 'Soll 15,10 € · <span class="ueber">+10,3 %</span>',
+      ergebnis: `
+        <p>Die Mehrkosten entstehen beim <strong>Lackieren</strong> und beim <strong>Kanten</strong>: Das Lackieren hat in der Bearbeitung 25 min länger gedauert als geplant (+12,5 %), beim Kanten hat das Rüsten 12 min länger gedauert (+60 %).</p>
+        <p>Durch 2 Ausschussteile verteilen sich die Kosten auf nur 48 Gutstücke. Deshalb steigen die Kosten pro Stück stärker als die Gesamtkosten.</p>
+        <p>Die Rüstzeit beim Kanten liegt auch im Schnitt aller V-410-Aufträge über Plan. Der Arbeitsplan schlägt deshalb 29 statt 20 min vor: <a href="artikel.html#abgleich">Vorschlag ansehen</a>.</p>
+        <p class="leise klein">AG 20 war einmal 12 min unterbrochen (Werkzeug fehlt). Diese Zeit steckt nicht in der Ist-Zeit, sie erscheint in der <a href="auswertung.html">Auswertung der Unterbrechungen</a>. Eine Buchung an AG 20 hat Lena Hoffmann nachgetragen (Stempeln vergessen).</p>
+      `
+    },
+    "FA-0999": {
+      titel: "Nachkalkulation FA-0999",
+      status: "nachkalkuliert",
+      statusKlasse: "fertig",
+      untertitel: "F-310 Lagerbock Aluminium · 100 Stück bestellt · 100 Gut, 0 Ausschuss · abgeschlossen am 21.09.2026",
+      sollKosten: "1.120,00 €",
+      sollZeitText: "720 min geplant",
+      istKosten: "1.085,00 €",
+      istKostenAbw: '<span class="ampel gruen"></span><span class="unter">-35,00 € (-3,1 %)</span>',
+      istZeit: "695 min",
+      istZeitAbw: '<span class="unter">-25 min (-3,5 %)</span>',
+      stueckKosten: "10,85 €",
+      stueckKostenSub: 'Soll 11,20 € · <span class="unter">-3,1 %</span>',
+      ergebnis: `
+        <p>Der Auftrag lief komplett <strong>im Plan</strong> und ohne Ausschuss durch. Auf dem Bearbeitungszentrum konnte durch optimierte Spannmittel 25 min Bearbeitungszeit eingespart werden.</p>
+        <p>Alle 100 bestellten Gutstücke wurden termingerecht eingelagert. Keine Nachkalkulations-Maßnahmen erforderlich.</p>
+      `
+    },
+    "FA-0998": {
+      titel: "Nachkalkulation FA-0998",
+      status: "nachkalkuliert",
+      statusKlasse: "verzug",
+      untertitel: "V-410 Seitenverkleidung Fräszentrum · 30 Stück bestellt · 26 Gut, 4 Ausschuss · abgeschlossen am 15.09.2026",
+      sollKosten: "490,00 €",
+      sollZeitText: "370 min geplant",
+      istKosten: "565,40 €",
+      istKostenAbw: '<span class="ampel rot"></span><span class="ueber">+75,40 € (+15,4 %)</span>',
+      istZeit: "428 min",
+      istZeitAbw: '<span class="ueber">+58 min (+15,7 %)</span>',
+      stueckKosten: "21,75 €",
+      stueckKostenSub: 'Soll 16,33 € · <span class="ueber">+33,2 %</span>',
+      ergebnis: `
+        <p>Deutliche Kostenüberschreitung durch <strong>4 Ausschussteile</strong> beim Kanten (Materialfehler/Rissbildung) sowie erhöhte Rüstzeit an der Abkantpresse.</p>
+        <p>Durch die geringe Losgröße von 30 Stück schlagen Rüstzeiten und Ausschuss überproportional auf die Stückkosten durch (+33,2 %).</p>
+      `
+    }
+  };
+
+  // Prüfen, ob in der URL ?auftrag=... steht
+  const params = new URLSearchParams(window.location.search);
+  const gewaehlterAuftrag = params.get("auftrag") || "FA-1001";
+
+  if (auftraege[gewaehlterAuftrag]) {
+    const daten = auftraege[gewaehlterAuftrag];
+
+    // Dropdown auf den aktuellen Auftrag setzen
+    selectAuftrag.value = gewaehlterAuftrag;
+
+    // Überschrift & Untertitel aktualisieren
+    document.querySelector(".seitenkopf h1").innerHTML = `${daten.titel} <span class="badge ${daten.statusKlasse}">${daten.status}</span>`;
+    document.querySelector(".seitenkopf .leise").textContent = daten.untertitel;
+
+    // Die 4 KPI-Kacheln aktualisieren
+    const kacheln = document.querySelectorAll(".kacheln .kachel");
+    if (kacheln.length === 4) {
+      kacheln[0].querySelectorAll("span")[1].textContent = daten.sollKosten;
+      kacheln[0].querySelectorAll("span")[2].textContent = daten.sollZeitText;
+
+      kacheln[1].querySelectorAll("span")[1].textContent = daten.istKosten;
+      kacheln[1].querySelectorAll("span")[2].innerHTML = daten.istKostenAbw;
+
+      kacheln[2].querySelectorAll("span")[1].textContent = daten.istZeit;
+      kacheln[2].querySelectorAll("span")[2].innerHTML = daten.istZeitAbw;
+
+      kacheln[3].querySelectorAll("span")[1].textContent = daten.stueckKosten;
+      kacheln[3].querySelectorAll("span")[2].innerHTML = daten.stueckKostenSub;
+    }
+
+    // Ergebnis-Text rechts unten aktualisieren
+    const karten = document.querySelectorAll(".spalten-gleich .karte");
+    if (karten[1]) {
+      karten[1].innerHTML = `<h2>Ergebnis</h2>${daten.ergebnis}`;
+    }
+  }
+});
