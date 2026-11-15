@@ -7,17 +7,22 @@
 // - artikel.html:          Artikel anlegen und jedem Artikel seine Arbeitsschritte zuordnen
 // - zertifikate.html:      eigene Zertifikate für bestimmte Artikel anlegen (Arbeitsvorbereitung)
 // - auftrag-anlegen.html:  Artikel, Menge, Liefertermin und Zertifikate wählen, Vorschau rechnet live
-// - auftraege.html:        zeigt die neu angelegten Aufträge oben in der Liste
+// - auftraege.html:        neue Aufträge oben, Suche und Status-Filter, aktueller Prozess je Auftrag
+// - arbeitsplaetze.html:   Arbeitsplätze anlegen und bearbeiten (Station, Stundensatz, aktiv)
 
-// Stationen, die ein Rohteil durchläuft, mit den Arbeitsplätzen dazu
-const ARBEITSPLAETZE = [
-  { nummer: "AP-10", bezeichnung: "Laserschneidanlage", station: "Auslasern", stundensatz: 110 },
-  { nummer: "AP-20", bezeichnung: "Abkantpresse", station: "Umformen", stundensatz: 75 },
-  { nummer: "AP-30", bezeichnung: "Schweißplatz", station: "Bearbeitung", stundensatz: 65 },
-  { nummer: "AP-40", bezeichnung: "CNC-Drehmaschine", station: "Zerspanung", ablauf: "Drehen", stundensatz: 85 },
-  { nummer: "AP-50", bezeichnung: "CNC-Fräsmaschine", station: "Zerspanung", ablauf: "Fräsen", stundensatz: 95 },
-  { nummer: "AP-60", bezeichnung: "Lackieranlage", station: "Lackierung", stundensatz: 70 },
-  { nummer: "AP-70", bezeichnung: "Versandplatz", station: "Versand", stundensatz: 40 },
+// Stationen in der Reihenfolge des Fertigungsflusses
+const STATIONSFOLGE = ["Auslasern", "Umformen", "Bearbeitung", "Zerspanung", "Lackierung", "Versand"];
+
+// Arbeitsplätze der Beispieldaten. ablauf = Kurzname in der Zerspanung (Drehen oder Fräsen)
+const ARBEITSPLAETZE_BEISPIEL = [
+  { nummer: "AP-10", bezeichnung: "Laserschneidanlage", station: "Auslasern", kostenstelle: "4100", stundensatz: 110, aktiv: true },
+  { nummer: "AP-20", bezeichnung: "Abkantpresse", station: "Umformen", kostenstelle: "4200", stundensatz: 75, aktiv: true },
+  { nummer: "AP-30", bezeichnung: "Schweißplatz", station: "Bearbeitung", kostenstelle: "4300", stundensatz: 65, aktiv: true },
+  { nummer: "AP-40", bezeichnung: "CNC-Drehmaschine", station: "Zerspanung", ablauf: "Drehen", kostenstelle: "4400", stundensatz: 85, aktiv: true },
+  { nummer: "AP-50", bezeichnung: "CNC-Fräsmaschine", station: "Zerspanung", ablauf: "Fräsen", kostenstelle: "4500", stundensatz: 95, aktiv: true },
+  { nummer: "AP-60", bezeichnung: "Lackieranlage", station: "Lackierung", kostenstelle: "4600", stundensatz: 70, aktiv: true },
+  { nummer: "AP-70", bezeichnung: "Versandplatz", station: "Versand", kostenstelle: "4700", stundensatz: 40, aktiv: true },
+  { nummer: "AP-90", bezeichnung: "Konventionelle Drehmaschine", station: "Zerspanung", ablauf: "Drehen", kostenstelle: "4410", stundensatz: 60, aktiv: false },
 ];
 
 // Vorschlag für einen neuen Arbeitsschritt je Station
@@ -145,6 +150,10 @@ const SPEICHER_ZERTIFIKATE = "fa-digital-zertifikate-v1";
 const SPEICHER_AUFTRAEGE = "fa-digital-auftraege-v2";
 const SPEICHER_GELOESCHT = "fa-digital-auftraege-geloescht-v1";
 const SPEICHER_NUMMER = "fa-digital-auftragsnummer-v1";
+const SPEICHER_ARBEITSPLAETZE = "fa-digital-arbeitsplaetze-v1";
+
+// Arbeitsplätze: Beispieldaten oder der im Browser gespeicherte Stand (arbeitsplaetze.html)
+const ARBEITSPLAETZE = lesen(SPEICHER_ARBEITSPLAETZE, null) || JSON.parse(JSON.stringify(ARBEITSPLAETZE_BEISPIEL));
 
 // ---------- Speicher im Browser ----------
 
@@ -177,12 +186,20 @@ function arbeitsplatz(nummer) {
   return ARBEITSPLAETZE.find(function (platz) { return platz.nummer === nummer; });
 }
 
-// Die Reihenfolge im Arbeitsplan folgt dem Fertigungsfluss, also der Reihenfolge der Arbeitsplätze:
+// Rang eines Arbeitsplatzes im Fertigungsfluss: erst nach Station, innerhalb der Station nach der Liste
+// (in der Zerspanung also erst Drehen, dann Fräsen)
+function rangImAblauf(nummer) {
+  const index = ARBEITSPLAETZE.findIndex(function (platz) { return platz.nummer === nummer; });
+  const station = index < 0 ? -1 : STATIONSFOLGE.indexOf(ARBEITSPLAETZE[index].station);
+  return (station < 0 ? STATIONSFOLGE.length : station) * 1000 + index;
+}
+
+// Die Reihenfolge im Arbeitsplan folgt dem Fertigungsfluss:
 // Auslasern → Umformen → Bearbeitung → Zerspanung (erst Drehen, dann Fräsen) → Lackierung → Versand.
 // Zwei Schritte am selben Arbeitsplatz behalten die Reihenfolge, in der sie hinzugefügt wurden.
 function nachAblaufSortiert(plan) {
   const rang = function (schritt) {
-    return ARBEITSPLAETZE.findIndex(function (platz) { return platz.nummer === schritt.arbeitsplatz; });
+    return rangImAblauf(schritt.arbeitsplatz);
   };
   return plan.map(function (schritt, index) { return { schritt: schritt, index: index }; })
     .sort(function (a, b) { return rang(a.schritt) - rang(b.schritt) || a.index - b.index; })
@@ -271,10 +288,13 @@ function text(wert) {
   return element.innerHTML;
 }
 
+// Auswahlliste der Arbeitsplätze, nach Station gruppiert. Inaktive nur, wenn sie schon gewählt sind
 function arbeitsplatzAuswahl(gewaehlt) {
   const gruppen = {};
-  ARBEITSPLAETZE.forEach(function (platz) {
-    (gruppen[platz.station] = gruppen[platz.station] || []).push(platz);
+  ARBEITSPLAETZE.slice().sort(function (a, b) { return rangImAblauf(a.nummer) - rangImAblauf(b.nummer); }).forEach(function (platz) {
+    if (platz.aktiv !== false || platz.nummer === gewaehlt) {
+      (gruppen[platz.station] = gruppen[platz.station] || []).push(platz);
+    }
   });
   return Object.keys(gruppen).map(function (station) {
     return '<optgroup label="' + text(station) + '">' + gruppen[station].map(function (platz) {
@@ -867,6 +887,18 @@ function auftragAnlegenSeite() {
 
 // ---------- auftraege.html: neue Aufträge anzeigen, Aufträge löschen ----------
 
+// Aktueller Prozess eines neu angelegten Auftrags: der erste Arbeitsgang seines Arbeitsplans
+function prozessZelle(auftrag) {
+  const artikel = alleArtikel().find(function (eintrag) { return eintrag.nummer === auftrag.artikelnummer; });
+  const erster = artikel ? nachAblaufSortiert(artikel.plan)[0] : null;
+  const platz = erster ? arbeitsplatz(erster.arbeitsplatz) : null;
+  const bereit = auftrag.status === "freigegeben";
+  return '<td class="prozess"><strong>' + text(platz ? platz.station : "–") + "</strong> "
+    + '<span class="badge ' + (bereit ? "erledigt" : "offen") + '">' + (bereit ? "bereit" : "noch nicht freigegeben") + "</span><br>"
+    + '<span class="klein">' + (erster ? "AG 10 " + text(erster.arbeitsgang) + (platz ? " · " + text(platz.bezeichnung) : "") : "") + "</span>"
+    + '<div class="balken"><span style="width: 0%;"></span></div><span class="leise klein">0 von ' + auftrag.arbeitsgaenge + " AG erledigt</span></td>";
+}
+
 function auftraegeSeite() {
   const tabelle = document.getElementById("auftrags-liste");
   const meldung = document.getElementById("auftraege-meldung");
@@ -898,7 +930,7 @@ function auftraegeSeite() {
       + '<td class="zahl">' + auftrag.menge + "</td>"
       + "<td>" + termin + "</td>"
       + '<td><span class="badge ' + auftrag.status + '">' + auftrag.status + "</span></td>"
-      + '<td><div class="balken"><span style="width: 0%;"></span></div><span class="leise klein">0 von ' + auftrag.arbeitsgaenge + " AG</span></td>"
+      + prozessZelle(auftrag)
       + '<td class="zahl">' + minuten(auftrag.sollZeit) + "</td>"
       + '<td class="zahl">–</td><td>' + loeschKnopf("data-auftrag-loeschen", auftrag.nummer, [], "auftrag.anlegen") + "</td>";
     tabelle.prepend(zeile);
@@ -942,14 +974,14 @@ function auftraegeSeite() {
   meldungZeigen(neu ? "Auftrag " + neu + " wurde angelegt. Die Arbeitsgänge kommen aus dem Arbeitsplan des Artikels." : "");
 }
 
-// Filter der Auftragsliste: Suche, Status, Art und Verzug wirken sofort auf die Zeilen
+// Filter der Auftragsliste: Suche links, rechts der Status als Knöpfe mit Anzahl.
+// Die Spalte „Aktueller Prozess“ zeigt dann, an welcher Station jedes Teil gerade ist.
 function auftragsFilter(tabelle) {
   const formular = document.getElementById("auftrag-filter");
   const ergebnis = document.getElementById("filter-ergebnis");
   const zuruecksetzen = document.getElementById("filter-zuruecksetzen");
-  const statusFeld = formular.status;
-  const arten = {};
-  alleArtikel().forEach(function (eintrag) { arten[eintrag.nummer] = eintrag.art; });
+  const knoepfe = Array.from(formular.querySelectorAll("[data-status]"));
+  const OFFEN = ["angelegt", "freigegeben", "in_arbeit", "messen"];
 
   // Groß-/Kleinschreibung, Leerzeichen und Bindestriche spielen bei der Suche keine Rolle: „fa1002“ findet FA-1002
   function normal(wert) {
@@ -962,54 +994,35 @@ function auftragsFilter(tabelle) {
       if (!zeile.dataset.status) {
         const badge = zeile.cells[5].querySelector(".badge");
         const klasse = badge ? Array.from(badge.classList).find(function (k) { return k !== "badge"; }) : "";
-        const artikelnummer = zeile.cells[1].textContent.trim().split(" ")[0];
         zeile.dataset.status = (klasse || "").replace("-", "_");
-        zeile.dataset.art = arten[artikelnummer] || (artikelnummer.startsWith("V-") ? "Verkleidungsteil" : "Zerspanteil");
-        zeile.dataset.verzug = zeile.querySelector(".badge.verzug") ? "1" : "";
         zeile.dataset.suchtext = normal(Array.from(zeile.cells).slice(0, 3).map(function (z) { return z.textContent; }).join(" "));
       }
       return zeile;
     });
   }
 
-  function passt(zeile, auswahl) {
-    const status = zeile.dataset.status;
-    if (auswahl.suche && !zeile.dataset.suchtext.includes(auswahl.suche)) {
-      return false;
-    }
-    if (auswahl.status === "offen" ? ["fertig", "storniert", "nachkalkuliert"].includes(status) : auswahl.status && status !== auswahl.status) {
-      return false;
-    }
-    if (auswahl.art && zeile.dataset.art !== auswahl.art) {
-      return false;
-    }
-    return !(auswahl.verzug && !zeile.dataset.verzug);
+  function passtStatus(zeile, status) {
+    return status === "" || (status === "offen" ? OFFEN.includes(zeile.dataset.status) : zeile.dataset.status === status);
   }
 
   function anwenden() {
-    const auswahl = {
-      suche: normal(formular.suche.value),
-      status: statusFeld.value,
-      art: formular.art.value,
-      verzug: formular.verzug.checked,
-    };
+    const suche = normal(formular.suche.value);
+    const status = formular.status.value;
     const alle = zeilen();
     let sichtbar = 0;
     alle.forEach(function (zeile) {
-      const zeigen = passt(zeile, auswahl);
+      const zeigen = passtStatus(zeile, status) && (!suche || zeile.dataset.suchtext.includes(suche));
       zeile.hidden = !zeigen;
       sichtbar += zeigen ? 1 : 0;
     });
 
-    // Anzahl je Status im Auswahlfeld, gezählt über alle Aufträge
-    Array.from(statusFeld.options).forEach(function (option) {
-      if (!option.dataset.text) {
-        option.dataset.text = option.textContent;
-      }
-      const anzahl = alle.filter(function (zeile) {
-        return passt(zeile, { status: option.value, suche: "", art: "", verzug: false });
-      }).length;
-      option.textContent = option.dataset.text + " (" + anzahl + ")";
+    // Knöpfe: gewählter Status hervorgehoben, Anzahl über alle Aufträge
+    knoepfe.forEach(function (knopf) {
+      const aktiv = knopf.dataset.status === status;
+      knopf.classList.toggle("btn-primaer", aktiv);
+      knopf.classList.toggle("btn-sekundaer", !aktiv);
+      knopf.setAttribute("aria-pressed", aktiv ? "true" : "false");
+      knopf.querySelector(".anzahl").textContent = alle.filter(function (zeile) { return passtStatus(zeile, knopf.dataset.status); }).length;
     });
 
     let leer = tabelle.querySelector("[data-leer]");
@@ -1022,7 +1035,7 @@ function auftragsFilter(tabelle) {
       leer.remove();
     }
 
-    const gefiltert = auswahl.suche || auswahl.status || auswahl.art || auswahl.verzug;
+    const gefiltert = suche || status;
     ergebnis.textContent = gefiltert ? sichtbar + " von " + alle.length + " Aufträgen" : "Alle " + alle.length + " Aufträge";
     zuruecksetzen.hidden = !gefiltert;
 
@@ -1031,9 +1044,7 @@ function auftragsFilter(tabelle) {
       const adresse = new URL(window.location.href);
       ["suche", "status", "art", "verzug"].forEach(function (name) { adresse.searchParams.delete(name); });
       if (formular.suche.value.trim()) { adresse.searchParams.set("suche", formular.suche.value.trim()); }
-      if (auswahl.status) { adresse.searchParams.set("status", auswahl.status); }
-      if (auswahl.art) { adresse.searchParams.set("art", auswahl.art); }
-      if (auswahl.verzug) { adresse.searchParams.set("verzug", "1"); }
+      if (status) { adresse.searchParams.set("status", status); }
       history.replaceState(null, "", adresse);
     } catch (fehler) {
       // auf file:// nicht möglich, der Filter wirkt trotzdem
@@ -1043,22 +1054,190 @@ function auftragsFilter(tabelle) {
   // Startwerte aus der Adresse
   const parameter = new URLSearchParams(window.location.search);
   formular.suche.value = parameter.get("suche") || "";
-  statusFeld.value = parameter.get("status") || "";
-  formular.art.value = parameter.get("art") || "";
-  formular.verzug.checked = parameter.get("verzug") === "1";
+  formular.status.value = knoepfe.some(function (k) { return k.dataset.status === parameter.get("status"); }) ? parameter.get("status") : "";
 
-  formular.addEventListener("input", anwenden);
-  formular.addEventListener("change", anwenden);
+  knoepfe.forEach(function (knopf) {
+    knopf.addEventListener("click", function () {
+      formular.status.value = knopf.dataset.status;
+      anwenden();
+    });
+  });
+  formular.suche.addEventListener("input", anwenden);
   formular.addEventListener("submit", function (ereignis) {
     ereignis.preventDefault();
     anwenden();
   });
-  formular.addEventListener("reset", function () {
-    setTimeout(anwenden, 0);
+  zuruecksetzen.addEventListener("click", function () {
+    formular.suche.value = "";
+    formular.status.value = "";
+    anwenden();
   });
 
   anwenden();
   return { anwenden: anwenden };
+}
+
+// ---------- arbeitsplaetze.html: Arbeitsplätze anlegen und bearbeiten ----------
+
+function arbeitsplaetzeSeite() {
+  const liste = document.getElementById("platz-liste");
+  const formular = document.getElementById("platz-formular");
+  const meldung = document.getElementById("platz-meldung");
+  let bearbeitet = null;
+
+  formular.station.innerHTML = STATIONSFOLGE.map(function (station) {
+    return '<option value="' + station + '">' + station + "</option>";
+  }).join("");
+
+  // Wo ein Arbeitsplatz im Arbeitsplan vorkommt
+  function verwendetIn(nummer) {
+    return alleArtikel().filter(function (artikel) {
+      return artikel.plan.some(function (schritt) { return schritt.arbeitsplatz === nummer; });
+    }).map(function (artikel) { return artikel.nummer; });
+  }
+
+  function listeZeigen() {
+    liste.innerHTML = ARBEITSPLAETZE.map(function (platz, index) { return { platz: platz, index: index }; })
+      .sort(function (a, b) { return rangImAblauf(a.platz.nummer) - rangImAblauf(b.platz.nummer); })
+      .map(function (eintrag) {
+        const platz = eintrag.platz;
+        const artikel = verwendetIn(platz.nummer);
+        return "<tr" + (eintrag.index === bearbeitet ? ' class="hervorgehoben"' : "") + ">"
+          + "<td>" + text(platz.nummer) + "</td>"
+          + "<td>" + text(platz.bezeichnung) + "</td>"
+          + "<td>" + text(platz.station) + (platz.ablauf ? " (" + text(platz.ablauf) + ")" : "") + "</td>"
+          + "<td>" + text(platz.kostenstelle || "–") + "</td>"
+          + '<td class="zahl">' + zahl(platz.stundensatz, 2) + " €/h</td>"
+          + '<td><span class="badge ' + (platz.aktiv !== false ? "aktiv" : "inaktiv") + '">' + (platz.aktiv !== false ? "aktiv" : "inaktiv") + "</span></td>"
+          + '<td class="klein">' + (artikel.length ? text(artikel.join(", ")) : '<span class="leise">–</span>') + "</td>"
+          + '<td><button type="button" class="btn btn-klein btn-sekundaer" data-bearbeiten="' + eintrag.index + '">Bearbeiten</button></td>'
+          + "</tr>";
+      }).join("");
+  }
+
+  function bearbeiten(index) {
+    bearbeitet = index;
+    const platz = index === null
+      ? { nummer: naechsteNummer(), bezeichnung: "", station: "Auslasern", ablauf: "", kostenstelle: "", stundensatz: 0, aktiv: true }
+      : ARBEITSPLAETZE[index];
+    document.getElementById("platz-titel").textContent = index === null ? "Neuer Arbeitsplatz" : "Arbeitsplatz bearbeiten: " + platz.nummer;
+    formular.nummer.value = platz.nummer;
+    formular.bezeichnung.value = platz.bezeichnung;
+    formular.station.value = platz.station;
+    formular.ablauf.value = platz.ablauf || "";
+    formular.kostenstelle.value = platz.kostenstelle || "";
+    formular.stundensatz.value = index === null ? "" : platz.stundensatz;
+    formular.aktiv.checked = platz.aktiv !== false;
+    formular.querySelector("[data-ablauf]").hidden = formular.station.value !== "Zerspanung";
+    listeZeigen();
+  }
+
+  // Vorschlag: die kleinste freie Nummer in Zehnerschritten, z. B. AP-80
+  function naechsteNummer() {
+    let nummer = 10;
+    while (ARBEITSPLAETZE.some(function (platz) { return platz.nummer === "AP-" + nummer; })) {
+      nummer += 10;
+    }
+    return "AP-" + nummer;
+  }
+
+  liste.addEventListener("click", function (ereignis) {
+    const knopf = ereignis.target.closest("[data-bearbeiten]");
+    if (knopf) {
+      meldung.hidden = true;
+      bearbeiten(Number(knopf.dataset.bearbeiten));
+      formular.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+
+  document.getElementById("neuer-platz").addEventListener("click", function () {
+    meldung.hidden = true;
+    bearbeiten(null);
+    formular.scrollIntoView({ behavior: "smooth" });
+    formular.bezeichnung.focus();
+  });
+
+  formular.station.addEventListener("change", function () {
+    formular.querySelector("[data-ablauf]").hidden = formular.station.value !== "Zerspanung";
+  });
+
+  formular.addEventListener("submit", function (ereignis) {
+    ereignis.preventDefault();
+    const nummer = formular.nummer.value.trim().toUpperCase();
+    const doppelt = ARBEITSPLAETZE.some(function (platz, index) { return platz.nummer === nummer && index !== bearbeitet; });
+    const satz = Number(formular.stundensatz.value);
+    meldung.hidden = false;
+    meldung.className = "hinweis fehler";
+    if (doppelt) {
+      meldung.textContent = "Die Nummer " + nummer + " gibt es schon.";
+      return;
+    }
+    if (!(satz > 0)) {
+      meldung.textContent = "Bitte einen Stundensatz größer als 0 € eintragen.";
+      return;
+    }
+    if (bearbeitet !== null && !formular.aktiv.checked && verwendetIn(ARBEITSPLAETZE[bearbeitet].nummer).length > 0) {
+      meldung.className = "hinweis warnung";
+    }
+    const vorher = bearbeitet === null ? null : ARBEITSPLAETZE[bearbeitet];
+    const platz = {
+      nummer: nummer,
+      bezeichnung: formular.bezeichnung.value.trim(),
+      station: formular.station.value,
+      ablauf: formular.station.value === "Zerspanung" ? formular.ablauf.value : "",
+      kostenstelle: formular.kostenstelle.value.trim(),
+      stundensatz: Math.round(satz * 100) / 100,
+      aktiv: formular.aktiv.checked,
+    };
+
+    // Neue Nummer: auch in den Arbeitsplänen umstellen, damit die Schritte ihren Arbeitsplatz behalten
+    if (vorher && vorher.nummer !== nummer) {
+      const artikel = alleArtikel();
+      artikel.forEach(function (eintrag) {
+        eintrag.plan.forEach(function (schritt) {
+          if (schritt.arbeitsplatz === vorher.nummer) {
+            schritt.arbeitsplatz = nummer;
+          }
+        });
+      });
+      schreiben(SPEICHER_ARTIKEL, artikel);
+    }
+
+    if (bearbeitet === null) {
+      ARBEITSPLAETZE.push(platz);
+      bearbeitet = ARBEITSPLAETZE.length - 1;
+    } else {
+      ARBEITSPLAETZE[bearbeitet] = platz;
+    }
+    schreiben(SPEICHER_ARBEITSPLAETZE, ARBEITSPLAETZE);
+    document.getElementById("platz-titel").textContent = "Arbeitsplatz bearbeiten: " + platz.nummer;
+
+    let satzText = "Gespeichert.";
+    if (vorher && vorher.stundensatz !== platz.stundensatz) {
+      satzText += " Der neue Stundensatz gilt nur für neue Aufträge, laufende Aufträge behalten ihren Satz.";
+    }
+    if (meldung.className.includes("warnung")) {
+      satzText += " " + platz.nummer + " ist jetzt inaktiv, steht aber noch in den Arbeitsplänen von "
+        + verwendetIn(platz.nummer).join(", ") + ". Für neue Arbeitsschritte wird er nicht mehr angeboten.";
+    } else {
+      meldung.className = "hinweis";
+      if (!vorher) {
+        satzText += " " + platz.nummer + " steht jetzt unter „Artikel & Arbeitspläne“ zur Auswahl.";
+      }
+    }
+    meldung.textContent = satzText;
+    listeZeigen();
+  });
+
+  document.getElementById("plaetze-zuruecksetzen").addEventListener("click", function () {
+    schreiben(SPEICHER_ARBEITSPLAETZE, null);
+    ARBEITSPLAETZE.splice(0, ARBEITSPLAETZE.length);
+    JSON.parse(JSON.stringify(ARBEITSPLAETZE_BEISPIEL)).forEach(function (platz) { ARBEITSPLAETZE.push(platz); });
+    meldung.hidden = true;
+    bearbeiten(null);
+  });
+
+  bearbeiten(null);
 }
 
 // ---------- Start ----------
@@ -1071,4 +1250,6 @@ if (document.getElementById("artikel-formular")) {
   auftragAnlegenSeite();
 } else if (document.getElementById("auftrags-liste")) {
   auftraegeSeite();
+} else if (document.getElementById("platz-liste")) {
+  arbeitsplaetzeSeite();
 }

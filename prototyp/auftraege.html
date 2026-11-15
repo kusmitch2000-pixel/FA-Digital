@@ -51,42 +51,33 @@
         <a class="btn btn-primaer" href="auftrag-anlegen.html">+ Neuer Auftrag</a>
       </div>
 
-      <!-- Filter: wirkt sofort beim Tippen und Auswählen (stammdaten.js). Die Auswahl steht
-           auch in der Adresse, z. B. auftraege.html?status=in_arbeit&verzug=1 -->
+      <!-- Filter: links die Suche nach einem bestimmten Teil, rechts der Status. Die Spalte
+           „Aktueller Prozess“ zeigt dann, an welcher Station jedes Teil gerade ist.
+           Die Auswahl steht auch in der Adresse, z. B. auftraege.html?status=in_arbeit -->
       <form class="karte" id="auftrag-filter" action="auftraege.html" method="get">
-        <div class="formular-raster">
+        <div class="filter-zeile">
           <div class="feld">
             <label for="suche">Suche</label>
             <input type="search" id="suche" name="suche" placeholder="Auftrag, Artikel oder Kunde" autocomplete="off">
           </div>
           <div class="feld">
-            <label for="status">Status</label>
-            <select id="status" name="status">
-              <option value="">alle</option>
-              <option value="offen">alle offenen (nicht fertig, nicht storniert)</option>
-              <option value="angelegt">angelegt</option>
-              <option value="freigegeben">freigegeben</option>
-              <option value="in_arbeit">in Arbeit</option>
-              <option value="messen">Messen</option>
-              <option value="fertig">fertig</option>
-              <option value="storniert">storniert</option>
-            </select>
-          </div>
-          <div class="feld">
-            <label for="art">Art</label>
-            <select id="art" name="art">
-              <option value="">alle</option>
-              <option value="Verkleidungsteil">Verkleidungsteile</option>
-              <option value="Zerspanteil">Zerspanteile</option>
-            </select>
-          </div>
-          <div class="feld feld-knopf">
-            <label class="auswahl"><input type="checkbox" id="verzug" name="verzug" value="1"> nur mit Verzug</label>
+            <span class="feld-titel">Status</span>
+            <input type="hidden" id="status" name="status">
+            <div class="knopfleiste status-knoepfe" role="group" aria-label="Status">
+              <button type="button" class="btn btn-klein btn-sekundaer" data-status="" aria-pressed="false">Alle <span class="anzahl"></span></button>
+              <button type="button" class="btn btn-klein btn-sekundaer" data-status="offen" aria-pressed="false">Offen <span class="anzahl"></span></button>
+              <button type="button" class="btn btn-klein btn-sekundaer" data-status="angelegt" aria-pressed="false">angelegt <span class="anzahl"></span></button>
+              <button type="button" class="btn btn-klein btn-sekundaer" data-status="freigegeben" aria-pressed="false">freigegeben <span class="anzahl"></span></button>
+              <button type="button" class="btn btn-klein btn-sekundaer" data-status="in_arbeit" aria-pressed="false">in Arbeit <span class="anzahl"></span></button>
+              <button type="button" class="btn btn-klein btn-sekundaer" data-status="messen" aria-pressed="false">Messen <span class="anzahl"></span></button>
+              <button type="button" class="btn btn-klein btn-sekundaer" data-status="fertig" aria-pressed="false">fertig <span class="anzahl"></span></button>
+              <button type="button" class="btn btn-klein btn-sekundaer" data-status="storniert" aria-pressed="false">storniert <span class="anzahl"></span></button>
+            </div>
           </div>
         </div>
-        <div class="knopfleiste" style="margin: 0.25rem 0 0; align-items: center;">
+        <div class="knopfleiste" style="margin: 0.5rem 0 0; align-items: center;">
           <span class="leise klein" id="filter-ergebnis" role="status"></span>
-          <button type="reset" class="btn btn-klein btn-sekundaer" id="filter-zuruecksetzen" hidden>Filter zurücksetzen</button>
+          <button type="button" class="btn btn-klein btn-sekundaer" id="filter-zuruecksetzen" hidden>Filter zurücksetzen</button>
         </div>
       </form>
 
@@ -103,7 +94,7 @@
                 <th class="zahl">Menge</th>
                 <th>Liefertermin</th>
                 <th>Status</th>
-                <th>Fortschritt</th>
+                <th>Aktueller Prozess</th>
                 <th class="zahl">Soll-Zeit</th>
                 <th class="zahl">Ist-Zeit</th>
                 <th></th>
@@ -117,9 +108,10 @@
                 <td class="zahl">10</td>
                 <td>25.09.2026 <span class="badge verzug">Verzug</span></td>
                 <td><span class="badge in-arbeit">in Arbeit</span></td>
-                <td>
+                <td class="prozess"><strong>Umformen</strong> <span class="badge unterbrochen">unterbrochen</span><br>
+                  <span class="klein">AG 20 Kanten zur Wanne · Abkantpresse</span>
                   <div class="balken"><span style="width: 20%;"></span></div>
-                  <span class="leise klein">1 von 5 AG</span>
+                  <span class="leise klein">1 von 5 AG erledigt</span>
                 </td>
                 <td class="zahl">365 min</td>
                 <td class="zahl">107 min</td>
@@ -132,9 +124,10 @@
                 <td class="zahl">50</td>
                 <td>02.10.2026</td>
                 <td><span class="badge fertig">fertig</span></td>
-                <td>
+                <td class="prozess"><strong>abgeschlossen</strong> <span class="badge erledigt">alle erledigt</span><br>
+                  <span class="klein">zuletzt AG 40 Verpacken und versenden</span>
                   <div class="balken"><span class="voll" style="width: 100%;"></span></div>
-                  <span class="leise klein">4 von 4 AG</span>
+                  <span class="leise klein">4 von 4 AG erledigt</span>
                 </td>
                 <td class="zahl">570 min</td>
                 <td class="zahl">607 min</td>
@@ -147,9 +140,10 @@
                 <td class="zahl">30</td>
                 <td>06.10.2026</td>
                 <td><span class="badge in-arbeit">in Arbeit</span></td>
-                <td>
+                <td class="prozess"><strong>Zerspanung</strong> <span class="badge laeuft">läuft</span><br>
+                  <span class="klein">AG 20 Drehen · CNC-Drehmaschine</span>
                   <div class="balken"><span style="width: 25%;"></span></div>
-                  <span class="leise klein">1 von 4 AG</span>
+                  <span class="leise klein">1 von 4 AG erledigt</span>
                 </td>
                 <td class="zahl">400 min</td>
                 <td class="zahl">188 min</td>
@@ -162,9 +156,10 @@
                 <td class="zahl">12</td>
                 <td>09.10.2026</td>
                 <td><span class="badge in-arbeit">in Arbeit</span></td>
-                <td>
+                <td class="prozess"><strong>Umformen</strong> <span class="badge erledigt">bereit</span><br>
+                  <span class="klein">AG 20 Kanten · Abkantpresse</span>
                   <div class="balken"><span style="width: 17%;"></span></div>
-                  <span class="leise klein">1 von 6 AG</span>
+                  <span class="leise klein">1 von 6 AG erledigt</span>
                 </td>
                 <td class="zahl">463 min</td>
                 <td class="zahl">59 min</td>
@@ -177,9 +172,10 @@
                 <td class="zahl">40</td>
                 <td>14.10.2026</td>
                 <td><span class="badge in-arbeit">in Arbeit</span></td>
-                <td>
+                <td class="prozess"><strong>Auslasern</strong> <span class="badge laeuft">läuft</span><br>
+                  <span class="klein">AG 10 Ronde auslasern · Laserschneidanlage</span>
                   <div class="balken"><span style="width: 0%;"></span></div>
-                  <span class="leise klein">0 von 4 AG</span>
+                  <span class="leise klein">0 von 4 AG erledigt</span>
                 </td>
                 <td class="zahl">505 min</td>
                 <td class="zahl">42 min</td>
@@ -192,9 +188,10 @@
                 <td class="zahl">8</td>
                 <td>16.10.2026</td>
                 <td><span class="badge freigegeben">freigegeben</span></td>
-                <td>
+                <td class="prozess"><strong>Auslasern</strong> <span class="badge erledigt">bereit</span><br>
+                  <span class="klein">AG 10 Auslasern · Laserschneidanlage</span>
                   <div class="balken"><span style="width: 0%;"></span></div>
-                  <span class="leise klein">0 von 5 AG</span>
+                  <span class="leise klein">0 von 5 AG erledigt</span>
                 </td>
                 <td class="zahl">311 min</td>
                 <td class="zahl">0 min</td>
@@ -207,9 +204,10 @@
                 <td class="zahl">120</td>
                 <td>21.10.2026</td>
                 <td><span class="badge angelegt">angelegt</span></td>
-                <td>
+                <td class="prozess"><strong>Zerspanung</strong> <span class="badge offen">noch nicht freigegeben</span><br>
+                  <span class="klein">AG 10 Drehen · CNC-Drehmaschine</span>
                   <div class="balken"><span style="width: 0%;"></span></div>
-                  <span class="leise klein">0 von 3 AG</span>
+                  <span class="leise klein">0 von 3 AG erledigt</span>
                 </td>
                 <td class="zahl">840 min</td>
                 <td class="zahl">0 min</td>
@@ -222,7 +220,7 @@
                 <td class="zahl">16</td>
                 <td>07.10.2026</td>
                 <td><span class="badge storniert">storniert</span></td>
-                <td><span class="leise klein">–</span></td>
+                <td class="prozess"><span class="leise klein">storniert, kein Prozess</span></td>
                 <td class="zahl">253 min</td>
                 <td class="zahl">0 min</td>
                 <td><a class="btn btn-klein btn-sekundaer" href="auftrag-detail.html">Details</a></td>

@@ -930,3 +930,38 @@ button:disabled {
 td.kein-umbruch {
   white-space: nowrap;
 }
+
+/* Auftragsliste: links die Suche, rechts der Status als Knöpfe */
+.filter-zeile {
+  display: grid;
+  grid-template-columns: minmax(14rem, 1fr) 2fr;
+  gap: 1rem 1.5rem;
+  align-items: start;
+}
+
+.feld-titel {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.status-knoepfe {
+  margin: 0;
+  gap: 0.35rem;
+}
+
+.status-knoepfe .anzahl {
+  font-weight: normal;
+  opacity: 0.8;
+}
+
+td.prozess {
+  min-width: 13rem;
+}
+
+@media (max-width: 800px) {
+  .filter-zeile {
+    grid-template-columns: 1fr;
+  }
+}

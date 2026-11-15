@@ -794,6 +794,36 @@ legend {
   margin: 0.4rem 0 0;
 }
 
+/* ---------- Auftragsliste: Filter und aktueller Prozess ---------- */
+
+.filter-zeile {
+  display: grid;
+  grid-template-columns: minmax(14rem, 1fr) 2fr;
+  gap: 1rem 1.5rem;
+  align-items: start;
+}
+
+.feld-titel {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.status-knoepfe {
+  margin: 0;
+  gap: 0.35rem;
+}
+
+.status-knoepfe .anzahl {
+  font-weight: normal;
+  opacity: 0.8;
+}
+
+td.prozess {
+  min-width: 13rem;
+}
+
 /* ---------- Schmale Bildschirme (Tablet, Handy) ---------- */
 
 @media (max-width: 800px) {
@@ -820,7 +850,8 @@ legend {
   }
 
   .spalten,
-  .spalten-gleich {
+  .spalten-gleich,
+  .filter-zeile {
     grid-template-columns: 1fr;
   }
 

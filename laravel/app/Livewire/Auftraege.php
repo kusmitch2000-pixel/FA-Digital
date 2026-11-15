@@ -9,7 +9,11 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
-/** Auftragsübersicht für alle Rollen (Anwendungsfall 8), gelesen aus der Sicht v_auftragsuebersicht */
+/**
+ * Auftragsübersicht für alle Rollen (Anwendungsfall 8), gelesen aus der Sicht v_auftragsuebersicht.
+ * Links die Suche nach einem bestimmten Teil, daneben der Status. Die Spalte „Aktueller Prozess“
+ * zeigt, an welchem Arbeitsplatz jedes Teil gerade ist.
+ */
 class Auftraege extends Component
 {
     use BrauchtRecht;
@@ -26,12 +30,9 @@ class Auftraege extends Component
     #[Url]
     public string $status = '';
 
-    #[Url]
-    public bool $verzug = false;
-
     public function zuruecksetzen(): void
     {
-        $this->reset('suche', 'status', 'verzug');
+        $this->reset('suche', 'status');
     }
 
     public function render(): View
@@ -46,20 +47,30 @@ class Auftraege extends Component
                 ->orWhere('kunde', 'like', $suche)))
             ->when($this->status === 'offen', fn (Builder $abfrage) => $abfrage->whereIn('status', self::OFFEN))
             ->when($this->status !== '' && $this->status !== 'offen', fn (Builder $abfrage) => $abfrage->where('status', $this->status))
-            ->when($this->verzug, fn (Builder $abfrage) => $abfrage->where('verzug', 1))
             ->orderByRaw("FIELD(status, 'messen', 'in_arbeit', 'freigegeben', 'angelegt', 'fertig', 'storniert')")
             ->orderBy('liefertermin')
             ->get();
 
-        // Anzahl je Status über alle Aufträge, für das Auswahlfeld
+        // Aktueller Prozess: der erste noch nicht erledigte Arbeitsgang je Auftrag mit seinem Arbeitsplatz
+        $aktuell = DB::table('arbeitsgang as ag')
+            ->join('arbeitsplatz as ap', 'ap.id', '=', 'ag.arbeitsplatz_id')
+            ->whereIn('ag.fertigungsauftrag_id', $auftraege->pluck('fertigungsauftrag_id'))
+            ->where('ag.status', '<>', 'erledigt')
+            ->orderBy('ag.ag_nummer')
+            ->get(['ag.fertigungsauftrag_id', 'ag.ag_nummer', 'ag.bezeichnung', 'ag.status', 'ap.bezeichnung as arbeitsplatz'])
+            ->unique('fertigungsauftrag_id')
+            ->keyBy('fertigungsauftrag_id');
+
+        // Anzahl je Status über alle Aufträge, für die Status-Knöpfe
         $anzahl = DB::table('v_auftragsuebersicht')->selectRaw('status, COUNT(*) AS anzahl')->groupBy('status')->pluck('anzahl', 'status');
 
         return view('livewire.auftraege', [
             'auftraege' => $auftraege,
+            'aktuell' => $aktuell,
             'anzahl' => $anzahl,
             'gesamt' => (int) $anzahl->sum(),
             'offen' => (int) $anzahl->only(self::OFFEN)->sum(),
-            'gefiltert' => trim($this->suche) !== '' || $this->status !== '' || $this->verzug,
+            'gefiltert' => trim($this->suche) !== '' || $this->status !== '',
         ])->layout('layouts::production', ['title' => 'Aufträge']);
     }
 }
