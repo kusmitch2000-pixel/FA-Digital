@@ -8,6 +8,8 @@ use App\Livewire\Concerns\BrauchtRecht;
 use App\Models\ArbeitsplanPosition;
 use App\Models\Arbeitsplatz;
 use App\Models\Artikel;
+use App\Models\Pruefmerkmal;
+use App\Models\Zertifikatsart;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -55,6 +57,26 @@ class Arbeitsplaene extends Component
 
     public string $aenderungBegruendung = '';
 
+    /** Arbeitsgang, dessen Prüfmerkmale gerade gepflegt werden */
+    public ?int $merkmalPosition = null;
+
+    /** null = neues Prüfmerkmal, sonst die ID des bearbeiteten */
+    public ?int $merkmalId = null;
+
+    public string $merkmalBezeichnung = '';
+
+    public string $merkmalArt = 'messwert';
+
+    public ?float $merkmalSoll = null;
+
+    public ?float $merkmalUnten = null;
+
+    public ?float $merkmalOben = null;
+
+    public string $merkmalEinheit = 'mm';
+
+    public ?int $merkmalZertifikat = null;
+
     public function mount(): void
     {
         if ($this->artikel === '') {
@@ -70,6 +92,7 @@ class Arbeitsplaene extends Component
         $this->artikel = $artikelnummer;
         $this->resetValidation();
         $this->bearbeitenAbbrechen();
+        $this->merkmaleSchliessen();
         $this->naechsteAgNummer();
     }
 
@@ -78,10 +101,104 @@ class Arbeitsplaene extends Component
         $this->resetErrorBag();
         $this->meldung = '';
         $position = $this->position($positionId);
+        $this->merkmalPosition = null;
         $this->bearbeitetId = $position->id;
         $this->neueRuestzeit = (float) $position->ruestzeit_min;
         $this->neueStueckzeit = (float) $position->stueckzeit_min;
         $this->aenderungBegruendung = '';
+    }
+
+    /** Prüfmerkmale eines Arbeitsgangs pflegen: Formular für ein neues Merkmal öffnen */
+    public function merkmaleOeffnen(int $positionId): void
+    {
+        $this->resetErrorBag();
+        $this->meldung = '';
+        $this->bearbeitenAbbrechen();
+        $this->merkmalPosition = $this->position($positionId)->id;
+        $this->merkmalLeeren();
+    }
+
+    public function merkmalBearbeiten(int $merkmalId): void
+    {
+        $this->resetErrorBag();
+        $merkmal = $this->merkmal($merkmalId);
+        $this->merkmalPosition = $merkmal->arbeitsplan_position_id;
+        $this->merkmalId = $merkmal->id;
+        $this->merkmalBezeichnung = $merkmal->bezeichnung;
+        $this->merkmalArt = $merkmal->art;
+        $this->merkmalSoll = $merkmal->sollwert === null ? null : (float) $merkmal->sollwert;
+        $this->merkmalUnten = $merkmal->untere_grenze === null ? null : (float) $merkmal->untere_grenze;
+        $this->merkmalOben = $merkmal->obere_grenze === null ? null : (float) $merkmal->obere_grenze;
+        $this->merkmalEinheit = $merkmal->einheit ?? '';
+        $this->merkmalZertifikat = $merkmal->zertifikatsart_id;
+    }
+
+    public function merkmalSpeichern(): void
+    {
+        $this->resetErrorBag();
+        $position = $this->position((int) $this->merkmalPosition);
+        $messwert = $this->merkmalArt === 'messwert';
+        $daten = $this->validate([
+            'merkmalBezeichnung' => ['required', 'string', 'max:120'],
+            'merkmalArt' => ['required', Rule::in(['messwert', 'sichtpruefung'])],
+            'merkmalSoll' => ['nullable', 'numeric'],
+            'merkmalUnten' => [$messwert ? 'required' : 'nullable', 'numeric'],
+            'merkmalOben' => [$messwert ? 'required' : 'nullable', 'numeric', ...($messwert ? ['gte:merkmalUnten'] : [])],
+            'merkmalEinheit' => ['nullable', 'string', 'max:10'],
+            'merkmalZertifikat' => ['nullable', 'integer', 'exists:zertifikatsart,id'],
+        ]);
+
+        $werte = [
+            'bezeichnung' => $daten['merkmalBezeichnung'],
+            'art' => $daten['merkmalArt'],
+            'sollwert' => $messwert ? $daten['merkmalSoll'] : null,
+            'untere_grenze' => $messwert ? $daten['merkmalUnten'] : null,
+            'obere_grenze' => $messwert ? $daten['merkmalOben'] : null,
+            'einheit' => $messwert ? ($daten['merkmalEinheit'] ?: null) : null,
+            'zertifikatsart_id' => $daten['merkmalZertifikat'] ?: null,
+        ];
+
+        if ($this->merkmalId) {
+            $this->merkmal($this->merkmalId)->update($werte);
+            $this->meldung = "Prüfmerkmal „{$werte['bezeichnung']}“ bei AG {$position->ag_nummer} geändert. Neue Aufträge prüfen den neuen Stand.";
+        } else {
+            $position->pruefmerkmale()->create($werte + ['reihenfolge' => (int) $position->pruefmerkmale()->max('reihenfolge') + 1]);
+            $this->meldung = "Prüfmerkmal „{$werte['bezeichnung']}“ bei AG {$position->ag_nummer} angelegt. Es kommt bei neuen Aufträgen in die Checkliste.";
+        }
+
+        $this->merkmalLeeren();
+    }
+
+    /** Bestehende Aufträge behalten ihre kopierten Prüfpunkte, der Verweis auf die Vorlage wird leer */
+    public function merkmalLoeschen(int $merkmalId): void
+    {
+        $this->resetErrorBag();
+        $merkmal = $this->merkmal($merkmalId);
+        $merkmal->delete();
+        $this->meldung = "Prüfmerkmal „{$merkmal->bezeichnung}“ entfernt. Bestehende Aufträge behalten ihre Prüfpunkte.";
+        if ($this->merkmalId === $merkmalId) {
+            $this->merkmalLeeren();
+        }
+    }
+
+    public function merkmaleSchliessen(): void
+    {
+        $this->resetErrorBag();
+        $this->merkmalPosition = null;
+        $this->merkmalLeeren();
+    }
+
+    private function merkmalLeeren(): void
+    {
+        $this->reset('merkmalId', 'merkmalBezeichnung', 'merkmalSoll', 'merkmalUnten', 'merkmalOben', 'merkmalZertifikat');
+        $this->merkmalArt = 'messwert';
+        $this->merkmalEinheit = 'mm';
+    }
+
+    /** Nur Prüfmerkmale von Arbeitsgängen des gewählten Artikels */
+    private function merkmal(int $merkmalId): Pruefmerkmal
+    {
+        return Pruefmerkmal::whereHas('position.artikel', fn ($a) => $a->where('artikelnummer', $this->artikel))->findOrFail($merkmalId);
     }
 
     public function bearbeitenAbbrechen(): void
@@ -196,6 +313,7 @@ class Arbeitsplaene extends Component
                 ->filter(fn ($v) => $v->vorschlag_ruestzeit_min !== null || $v->vorschlag_stueckzeit_min !== null)
                 ->countBy('artikelnummer'),
             'plaetze' => Arbeitsplatz::where('aktiv', true)->orderBy('nummer')->get(),
+            'zertifikatsarten' => Zertifikatsart::orderBy('kuerzel')->get(),
         ])->layout('layouts::production', ['title' => 'Artikel & Arbeitspläne']);
     }
 }

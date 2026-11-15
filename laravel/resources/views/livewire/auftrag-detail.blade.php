@@ -10,6 +10,9 @@
             @if ($darfFreigeben && $auftrag->status === 'angelegt')
                 <button wire:click="freigeben" class="btn btn-primaer" wire:loading.attr="disabled">Freigeben</button>
             @endif
+            @if ($darfAendern && ! $bearbeiten)
+                <button wire:click="bearbeitenBeginnen" class="btn btn-sekundaer">Bearbeiten</button>
+            @endif
             @if ($darfFreigeben && in_array($auftrag->status, ['angelegt', 'freigegeben'], true) && $buchungen->isEmpty())
                 <button wire:click="stornieren" wire:confirm="Auftrag {{ $auftrag->auftragsnummer }} wirklich stornieren?" class="btn btn-gefahr">Stornieren</button>
             @endif
@@ -20,6 +23,49 @@
     </div>
 
     @error('aktion')<div class="hinweis fehler" role="alert">{{ $message }}</div>@enderror
+
+    {{-- Auftrag ändern, solange noch niemand daran gearbeitet hat --}}
+    @if ($bearbeiten)
+        <form wire:submit="aenderungSpeichern" class="karte">
+            <h2>Auftrag bearbeiten</h2>
+            <p class="leise klein">Geht nur, solange noch niemand an dem Auftrag gearbeitet hat. Die Soll-Zeiten rechnen mit der neuen Menge, die Checkliste passt sich an die Zertifikate an.</p>
+            <div class="formular-raster">
+                <div class="feld">
+                    <label for="menge">Menge (Stück)</label>
+                    <input id="menge" type="number" min="1" wire:model="menge">
+                    @error('menge')<small class="ueber">{{ $message }}</small>@enderror
+                </div>
+                <div class="feld">
+                    <label for="liefertermin">Liefertermin</label>
+                    <input id="liefertermin" type="date" wire:model="liefertermin">
+                    @error('liefertermin')<small class="ueber">{{ $message }}</small>@enderror
+                </div>
+                <div class="feld">
+                    <label for="kunde">Kunde oder Kommission</label>
+                    <input id="kunde" wire:model="kunde" maxlength="100">
+                    @error('kunde')<small class="ueber">{{ $message }}</small>@enderror
+                </div>
+                <div class="feld">
+                    <label for="bemerkung">Bemerkung</label>
+                    <input id="bemerkung" wire:model="bemerkung" maxlength="255">
+                    @error('bemerkung')<small class="ueber">{{ $message }}</small>@enderror
+                </div>
+            </div>
+            <fieldset>
+                <legend>Zertifikate, die der Kunde fordert</legend>
+                <div class="gruende">
+                    @foreach ($zertifikatsarten as $art)
+                        <label class="grund" title="{{ $art->beschreibung }}"><input type="checkbox" wire:model="zertifikate" value="{{ $art->id }}"> {{ $art->kuerzel }} {{ $art->bezeichnung }}</label>
+                    @endforeach
+                </div>
+                @error('zertifikate')<small class="ueber">{{ $message }}</small>@enderror
+            </fieldset>
+            <div class="knopfleiste ohne-abstand">
+                <button type="submit" class="btn btn-primaer">Änderungen speichern</button>
+                <button type="button" wire:click="bearbeitenAbbrechen" class="btn btn-sekundaer">Abbrechen</button>
+            </div>
+        </form>
+    @endif
 
     <div class="spalten-gleich">
         <section class="karte">
@@ -33,7 +79,7 @@
             </dl>
         </section>
         <section class="karte">
-            <h2>Werkszertifikate</h2>
+            <h2>Geforderte Zertifikate</h2>
             @forelse ($auftrag->zertifikate as $zertifikat)
                 <p>
                     <strong>{{ $zertifikat->zertifikatsart->kuerzel }}</strong> {{ $zertifikat->zertifikatsart->bezeichnung }}
@@ -43,7 +89,7 @@
                     @endif
                 </p>
             @empty
-                <p class="leise">Der Kunde fordert kein Werkszertifikat. Der Werker prüft nur die Standardpunkte.</p>
+                <p class="leise">Der Kunde fordert kein Zertifikat. Der Werker prüft nur die Standardpunkte.</p>
             @endforelse
         </section>
     </div>

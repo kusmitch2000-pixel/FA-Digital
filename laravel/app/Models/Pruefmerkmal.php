@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $einheit
  * @property int|null $zertifikatsart_id
  * @property-read Zertifikatsart|null $zertifikatsart
+ * @property-read ArbeitsplanPosition $position
  */
 class Pruefmerkmal extends Model
 {
@@ -30,6 +31,12 @@ class Pruefmerkmal extends Model
         'arbeitsplan_position_id', 'reihenfolge', 'bezeichnung', 'art', 'sollwert',
         'untere_grenze', 'obere_grenze', 'einheit', 'zertifikatsart_id',
     ];
+
+    /** @return BelongsTo<ArbeitsplanPosition, $this> */
+    public function position(): BelongsTo
+    {
+        return $this->belongsTo(ArbeitsplanPosition::class, 'arbeitsplan_position_id');
+    }
 
     /** @return BelongsTo<Zertifikatsart, $this> */
     public function zertifikatsart(): BelongsTo

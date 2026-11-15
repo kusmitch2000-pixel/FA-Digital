@@ -47,8 +47,8 @@
 
         {{-- Rückmeldung vom 01.10.2026: Prüfzertifikate schon bei der Auftragserstellung angeben --}}
         <section class="karte">
-            <h2>Werkszertifikate, die der Kunde fordert</h2>
-            <p class="leise klein">Je Zertifikat bekommt der Werker zusätzliche Prüfpunkte in seiner Checkliste.</p>
+            <h2>Zertifikate, die der Kunde fordert</h2>
+            <p class="leise klein">Angeboten werden nur Zertifikate, die für diesen Artikel gelten. Je Zertifikat bekommt der Werker zusätzliche Prüfpunkte in seiner Checkliste.</p>
             <div class="gruende">
                 @foreach ($zertifikatsarten as $art)
                     <label class="grund" title="{{ $art->beschreibung }}">
@@ -56,6 +56,7 @@
                     </label>
                 @endforeach
             </div>
+            @error('zertifikate')<small class="ueber">{{ $message }}</small>@enderror
             @error('zertifikate.*')<small class="ueber">{{ $message }}</small>@enderror
         </section>
 

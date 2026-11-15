@@ -5,7 +5,7 @@ namespace App\Livewire;
 use App\Actions\Fertigung\AuftragAnlegen as AuftragAnlegenAktion;
 use App\Livewire\Concerns\BrauchtRecht;
 use App\Models\Artikel;
-use App\Models\Zertifikatsart;
+use App\Support\Zertifikate;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -39,6 +39,13 @@ class AuftragAnlegen extends Component
         $this->liefertermin = now()->addWeeks(2)->toDateString();
     }
 
+    /** Anderer Artikel: Zertifikate abwählen, die für ihn nicht gelten */
+    public function updatedArtikelId(): void
+    {
+        $erlaubt = Zertifikate::fuerArtikel($this->artikelId)->pluck('id')->map(fn ($id) => (string) $id)->all();
+        $this->zertifikate = array_values(array_intersect(array_map('strval', $this->zertifikate), $erlaubt));
+    }
+
     public function speichern(bool $freigeben = false): void
     {
         $this->resetErrorBag();
@@ -51,6 +58,13 @@ class AuftragAnlegen extends Component
             'zertifikate' => ['array'],
             'zertifikate.*' => ['integer', 'exists:zertifikatsart,id'],
         ]);
+
+        $erlaubt = Zertifikate::fuerArtikel((int) $daten['artikelId'])->pluck('id')->all();
+        if (array_diff(array_map('intval', $daten['zertifikate']), $erlaubt) !== []) {
+            $this->addError('zertifikate', 'Mindestens ein Zertifikat gilt nicht für diesen Artikel.');
+
+            return;
+        }
 
         $auftrag = app(AuftragAnlegenAktion::class)(auth()->user(), [
             'artikel_id' => $daten['artikelId'],
@@ -88,7 +102,7 @@ class AuftragAnlegen extends Component
         return view('livewire.auftrag-anlegen', [
             'artikel' => $artikel,
             'vorschau' => $vorschau,
-            'zertifikatsarten' => Zertifikatsart::orderBy('kuerzel')->get(),
+            'zertifikatsarten' => Zertifikate::fuerArtikel($this->artikelId),
         ])->layout('layouts::production', ['title' => 'Auftrag anlegen']);
     }
 }

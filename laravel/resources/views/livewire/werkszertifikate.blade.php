@@ -1,7 +1,7 @@
 <div>
     <div class="seitenkopf">
         <div>
-            <h1>Werkszertifikate</h1>
+            <h1>Zertifikatsfreigabe</h1>
             <p class="leise">Werkszeugnisse nach DIN EN 10204. Die Messwerte kommen aus den Checklisten der Werker.</p>
         </div>
     </div>

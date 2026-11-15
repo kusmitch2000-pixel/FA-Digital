@@ -14,6 +14,7 @@ use App\Livewire\Messung;
 use App\Livewire\Nachkalkulation;
 use App\Livewire\Terminal;
 use App\Livewire\Werkszertifikate;
+use App\Livewire\Zertifikatsvorlagen;
 use Illuminate\Support\Facades\Route;
 
 // Anmelden und Abmelden stellt Fortify bereit (/login, /logout).
@@ -41,6 +42,7 @@ Route::middleware('auth')->group(function () {
 
     // Stammdaten und Verwaltung
     Route::livewire('artikel', Arbeitsplaene::class)->middleware('recht:arbeitsplaene')->name('arbeitsplaene');
+    Route::livewire('zertifikatsvorlagen', Zertifikatsvorlagen::class)->middleware('recht:zertifikatsvorlagen')->name('zertifikatsvorlagen');
     Route::livewire('arbeitsplaetze', Arbeitsplaetze::class)->middleware('recht:arbeitsplaetze')->name('arbeitsplaetze');
     Route::livewire('benutzer', Benutzerverwaltung::class)->middleware('recht:benutzer')->name('benutzer');
 });

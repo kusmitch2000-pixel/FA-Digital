@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Actions\Fertigung\AuftragAendern;
 use App\Actions\Fertigung\Buchungskorrektur;
 use App\Actions\Fertigung\Statuswechsel;
 use App\Livewire\Concerns\BrauchtRecht;
@@ -9,13 +10,14 @@ use App\Models\Benutzer;
 use App\Models\Fertigungsauftrag;
 use App\Models\Unterbrechung;
 use App\Models\Zeitbuchung;
+use App\Support\Zertifikate;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 /**
  * Auftragsdetail: Kopfdaten, Arbeitsgänge mit Soll und Ist, Checkliste, Zertifikate und alle Buchungen.
- * Die Arbeitsvorbereitung gibt hier frei oder storniert. Der Meister trägt Buchungen nach
+ * Die Arbeitsvorbereitung gibt hier frei, ändert den Auftrag vor dem Start oder storniert. Der Meister trägt Buchungen nach
  * oder korrigiert sie (Anwendungsfall 6).
  */
 class AuftragDetail extends Component
@@ -43,6 +45,20 @@ class AuftragDetail extends Component
 
     public ?int $zuordnungArbeitsgang = null;
 
+    /** Formular „Auftrag bearbeiten“ */
+    public bool $bearbeiten = false;
+
+    public ?int $menge = null;
+
+    public string $liefertermin = '';
+
+    public string $kunde = '';
+
+    public string $bemerkung = '';
+
+    /** @var array<int, string> IDs der geforderten Zertifikatsarten */
+    public array $zertifikate = [];
+
     public ?int $zuordnungWerker = null;
 
     public function mount(Fertigungsauftrag $auftrag): void
@@ -65,6 +81,50 @@ class AuftragDetail extends Component
         $this->pruefeRecht('auftrag.freigeben');
         app(Statuswechsel::class)->stornieren($this->auftrag);
         session()->flash('status', "Auftrag {$this->auftrag->auftragsnummer} ist storniert.");
+    }
+
+    public function bearbeitenBeginnen(): void
+    {
+        $this->resetErrorBag();
+        $this->pruefeRecht('auftrag.anlegen');
+        AuftragAendern::pruefeAenderbar($this->auftrag);
+
+        $this->bearbeiten = true;
+        $this->menge = $this->auftrag->menge;
+        $this->liefertermin = $this->auftrag->liefertermin->toDateString();
+        $this->kunde = $this->auftrag->kunde ?? '';
+        $this->bemerkung = $this->auftrag->bemerkung ?? '';
+        $this->zertifikate = $this->auftrag->zertifikate()->pluck('zertifikatsart_id')->map(fn ($id) => (string) $id)->all();
+    }
+
+    public function bearbeitenAbbrechen(): void
+    {
+        $this->resetErrorBag();
+        $this->bearbeiten = false;
+    }
+
+    public function aenderungSpeichern(): void
+    {
+        $this->resetErrorBag();
+        $this->pruefeRecht('auftrag.anlegen');
+        $daten = $this->validate([
+            'menge' => ['required', 'integer', 'min:1', 'max:100000'],
+            'liefertermin' => ['required', 'date', 'after_or_equal:today'],
+            'kunde' => ['nullable', 'string', 'max:100'],
+            'bemerkung' => ['nullable', 'string', 'max:255'],
+            'zertifikate' => ['array'],
+            'zertifikate.*' => ['integer', 'exists:zertifikatsart,id'],
+        ]);
+
+        app(AuftragAendern::class)($this->auftrag, [
+            'menge' => (int) $daten['menge'],
+            'liefertermin' => $daten['liefertermin'],
+            'kunde' => $daten['kunde'],
+            'bemerkung' => $daten['bemerkung'],
+        ], array_values(array_map('intval', $daten['zertifikate'])));
+
+        $this->bearbeiten = false;
+        session()->flash('status', "Auftrag {$this->auftrag->auftragsnummer} geändert. Soll-Zeiten und Checkliste sind angepasst.");
     }
 
     public function zuordnen(): void
@@ -169,6 +229,8 @@ class AuftragDetail extends Component
             'werker' => Benutzer::whereIn('rolle', ['werker', 'meister'])->where('aktiv', true)->orderBy('nachname')->get(),
             'darfKorrigieren' => $this->darf('buchung.korrigieren') && ! in_array($this->auftrag->status, ['nachkalkuliert', 'storniert'], true),
             'darfFreigeben' => $this->darf('auftrag.freigeben'),
+            'darfAendern' => $this->darf('auftrag.anlegen') && AuftragAendern::istAenderbar($this->auftrag),
+            'zertifikatsarten' => $this->bearbeiten ? Zertifikate::fuerArtikel($this->auftrag->artikel_id) : collect(),
         ])->layout('layouts::production', ['title' => $this->auftrag->auftragsnummer]);
     }
 }
