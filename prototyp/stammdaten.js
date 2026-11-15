@@ -1083,6 +1083,7 @@ function arbeitsplaetzeSeite() {
   const liste = document.getElementById("platz-liste");
   const formular = document.getElementById("platz-formular");
   const meldung = document.getElementById("platz-meldung");
+  const listenMeldung = document.getElementById("platz-liste-meldung");
   let bearbeitet = null;
 
   formular.station.innerHTML = STATIONSFOLGE.map(function (station) {
@@ -1110,9 +1111,32 @@ function arbeitsplaetzeSeite() {
           + '<td class="zahl">' + zahl(platz.stundensatz, 2) + " €/h</td>"
           + '<td><span class="badge ' + (platz.aktiv !== false ? "aktiv" : "inaktiv") + '">' + (platz.aktiv !== false ? "aktiv" : "inaktiv") + "</span></td>"
           + '<td class="klein">' + (artikel.length ? text(artikel.join(", ")) : '<span class="leise">–</span>') + "</td>"
-          + '<td><button type="button" class="btn btn-klein btn-sekundaer" data-bearbeiten="' + eintrag.index + '">Bearbeiten</button></td>'
+          + '<td><div class="knopfleiste" style="margin: 0; flex-wrap: nowrap;">'
+          + '<button type="button" class="btn btn-klein btn-sekundaer" data-bearbeiten="' + eintrag.index + '">Bearbeiten</button>'
+          + loeschKnopf("data-platz-loeschen", eintrag.index, artikel) + "</div></td>"
           + "</tr>";
       }).join("");
+  }
+
+  // Löschen nur, wenn kein Arbeitsplan den Arbeitsplatz nutzt. Sonst ist der Knopf gesperrt
+  // und nennt die Artikel. Solche Arbeitsplätze lassen sich auf inaktiv setzen.
+  function loeschen(index) {
+    const platz = ARBEITSPLAETZE[index];
+    const artikel = verwendetIn(platz.nummer);
+    listenMeldung.hidden = false;
+    if (artikel.length > 0) {
+      listenMeldung.className = "hinweis fehler";
+      listenMeldung.textContent = platz.nummer + " steht noch in den Arbeitsplänen von " + artikel.join(", ")
+        + " und bleibt deshalb. Über „Bearbeiten“ lässt er sich auf inaktiv setzen.";
+      return;
+    }
+    ARBEITSPLAETZE.splice(index, 1);
+    schreiben(SPEICHER_ARBEITSPLAETZE, ARBEITSPLAETZE);
+    meldung.hidden = true;
+    bearbeiten(null);
+    listenMeldung.hidden = false;
+    listenMeldung.className = "hinweis";
+    listenMeldung.textContent = "Arbeitsplatz " + platz.nummer + " " + platz.bezeichnung + " wurde gelöscht.";
   }
 
   function bearbeiten(index) {
@@ -1145,8 +1169,14 @@ function arbeitsplaetzeSeite() {
     const knopf = ereignis.target.closest("[data-bearbeiten]");
     if (knopf) {
       meldung.hidden = true;
+      listenMeldung.hidden = true;
       bearbeiten(Number(knopf.dataset.bearbeiten));
       formular.scrollIntoView({ behavior: "smooth" });
+    }
+
+    const loeschKnopfGeklickt = ereignis.target.closest("[data-platz-loeschen]");
+    if (loeschKnopfGeklickt && loeschenBestaetigt(loeschKnopfGeklickt)) {
+      loeschen(Number(loeschKnopfGeklickt.dataset.platzLoeschen));
     }
   });
 

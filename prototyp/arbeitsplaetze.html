@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Arbeitsplätze – FA-Digital</title>
-  <link rel="stylesheet" href="style.css?v=2026-11-15">
-  <script src="prototyp.js?v=2026-11-15" defer></script>
-  <script src="stammdaten.js?v=2026-11-15" defer></script>
+  <link rel="stylesheet" href="style.css?v=2026-11-15-2">
+  <script src="prototyp.js?v=2026-11-15-2" defer></script>
+  <script src="stammdaten.js?v=2026-11-15-2" defer></script>
 </head>
 <body>
 
@@ -53,6 +53,7 @@
 
       <section class="karte">
         <h2>Alle Arbeitsplätze</h2>
+        <p id="platz-liste-meldung" class="hinweis" hidden></p>
         <div class="tabelle-scroll">
           <table>
             <thead>
@@ -151,7 +152,7 @@
             </tbody>
           </table>
         </div>
-        <p class="leise klein" style="margin: 0.75rem 0 0;">Sortiert nach dem Fertigungsfluss. Ein inaktiver Arbeitsplatz wird für neue Arbeitsschritte nicht mehr angeboten, bestehende Arbeitspläne behalten ihn.</p>
+        <p class="leise klein" style="margin: 0.75rem 0 0;">Sortiert nach dem Fertigungsfluss. Löschen geht nur, wenn kein Arbeitsplan den Arbeitsplatz nutzt, sonst nennt der gesperrte Knopf die Artikel. Ein inaktiver Arbeitsplatz wird für neue Arbeitsschritte nicht mehr angeboten, bestehende Arbeitspläne behalten ihn.</p>
       </section>
 
       <form class="karte" id="platz-formular" action="arbeitsplaetze.html" method="post">
