@@ -224,103 +224,460 @@
   <footer class="fuss">
     Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
   </footer>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nachkalkulation – FA-Digital</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="prototyp.js" defer></script>
+</head>
+<body>
 
-  document.addEventListener("DOMContentLoaded", () => {
-  const selectAuftrag = document.getElementById("auftrag");
-  if (!selectAuftrag) return;
+  <header class="kopf">
+    <a class="logo" href="dashboard.html">FA-Digital</a>
+    <span class="untertitel">Digitaler Fertigungsauftrag</span>
+    <div class="benutzer">
+      Sven Petersen · Admin
+      <a href="index.html">Abmelden</a>
+    </div>
+  </header>
 
-  // Bei Auswahl im Dropdown direkt wechseln (ohne extra Klick auf "Anzeigen")
-  selectAuftrag.addEventListener("change", () => {
-    selectAuftrag.form.submit();
-  });
+  <div class="rahmen">
+    <nav class="menue">
+      <p class="menue-titel">Übersicht</p>
+      <a href="dashboard.html">Hallenansicht</a>
+      <a href="auftraege.html">Aufträge</a>
 
-  // Datensätze für alle 3 Aufträge (rechnerisch konsistent)
-  const auftraege = {
-    "FA-1001": {
-      titel: "Nachkalkulation FA-1001",
-      status: "fertig",
-      statusKlasse: "fertig",
-      untertitel: "V-410 Seitenverkleidung Fräszentrum · 50 Stück bestellt · 48 Gut, 2 Ausschuss · abgeschlossen am 28.09.2026",
-      kachel2Klasse: "kachel in-arbeit",
-      kachel4Klasse: "kachel verzug",
-      sollKosten: "755,00 €",
-      sollZeitText: "570 min geplant",
-      istKosten: "799,67 €",
-      istKostenAbw: '<span class="ampel gelb"></span><span class="ueber">+44,67 € (+5,9 %)</span>',
-      istZeit: "607 min",
-      istZeitAbw: '<span class="ueber">+37 min (+6,5 %)</span>',
-      stueckKosten: "16,66 €",
-      stueckKostenSub: 'Soll 15,10 € · <span class="ueber">+10,3 %</span>',
-      arbeitsgaenge: [
-        { ag: "10 Auslasern", platz: "Laserschneidanlage", satz: "110,00 €/h", sollZ: "140 min", istZ: "140 min", abwZ: "±0,0 %", abwZKlasse: "unter", sollK: "256,67 €", istK: "256,67 €", abwK: "±0,00 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "15 / 14 min", bearb: "125 / 126 min" },
-        { ag: "20 Kanten", platz: "Abkantpresse", satz: "75,00 €/h", sollZ: "170 min", istZ: "182 min", abwZ: "+7,1 %", abwZKlasse: "ueber", sollK: "212,50 €", istK: "227,50 €", abwK: "+15,00 €", abwKKlasse: "ueber", ampel: "gelb", bewertung: "leicht über Plan", ruest: '20 / <span class="ueber">32 min</span>', bearb: "150 / 150 min" },
-        { ag: "30 Lackieren", platz: "Lackieranlage", satz: "70,00 €/h", sollZ: "225 min", istZ: "251 min", abwZ: "+11,6 %", abwZKlasse: "ueber", sollK: "262,50 €", istK: "292,83 €", abwK: "+30,33 €", abwKKlasse: "ueber", ampel: "rot", bewertung: "deutlich über Plan", ruest: "25 / 26 min", bearb: '200 / <span class="ueber">225 min</span>' },
-        { ag: "40 Verpacken und versenden", platz: "Versandplatz", satz: "40,00 €/h", sollZ: "35 min", istZ: "34 min", abwZ: "−2,9 %", abwZKlasse: "unter", sollK: "23,33 €", istK: "22,67 €", abwK: "−0,66 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "10 / 9 min", bearb: "25 / 25 min" }
-      ],
-      summe: { sollZ: "570 min", istZ: "607 min", abwZ: "+6,5 %", abwZKlasse: "ueber", sollK: "755,00 €", istK: "799,67 €", abwK: "+44,67 €", abwKKlasse: "ueber", ampel: "gelb", bewertung: "leicht über Plan" },
-      ergebnis: `
-        <p>Die Mehrkosten entstehen beim <strong>Lackieren</strong> und beim <strong>Kanten</strong>: Das Lackieren hat in der Bearbeitung 25 min länger gedauert als geplant (+12,5 %), beim Kanten hat das Rüsten 12 min länger gedauert (+60 %).</p>
-        <p>Durch 2 Ausschussteile verteilen sich die Kosten auf nur 48 Gutstücke. Deshalb steigen die Kosten pro Stück stärker als die Gesamtkosten.</p>
-        <p>Die Rüstzeit beim Kanten liegt auch im Schnitt aller V-410-Aufträge über Plan. Der Arbeitsplan schlägt deshalb 29 statt 20 min vor: <a href="artikel.html#abgleich">Vorschlag ansehen</a>.</p>
-        <p class="leise klein">AG 20 war einmal 12 min unterbrochen (Werkzeug fehlt). Diese Zeit steckt nicht in der Ist-Zeit, sie erscheint in der <a href="auswertung.html">Auswertung der Unterbrechungen</a>. Eine Buchung an AG 20 hat Lena Hoffmann nachgetragen (Stempeln vergessen).</p>
-      `
-    },
+      <p class="menue-titel">Arbeitsvorbereitung</p>
+      <a href="auftrag-anlegen.html">Auftrag anlegen</a>
+      <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="zertifikate.html">Zertifikate</a>
+      <a href="arbeitsplaetze.html">Arbeitsplätze</a>
 
-    "FA-0999": {
-      titel: "Nachkalkulation FA-0999",
-      status: "nachkalkuliert",
-      statusKlasse: "fertig",
-      untertitel: "F-310 Lagerbock Aluminium · 100 Stück bestellt · 100 Gut, 0 Ausschuss · abgeschlossen am 21.09.2026",
-      kachel2Klasse: "kachel",
-      kachel4Klasse: "kachel",
-      sollKosten: "1.147,50 €",
-      sollZeitText: "720 min geplant",
-      istKosten: "1.099,50 €",
-      istKostenAbw: '<span class="ampel gruen"></span><span class="unter">−48,00 € (−4,2 %)</span>',
-      istZeit: "692 min",
-      istZeitAbw: '<span class="unter">−28 min (−3,9 %)</span>',
-      stueckKosten: "11,00 €",
-      stueckKostenSub: 'Soll 11,48 € · <span class="unter">−4,2 %</span>',
-      arbeitsgaenge: [
-        { ag: "10 Sägen Zuschnitt", platz: "Bandsäge", satz: "60,00 €/h", sollZ: "90 min", istZ: "88 min", abwZ: "−2,2 %", abwZKlasse: "unter", sollK: "90,00 €", istK: "88,00 €", abwK: "−2,00 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "15 / 14 min", bearb: "75 / 74 min" },
-        { ag: "20 CNC-Fräsen", platz: "5-Achs-Zentrum", satz: "120,00 €/h", sollZ: "420 min", istZ: "396 min", abwZ: "−5,7 %", abwZKlasse: "unter", sollK: "840,00 €", istK: "792,00 €", abwK: "−48,00 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "40 / 36 min", bearb: "380 / 360 min" },
-        { ag: "30 Entgraten & Prüfen", platz: "Handarbeitsplatz", satz: "55,00 €/h", sollZ: "150 min", istZ: "150 min", abwZ: "±0,0 %", abwZKlasse: "unter", sollK: "137,50 €", istK: "137,50 €", abwK: "±0,00 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "10 / 10 min", bearb: "140 / 140 min" },
-        { ag: "40 Verpacken und versenden", platz: "Versandplatz", satz: "40,00 €/h", sollZ: "60 min", istZ: "58 min", abwZ: "−3,3 %", abwZKlasse: "unter", sollK: "40,00 €", istK: "38,67 €", abwK: "−1,33 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "10 / 9 min", bearb: "50 / 49 min" }
-      ],
-      summe: { sollZ: "720 min", istZ: "692 min", abwZ: "−3,9 %", abwZKlasse: "unter", sollK: "1.107,50 €", istK: "1.056,17 €", abwK: "−51,33 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan" },
-      ergebnis: `
-        <p>Der Auftrag lief komplett <strong>im Plan</strong> und ohne Ausschuss durch. Auf dem 5-Achs-Zentrum konnten durch optimierte Spannmittel 20 min Bearbeitungszeit eingespart werden.</p>
-        <p>Alle 100 bestellten Gutstücke wurden termingerecht eingelagert. Keine Anpassung am Arbeitsplan erforderlich.</p>
-        <p class="leise klein">Nachkalkulation wurde am 22.09.2026 durch Sven Petersen abgeschlossen und ins ERP übergeben.</p>
-      `
-    },
+      <p class="menue-titel">Werkstatt</p>
+      <a href="werker.html">Werker-Terminal</a>
 
-    "FA-0998": {
-      titel: "Nachkalkulation FA-0998",
-      status: "nachkalkuliert",
-      statusKlasse: "verzug",
-      untertitel: "V-410 Seitenverkleidung Fräszentrum · 30 Stück bestellt · 26 Gut, 4 Ausschuss · abgeschlossen am 15.09.2026",
-      kachel2Klasse: "kachel verzug",
-      kachel4Klasse: "kachel verzug",
-      sollKosten: "491,67 €",
-      sollZeitText: "370 min geplant",
-      istKosten: "564,17 €",
-      istKostenAbw: '<span class="ampel rot"></span><span class="ueber">+72,50 € (+14,7 %)</span>',
-      istZeit: "427 min",
-      istZeitAbw: '<span class="ueber">+57 min (+15,4 %)</span>',
-      stueckKosten: "21,70 €",
-      stueckKostenSub: 'Soll 16,39 € · <span class="ueber">+32,4 %</span>',
-      arbeitsgaenge: [
-        { ag: "10 Auslasern", platz: "Laserschneidanlage", satz: "110,00 €/h", sollZ: "90 min", istZ: "92 min", abwZ: "+2,2 %", abwZKlasse: "unter", sollK: "165,00 €", istK: "168,67 €", abwK: "+3,67 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "15 / 16 min", bearb: "75 / 76 min" },
-        { ag: "20 Kanten", platz: "Abkantpresse", satz: "75,00 €/h", sollZ: "110 min", istZ: "142 min", abwZ: "+29,1 %", abwZKlasse: "ueber", sollK: "137,50 €", istK: "177,50 €", abwK: "+40,00 €", abwKKlasse: "ueber", ampel: "rot", bewertung: "deutlich über Plan", ruest: '20 / <span class="ueber">34 min</span>', bearb: '90 / <span class="ueber">108 min</span>' },
-        { ag: "30 Lackieren", platz: "Lackieranlage", satz: "70,00 €/h", sollZ: "145 min", istZ: "168 min", abwZ: "+15,9 %", abwZKlasse: "ueber", sollK: "169,17 €", istK: "196,00 €", abwK: "+26,83 €", abwKKlasse: "ueber", ampel: "rot", bewertung: "deutlich über Plan", ruest: "25 / 28 min", bearb: '120 / <span class="ueber">140 min</span>' },
-        { ag: "40 Verpacken und versenden", platz: "Versandplatz", satz: "40,00 €/h", sollZ: "25 min", istZ: "25 min", abwZ: "±0,0 %", abwZKlasse: "unter", sollK: "16,67 €", istK: "16,67 €", abwK: "±0,00 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "10 / 10 min", bearb: "15 / 15 min" }
-      ],
-      summe: { sollZ: "370 min", istZ: "427 min", abwZ: "+15,4 %", abwZKlasse: "ueber", sollK: "488,34 €", istK: "558,84 €", abwK: "+70,50 €", abwKKlasse: "ueber", ampel: "rot", bewertung: "deutlich über Plan" },
-      ergebnis: `
-        <p>Deutliche Kostenüberschreitung beim <strong>Kanten (+29,
+      <p class="menue-titel">Controlling</p>
+      <a href="nachkalkulation.html" class="aktiv">Nachkalkulation</a>
+      <a href="auswertung.html">Auswertung</a>
 
-  
+      <p class="menue-titel">Verwaltung</p>
+      <a href="benutzer.html">Benutzer</a>
+    </nav>
+
+    <main class="inhalt">
+      <div class="seitenkopf">
+        <div>
+          <h1>Nachkalkulation FA-1001 <span class="badge fertig">fertig</span></h1>
+          <p class="leise">V-410 Seitenverkleidung Fräszentrum · 50 Stück bestellt · 48 Gut, 2 Ausschuss · abgeschlossen am 28.09.2026</p>
+        </div>
+        <form id="auftrag-form" action="nachkalkulation.html" method="get" class="knopfleiste">
+          <label for="auftrag" class="leise" style="margin: 0; align-self: center;">Auftrag</label>
+          <select id="auftrag" name="auftrag" style="width: auto;">
+            <option value="FA-1001" selected>FA-1001 · V-410 (fertig)</option>
+            <option value="FA-0999">FA-0999 · F-310 (nachkalkuliert)</option>
+            <option value="FA-0998">FA-0998 · V-410 (nachkalkuliert)</option>
+          </select>
+          <button type="submit" class="btn btn-sekundaer">Anzeigen</button>
+        </form>
+      </div>
+
+      <section class="kacheln">
+        <div class="kachel">
+          <span class="text">Soll-Kosten</span>
+          <span class="zahl">755,00 €</span>
+          <span class="text">570 min geplant</span>
+        </div>
+        <div class="kachel in-arbeit">
+          <span class="text">Ist-Kosten</span>
+          <span class="zahl">799,67 €</span>
+          <span class="text"><span class="ampel gelb"></span><span class="ueber">+44,67 € (+5,9 %)</span></span>
+        </div>
+        <div class="kachel">
+          <span class="text">Ist-Zeit</span>
+          <span class="zahl">607 min</span>
+          <span class="text"><span class="ueber">+37 min (+6,5 %)</span></span>
+        </div>
+        <div class="kachel verzug">
+          <span class="text">Kosten pro Gutstück</span>
+          <span class="zahl">16,66 €</span>
+          <span class="text">Soll 15,10 € · <span class="ueber">+10,3 %</span></span>
+        </div>
+      </section>
+
+      <!-- Soll-Ist-Vergleich je Arbeitsgang.
+           Ampel: bis +5 % grün, bis +10 % gelb, darüber rot -->
+      <section class="karte">
+        <h2>Soll-Ist-Vergleich je Arbeitsgang</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>AG</th>
+                <th>Arbeitsplatz</th>
+                <th class="zahl">Satz</th>
+                <th class="zahl">Soll-Zeit</th>
+                <th class="zahl">Ist-Zeit</th>
+                <th class="zahl">Abw. Zeit</th>
+                <th class="zahl">Soll-Kosten</th>
+                <th class="zahl">Ist-Kosten</th>
+                <th class="zahl">Abw. Kosten</th>
+                <th>Bewertung</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>10 Auslasern</td>
+                <td>Laserschneidanlage</td>
+                <td class="zahl">110,00 €/h</td>
+                <td class="zahl">140 min</td>
+                <td class="zahl">140 min</td>
+                <td class="zahl unter">±0,0 %</td>
+                <td class="zahl">256,67 €</td>
+                <td class="zahl">256,67 €</td>
+                <td class="zahl unter">±0,00 €</td>
+                <td><span class="ampel gruen"></span>im Plan</td>
+              </tr>
+              <tr>
+                <td>20 Kanten</td>
+                <td>Abkantpresse</td>
+                <td class="zahl">75,00 €/h</td>
+                <td class="zahl">170 min</td>
+                <td class="zahl">182 min</td>
+                <td class="zahl ueber">+7,1 %</td>
+                <td class="zahl">212,50 €</td>
+                <td class="zahl">227,50 €</td>
+                <td class="zahl ueber">+15,00 €</td>
+                <td><span class="ampel gelb"></span>leicht über Plan</td>
+              </tr>
+              <tr>
+                <td>30 Lackieren</td>
+                <td>Lackieranlage</td>
+                <td class="zahl">70,00 €/h</td>
+                <td class="zahl">225 min</td>
+                <td class="zahl">251 min</td>
+                <td class="zahl ueber">+11,6 %</td>
+                <td class="zahl">262,50 €</td>
+                <td class="zahl">292,83 €</td>
+                <td class="zahl ueber">+30,33 €</td>
+                <td><span class="ampel rot"></span>deutlich über Plan</td>
+              </tr>
+              <tr>
+                <td>40 Verpacken und versenden</td>
+                <td>Versandplatz</td>
+                <td class="zahl">40,00 €/h</td>
+                <td class="zahl">35 min</td>
+                <td class="zahl">34 min</td>
+                <td class="zahl unter">−2,9 %</td>
+                <td class="zahl">23,33 €</td>
+                <td class="zahl">22,67 €</td>
+                <td class="zahl unter">−0,66 €</td>
+                <td><span class="ampel gruen"></span>im Plan</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3">Summe</td>
+                <td class="zahl">570 min</td>
+                <td class="zahl">607 min</td>
+                <td class="zahl ueber">+6,5 %</td>
+                <td class="zahl">755,00 €</td>
+                <td class="zahl">799,67 €</td>
+                <td class="zahl ueber">+44,67 €</td>
+                <td><span class="ampel gelb"></span>leicht über Plan</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <div class="spalten-gleich">
+        <section class="karte">
+          <h2>Rüsten und Bearbeiten getrennt</h2>
+          <div class="tabelle-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>AG</th>
+                  <th class="zahl">Rüsten Soll / Ist</th>
+                  <th class="zahl">Bearbeiten Soll / Ist</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>10 Auslasern</td>
+                  <td class="zahl">15 / 14 min</td>
+                  <td class="zahl">125 / 126 min</td>
+                </tr>
+                <tr>
+                  <td>20 Kanten</td>
+                  <td class="zahl">20 / <span class="ueber">32 min</span></td>
+                  <td class="zahl">150 / 150 min</td>
+                </tr>
+                <tr>
+                  <td>30 Lackieren</td>
+                  <td class="zahl">25 / 26 min</td>
+                  <td class="zahl">200 / <span class="ueber">225 min</span></td>
+                </tr>
+                <tr>
+                  <td>40 Verpacken und versenden</td>
+                  <td class="zahl">10 / 9 min</td>
+                  <td class="zahl">25 / 25 min</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="karte">
+          <h2>Ergebnis</h2>
+          <p>Die Mehrkosten entstehen beim <strong>Lackieren</strong> und beim <strong>Kanten</strong>: Das Lackieren hat in der Bearbeitung 25 min länger gedauert als geplant (+12,5 %), beim Kanten hat das Rüsten 12 min länger gedauert (+60 %).</p>
+          <p>Durch 2 Ausschussteile verteilen sich die Kosten auf nur 48 Gutstücke. Deshalb steigen die Kosten pro Stück stärker als die Gesamtkosten.</p>
+          <p>Die Rüstzeit beim Kanten liegt auch im Schnitt aller V-410-Aufträge über Plan. Der Arbeitsplan schlägt deshalb 29 statt 20 min vor: <a href="artikel.html#abgleich">Vorschlag ansehen</a>.</p>
+          <p class="leise klein">AG 20 war einmal 12 min unterbrochen (Werkzeug fehlt). Diese Zeit steckt nicht in der Ist-Zeit, sie erscheint in der <a href="auswertung.html">Auswertung der Unterbrechungen</a>. Eine Buchung an AG 20 hat Lena Hoffmann nachgetragen (Stempeln vergessen).</p>
+        </section>
+      </div>
+
+      <!-- Kein POST: GitHub Pages hat keinen Server. Die Buttons werden per Skript bedient. -->
+      <div class="knopfleiste">
+        <button type="button" id="btn-abschliessen" class="btn btn-primaer" data-recht="nachkalkulation.abschliessen">Nachkalkulation abschließen</button>
+        <button type="button" id="btn-export" class="btn btn-sekundaer">Als CSV exportieren</button>
+      </div>
+    </main>
+  </div>
+
+  <footer class="fuss">
+    Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
+  </footer>
+
+  <script>
+    (function () {
+      var selectAuftrag = document.getElementById("auftrag");
+      if (!selectAuftrag) return;
+      var formAuftrag = document.getElementById("auftrag-form");
+      var aktuelleId = selectAuftrag.value;
+
+      var auftraege = {
+        "FA-1001": {
+          titel: "Nachkalkulation FA-1001",
+          status: "fertig",
+          statusKlasse: "fertig",
+          untertitel: "V-410 Seitenverkleidung Fräszentrum · 50 Stück bestellt · 48 Gut, 2 Ausschuss · abgeschlossen am 28.09.2026",
+          kachel2Klasse: "kachel in-arbeit",
+          kachel4Klasse: "kachel verzug",
+          sollKosten: "755,00 €",
+          sollZeitText: "570 min geplant",
+          istKosten: "799,67 €",
+          istKostenAbw: '<span class="ampel gelb"></span><span class="ueber">+44,67 € (+5,9 %)</span>',
+          istZeit: "607 min",
+          istZeitAbw: '<span class="ueber">+37 min (+6,5 %)</span>',
+          stueckKosten: "16,66 €",
+          stueckKostenSub: 'Soll 15,10 € · <span class="ueber">+10,3 %</span>',
+          arbeitsgaenge: [
+            { ag: "10 Auslasern", platz: "Laserschneidanlage", satz: "110,00 €/h", sollZ: "140 min", istZ: "140 min", abwZ: "±0,0 %", abwZKlasse: "unter", sollK: "256,67 €", istK: "256,67 €", abwK: "±0,00 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "15 / 14 min", bearb: "125 / 126 min" },
+            { ag: "20 Kanten", platz: "Abkantpresse", satz: "75,00 €/h", sollZ: "170 min", istZ: "182 min", abwZ: "+7,1 %", abwZKlasse: "ueber", sollK: "212,50 €", istK: "227,50 €", abwK: "+15,00 €", abwKKlasse: "ueber", ampel: "gelb", bewertung: "leicht über Plan", ruest: '20 / <span class="ueber">32 min</span>', bearb: "150 / 150 min" },
+            { ag: "30 Lackieren", platz: "Lackieranlage", satz: "70,00 €/h", sollZ: "225 min", istZ: "251 min", abwZ: "+11,6 %", abwZKlasse: "ueber", sollK: "262,50 €", istK: "292,83 €", abwK: "+30,33 €", abwKKlasse: "ueber", ampel: "rot", bewertung: "deutlich über Plan", ruest: "25 / 26 min", bearb: '200 / <span class="ueber">225 min</span>' },
+            { ag: "40 Verpacken und versenden", platz: "Versandplatz", satz: "40,00 €/h", sollZ: "35 min", istZ: "34 min", abwZ: "−2,9 %", abwZKlasse: "unter", sollK: "23,33 €", istK: "22,67 €", abwK: "−0,66 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "10 / 9 min", bearb: "25 / 25 min" }
+          ],
+          summe: { sollZ: "570 min", istZ: "607 min", abwZ: "+6,5 %", abwZKlasse: "ueber", sollK: "755,00 €", istK: "799,67 €", abwK: "+44,67 €", abwKKlasse: "ueber", ampel: "gelb", bewertung: "leicht über Plan" },
+          ergebnis: '<p>Die Mehrkosten entstehen beim <strong>Lackieren</strong> und beim <strong>Kanten</strong>: Das Lackieren hat in der Bearbeitung 25 min länger gedauert als geplant (+12,5 %), beim Kanten hat das Rüsten 12 min länger gedauert (+60 %).</p>' +
+            '<p>Durch 2 Ausschussteile verteilen sich die Kosten auf nur 48 Gutstücke. Deshalb steigen die Kosten pro Stück stärker als die Gesamtkosten.</p>' +
+            '<p>Die Rüstzeit beim Kanten liegt auch im Schnitt aller V-410-Aufträge über Plan. Der Arbeitsplan schlägt deshalb 29 statt 20 min vor: <a href="artikel.html#abgleich">Vorschlag ansehen</a>.</p>' +
+            '<p class="leise klein">AG 20 war einmal 12 min unterbrochen (Werkzeug fehlt). Diese Zeit steckt nicht in der Ist-Zeit, sie erscheint in der <a href="auswertung.html">Auswertung der Unterbrechungen</a>. Eine Buchung an AG 20 hat Lena Hoffmann nachgetragen (Stempeln vergessen).</p>'
+        },
+        "FA-0999": {
+          titel: "Nachkalkulation FA-0999",
+          status: "nachkalkuliert",
+          statusKlasse: "fertig",
+          untertitel: "F-310 Lagerbock Aluminium · 100 Stück bestellt · 100 Gut, 0 Ausschuss · abgeschlossen am 21.09.2026",
+          kachel2Klasse: "kachel",
+          kachel4Klasse: "kachel",
+          sollKosten: "1.107,50 €",
+          sollZeitText: "720 min geplant",
+          istKosten: "1.056,17 €",
+          istKostenAbw: '<span class="ampel gruen"></span><span class="unter">−51,33 € (−4,6 %)</span>',
+          istZeit: "692 min",
+          istZeitAbw: '<span class="unter">−28 min (−3,9 %)</span>',
+          stueckKosten: "10,56 €",
+          stueckKostenSub: 'Soll 11,08 € · <span class="unter">−4,6 %</span>',
+          arbeitsgaenge: [
+            { ag: "10 Sägen Zuschnitt", platz: "Bandsäge", satz: "60,00 €/h", sollZ: "90 min", istZ: "88 min", abwZ: "−2,2 %", abwZKlasse: "unter", sollK: "90,00 €", istK: "88,00 €", abwK: "−2,00 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "15 / 14 min", bearb: "75 / 74 min" },
+            { ag: "20 CNC-Fräsen", platz: "5-Achs-Zentrum", satz: "120,00 €/h", sollZ: "420 min", istZ: "396 min", abwZ: "−5,7 %", abwZKlasse: "unter", sollK: "840,00 €", istK: "792,00 €", abwK: "−48,00 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "40 / 36 min", bearb: "380 / 360 min" },
+            { ag: "30 Entgraten &amp; Prüfen", platz: "Handarbeitsplatz", satz: "55,00 €/h", sollZ: "150 min", istZ: "150 min", abwZ: "±0,0 %", abwZKlasse: "unter", sollK: "137,50 €", istK: "137,50 €", abwK: "±0,00 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "10 / 10 min", bearb: "140 / 140 min" },
+            { ag: "40 Verpacken und versenden", platz: "Versandplatz", satz: "40,00 €/h", sollZ: "60 min", istZ: "58 min", abwZ: "−3,3 %", abwZKlasse: "unter", sollK: "40,00 €", istK: "38,67 €", abwK: "−1,33 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "10 / 9 min", bearb: "50 / 49 min" }
+          ],
+          summe: { sollZ: "720 min", istZ: "692 min", abwZ: "−3,9 %", abwZKlasse: "unter", sollK: "1.107,50 €", istK: "1.056,17 €", abwK: "−51,33 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan" },
+          ergebnis: '<p>Der Auftrag lief komplett <strong>im Plan</strong> und ohne Ausschuss durch. Auf dem 5-Achs-Zentrum konnten durch optimierte Spannmittel 20 min Bearbeitungszeit eingespart werden.</p>' +
+            '<p>Alle 100 bestellten Gutstücke wurden termingerecht eingelagert. Keine Anpassung am Arbeitsplan erforderlich.</p>' +
+            '<p class="leise klein">Nachkalkulation wurde am 22.09.2026 durch Sven Petersen abgeschlossen und ins ERP übergeben.</p>'
+        },
+        "FA-0998": {
+          titel: "Nachkalkulation FA-0998",
+          status: "nachkalkuliert",
+          statusKlasse: "verzug",
+          untertitel: "V-410 Seitenverkleidung Fräszentrum · 30 Stück bestellt · 26 Gut, 4 Ausschuss · abgeschlossen am 15.09.2026",
+          kachel2Klasse: "kachel verzug",
+          kachel4Klasse: "kachel verzug",
+          sollKosten: "488,34 €",
+          sollZeitText: "370 min geplant",
+          istKosten: "558,84 €",
+          istKostenAbw: '<span class="ampel rot"></span><span class="ueber">+70,50 € (+14,4 %)</span>',
+          istZeit: "427 min",
+          istZeitAbw: '<span class="ueber">+57 min (+15,4 %)</span>',
+          stueckKosten: "21,49 €",
+          stueckKostenSub: 'Soll 16,28 € · <span class="ueber">+32,0 %</span>',
+          arbeitsgaenge: [
+            { ag: "10 Auslasern", platz: "Laserschneidanlage", satz: "110,00 €/h", sollZ: "90 min", istZ: "92 min", abwZ: "+2,2 %", abwZKlasse: "unter", sollK: "165,00 €", istK: "168,67 €", abwK: "+3,67 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "15 / 16 min", bearb: "75 / 76 min" },
+            { ag: "20 Kanten", platz: "Abkantpresse", satz: "75,00 €/h", sollZ: "110 min", istZ: "142 min", abwZ: "+29,1 %", abwZKlasse: "ueber", sollK: "137,50 €", istK: "177,50 €", abwK: "+40,00 €", abwKKlasse: "ueber", ampel: "rot", bewertung: "deutlich über Plan", ruest: '20 / <span class="ueber">34 min</span>', bearb: '90 / <span class="ueber">108 min</span>' },
+            { ag: "30 Lackieren", platz: "Lackieranlage", satz: "70,00 €/h", sollZ: "145 min", istZ: "168 min", abwZ: "+15,9 %", abwZKlasse: "ueber", sollK: "169,17 €", istK: "196,00 €", abwK: "+26,83 €", abwKKlasse: "ueber", ampel: "rot", bewertung: "deutlich über Plan", ruest: "25 / 28 min", bearb: '120 / <span class="ueber">140 min</span>' },
+            { ag: "40 Verpacken und versenden", platz: "Versandplatz", satz: "40,00 €/h", sollZ: "25 min", istZ: "25 min", abwZ: "±0,0 %", abwZKlasse: "unter", sollK: "16,67 €", istK: "16,67 €", abwK: "±0,00 €", abwKKlasse: "unter", ampel: "gruen", bewertung: "im Plan", ruest: "10 / 10 min", bearb: "15 / 15 min" }
+          ],
+          summe: { sollZ: "370 min", istZ: "427 min", abwZ: "+15,4 %", abwZKlasse: "ueber", sollK: "488,34 €", istK: "558,84 €", abwK: "+70,50 €", abwKKlasse: "ueber", ampel: "rot", bewertung: "deutlich über Plan" },
+          ergebnis: '<p>Deutliche Kostenüberschreitung beim <strong>Kanten (+29,1 %)</strong> und <strong>Lackieren (+15,9 %)</strong>. Beim Kanten traten Risse an der Biegekante auf, was zu 4 Ausschussteilen und Nacharbeit führte.</p>' +
+            '<p>Durch die geringe Losgröße von 30 Stück (nur 26 Gutstücke) schlagen Rüstzeiten und Ausschuss überproportional auf die Stückkosten durch (+32,0 %).</p>' +
+            '<p class="leise klein">Bestätigt den Trend bei V-410: Rüstzeit an der Abkantpresse dauerhaft zu knapp kalkuliert.</p>'
+        }
+      };
+
+      function zeigeAuftrag(id) {
+        var daten = auftraege[id];
+        if (!daten) return;
+        aktuelleId = id;
+        selectAuftrag.value = id;
+
+        document.querySelector(".seitenkopf h1").innerHTML =
+          daten.titel + ' <span class="badge ' + daten.statusKlasse + '">' + daten.status + '</span>';
+        document.querySelector(".seitenkopf .leise").textContent = daten.untertitel;
+
+        var kacheln = document.querySelectorAll(".kacheln .kachel");
+        if (kacheln.length === 4) {
+          var s0 = kacheln[0].querySelectorAll(":scope > span");
+          s0[1].textContent = daten.sollKosten;
+          s0[2].textContent = daten.sollZeitText;
+
+          kacheln[1].className = daten.kachel2Klasse;
+          var s1 = kacheln[1].querySelectorAll(":scope > span");
+          s1[1].textContent = daten.istKosten;
+          s1[2].innerHTML = daten.istKostenAbw;
+
+          var s2 = kacheln[2].querySelectorAll(":scope > span");
+          s2[1].textContent = daten.istZeit;
+          s2[2].innerHTML = daten.istZeitAbw;
+
+          kacheln[3].className = daten.kachel4Klasse;
+          var s3 = kacheln[3].querySelectorAll(":scope > span");
+          s3[1].textContent = daten.stueckKosten;
+          s3[2].innerHTML = daten.stueckKostenSub;
+        }
+
+        var tabellen = document.querySelectorAll("table");
+        if (tabellen[0]) {
+          tabellen[0].querySelector("tbody").innerHTML = daten.arbeitsgaenge.map(function (ag) {
+            return '<tr>' +
+              '<td>' + ag.ag + '</td>' +
+              '<td>' + ag.platz + '</td>' +
+              '<td class="zahl">' + ag.satz + '</td>' +
+              '<td class="zahl">' + ag.sollZ + '</td>' +
+              '<td class="zahl">' + ag.istZ + '</td>' +
+              '<td class="zahl ' + ag.abwZKlasse + '">' + ag.abwZ + '</td>' +
+              '<td class="zahl">' + ag.sollK + '</td>' +
+              '<td class="zahl">' + ag.istK + '</td>' +
+              '<td class="zahl ' + ag.abwKKlasse + '">' + ag.abwK + '</td>' +
+              '<td><span class="ampel ' + ag.ampel + '"></span>' + ag.bewertung + '</td>' +
+              '</tr>';
+          }).join("");
+
+          var s = daten.summe;
+          tabellen[0].querySelector("tfoot").innerHTML =
+            '<tr>' +
+            '<td colspan="3">Summe</td>' +
+            '<td class="zahl">' + s.sollZ + '</td>' +
+            '<td class="zahl">' + s.istZ + '</td>' +
+            '<td class="zahl ' + s.abwZKlasse + '">' + s.abwZ + '</td>' +
+            '<td class="zahl">' + s.sollK + '</td>' +
+            '<td class="zahl">' + s.istK + '</td>' +
+            '<td class="zahl ' + s.abwKKlasse + '">' + s.abwK + '</td>' +
+            '<td><span class="ampel ' + s.ampel + '"></span>' + s.bewertung + '</td>' +
+            '</tr>';
+        }
+
+        if (tabellen[1]) {
+          tabellen[1].querySelector("tbody").innerHTML = daten.arbeitsgaenge.map(function (ag) {
+            return '<tr><td>' + ag.ag + '</td><td class="zahl">' + ag.ruest + '</td><td class="zahl">' + ag.bearb + '</td></tr>';
+          }).join("");
+        }
+
+        var karten = document.querySelectorAll(".spalten-gleich .karte");
+        if (karten[1]) {
+          karten[1].innerHTML = '<h2>Ergebnis</h2>' + daten.ergebnis;
+        }
+
+        // URL mitführen (auf file:// kann das fehlschlagen, deshalb try/catch)
+        try { history.replaceState(null, "", "?auftrag=" + encodeURIComponent(id)); } catch (e) {}
+      }
+
+      // Dropdown: direkt umschalten, ohne Seiten-Reload.
+      // stopImmediatePropagation verhindert, dass ein älterer Handler in prototyp.js
+      // (z. B. form.submit()) die Seite trotzdem neu lädt.
+      selectAuftrag.addEventListener("change", function (e) {
+        e.stopImmediatePropagation();
+        zeigeAuftrag(selectAuftrag.value);
+      });
+
+      if (formAuftrag) {
+        formAuftrag.addEventListener("submit", function (e) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          zeigeAuftrag(selectAuftrag.value);
+        });
+      }
+
+      // Buttons (ohne Server)
+      function textOhneTags(html) {
+        var d = document.createElement("div");
+        d.innerHTML = html;
+        return d.textContent;
+      }
+
+      var btnAbschluss = document.getElementById("btn-abschliessen");
+      if (btnAbschluss) {
+        btnAbschluss.addEventListener("click", function () {
+          alert("Prototyp: Nachkalkulation " + aktuelleId + " würde jetzt abgeschlossen und ins ERP übergeben.");
+        });
+      }
+
+      var btnExport = document.getElementById("btn-export");
+      if (btnExport) {
+        btnExport.addEventListener("click", function () {
+          var d = auftraege[aktuelleId];
+          var kopf = ["AG", "Arbeitsplatz", "Satz", "Soll-Zeit", "Ist-Zeit", "Abw. Zeit", "Soll-Kosten", "Ist-Kosten", "Abw. Kosten", "Bewertung"];
+          var zeilen = d.arbeitsgaenge.map(function (a) {
+            return [a.ag, a.platz, a.satz, a.sollZ, a.istZ, a.abwZ, a.sollK, a.istK, a.abwK, a.bewertung];
+          });
+          var s = d.summe;
+          zeilen.push(["Summe", "", "", s.sollZ, s.istZ, s.abwZ, s.sollK, s.istK, s.abwK, s.bewertung]);
+          var csv = [kopf].concat(zeilen).map(function (z) {
+            return z.map(function (w) {
+              return '"' + textOhneTags(String(w)).replace(/"/g, '""') + '"';
+            }).join(";");
+          }).join("\r\n");
+          var blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "Nachkalkulation_" + aktuelleId + ".csv";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(a.href);
+        });
+      }
+
+      // Startzustand: ?auftrag=... hat Vorrang, sonst der Wert des Dropdowns
+      var start = new URLSearchParams(window.location.search).get("auftrag");
+      zeigeAuftrag(auftraege[start] ? start : selectAuftrag.value);
+    })();
+  </script>
 </body>
 </html>
-
