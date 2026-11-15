@@ -177,6 +177,18 @@ function arbeitsplatz(nummer) {
   return ARBEITSPLAETZE.find(function (platz) { return platz.nummer === nummer; });
 }
 
+// Die Reihenfolge im Arbeitsplan folgt dem Fertigungsfluss, also der Reihenfolge der Arbeitsplätze:
+// Auslasern → Umformen → Bearbeitung → Zerspanung (erst Drehen, dann Fräsen) → Lackierung → Versand.
+// Zwei Schritte am selben Arbeitsplatz behalten die Reihenfolge, in der sie hinzugefügt wurden.
+function nachAblaufSortiert(plan) {
+  const rang = function (schritt) {
+    return ARBEITSPLAETZE.findIndex(function (platz) { return platz.nummer === schritt.arbeitsplatz; });
+  };
+  return plan.map(function (schritt, index) { return { schritt: schritt, index: index }; })
+    .sort(function (a, b) { return rang(a.schritt) - rang(b.schritt) || a.index - b.index; })
+    .map(function (eintrag) { return eintrag.schritt; });
+}
+
 // Alle Aufträge, die es gerade gibt: Beispieldaten ohne die gelöschten, dazu die neu angelegten
 function vorhandeneAuftraege() {
   const geloescht = lesen(SPEICHER_GELOESCHT, []);
@@ -612,18 +624,15 @@ function artikelSeite() {
   }
 
   function planZeigen(plan) {
-    planZeilen.innerHTML = plan.map(function (schritt, index) {
+    planZeilen.innerHTML = nachAblaufSortiert(plan).map(function (schritt, index) {
       return "<tr>"
         + '<td class="zahl">' + (index + 1) * 10 + "</td>"
         + '<td><input type="text" data-feld="arbeitsgang" value="' + text(schritt.arbeitsgang) + '" aria-label="Arbeitsgang" required style="min-width: 14rem;"></td>'
         + '<td><select data-feld="arbeitsplatz" aria-label="Station und Arbeitsplatz" style="min-width: 15rem;">' + arbeitsplatzAuswahl(schritt.arbeitsplatz) + "</select></td>"
         + '<td><input type="number" data-feld="ruestzeit" value="' + schritt.ruestzeit + '" min="0" step="1" aria-label="Rüstzeit" style="width: 5.5rem;"></td>'
         + '<td><input type="number" data-feld="stueckzeit" value="' + schritt.stueckzeit + '" min="0" step="0.1" aria-label="Stückzeit" style="width: 5.5rem;"></td>'
-        + '<td><div class="knopfleiste" style="margin: 0; flex-wrap: nowrap;">'
-        + '<button type="button" class="btn btn-klein btn-sekundaer" data-hoch="' + index + '" aria-label="nach oben"' + (index === 0 ? " disabled" : "") + ">↑</button>"
-        + '<button type="button" class="btn btn-klein btn-sekundaer" data-runter="' + index + '" aria-label="nach unten"' + (index === plan.length - 1 ? " disabled" : "") + ">↓</button>"
-        + '<button type="button" class="btn btn-klein btn-gefahr" data-entfernen="' + index + '">Entfernen</button>'
-        + "</div></td></tr>";
+        + '<td><button type="button" class="btn btn-klein btn-gefahr" data-entfernen="' + index + '">Entfernen</button></td>'
+        + "</tr>";
     }).join("") || '<tr><td colspan="6" class="leise">Noch keine Arbeitsschritte. Unten eine Station hinzufügen.</td></tr>';
   }
 
@@ -687,17 +696,18 @@ function artikelSeite() {
     const plan = planLesen();
     if (knopf.dataset.entfernen !== undefined) {
       plan.splice(Number(knopf.dataset.entfernen), 1);
-    } else if (knopf.dataset.hoch !== undefined) {
-      const i = Number(knopf.dataset.hoch);
-      plan.splice(i - 1, 0, plan.splice(i, 1)[0]);
-    } else if (knopf.dataset.runter !== undefined) {
-      const i = Number(knopf.dataset.runter);
-      plan.splice(i + 1, 0, plan.splice(i, 1)[0]);
     }
     planZeigen(plan);
   });
 
-  // Ein Knopf je Station: hängt einen passenden Arbeitsschritt an
+  // Anderer Arbeitsplatz gewählt: Der Schritt rückt an seine Stelle im Ablauf
+  planZeilen.addEventListener("change", function (ereignis) {
+    if (ereignis.target.dataset.feld === "arbeitsplatz") {
+      planZeigen(planLesen());
+    }
+  });
+
+  // Ein Knopf je Station: fügt einen passenden Arbeitsschritt an der richtigen Stelle im Ablauf ein
   const stationsKnoepfe = document.getElementById("stationen");
   stationsKnoepfe.innerHTML = STATIONEN.map(function (eintrag, index) {
     return '<button type="button" class="btn btn-klein btn-sekundaer" data-station="' + index + '">+ ' + text(eintrag.station) + "</button>";
@@ -717,7 +727,7 @@ function artikelSeite() {
     ereignis.preventDefault();
     const nummer = formular.nummer.value.trim().toUpperCase();
     const doppelt = artikel.some(function (eintrag, index) { return eintrag.nummer === nummer && index !== bearbeitet; });
-    const plan = planLesen();
+    const plan = nachAblaufSortiert(planLesen());
     meldung.hidden = false;
     if (doppelt) {
       meldung.className = "hinweis fehler";

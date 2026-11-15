@@ -77,7 +77,7 @@
         </p>
       </section>
 
-      <!-- Arbeitsschritte zuordnen: Station und Arbeitsplatz wählen, Reihenfolge mit Pfeilen ändern -->
+      <!-- Arbeitsschritte zuordnen: Station und Arbeitsplatz wählen. Die Reihenfolge ergibt sich aus dem Fertigungsfluss -->
       <form class="karte" id="artikel-formular" action="artikel.html" method="post">
         <h2 id="formular-titel">Artikel bearbeiten</h2>
         <p id="artikel-meldung" class="hinweis" hidden></p>
@@ -123,6 +123,7 @@
           </table>
         </div>
 
+        <p class="leise klein" style="margin: 0.75rem 0 0;">Die Reihenfolge ergibt sich aus dem Fertigungsfluss: Auslasern → Umformen → Bearbeitung → Zerspanung (erst Drehen, dann Fräsen) → Lackierung → Versand. Ein neuer Schritt rückt automatisch an seine Stelle, die AG-Nummern zählen in Zehnerschritten.</p>
         <p class="leise klein" style="margin: 1rem 0 0.4rem;">Arbeitsschritt hinzufügen:</p>
         <div class="knopfleiste" id="stationen" style="margin: 0;"></div>
 
