@@ -884,6 +884,7 @@ function auftraegeSeite() {
       + "<td>" + text(auftrag.artikel)
       + (auftrag.zertifikate && auftrag.zertifikate.length ? '<br><span class="leise klein">Zertifikat: ' + text(auftrag.zertifikate.join(", ")) + "</span>" : "")
       + "</td>"
+      + "<td>" + (auftrag.kunde ? text(auftrag.kunde) : "–") + "</td>"
       + '<td class="zahl">' + auftrag.menge + "</td>"
       + "<td>" + termin + "</td>"
       + '<td><span class="badge ' + auftrag.status + '">' + auftrag.status + "</span></td>"
@@ -923,9 +924,131 @@ function auftraegeSeite() {
     }
     knopf.closest("tr").remove();
     meldungZeigen("Auftrag " + nummer + " wurde gelöscht.");
+    filter.anwenden();
   });
 
+  const filter = auftragsFilter(tabelle);
+
   meldungZeigen(neu ? "Auftrag " + neu + " wurde angelegt. Die Arbeitsgänge kommen aus dem Arbeitsplan des Artikels." : "");
+}
+
+// Filter der Auftragsliste: Suche, Status, Art und Verzug wirken sofort auf die Zeilen
+function auftragsFilter(tabelle) {
+  const formular = document.getElementById("auftrag-filter");
+  const ergebnis = document.getElementById("filter-ergebnis");
+  const zuruecksetzen = document.getElementById("filter-zuruecksetzen");
+  const statusFeld = formular.status;
+  const arten = {};
+  alleArtikel().forEach(function (eintrag) { arten[eintrag.nummer] = eintrag.art; });
+
+  // Groß-/Kleinschreibung, Leerzeichen und Bindestriche spielen bei der Suche keine Rolle: „fa1002“ findet FA-1002
+  function normal(wert) {
+    return wert.toLowerCase().replace(/[\s\-]/g, "");
+  }
+
+  // Merkmale jeder Zeile einmal aus der Tabelle lesen
+  function zeilen() {
+    return Array.from(tabelle.querySelectorAll("tr")).filter(function (zeile) { return !zeile.dataset.leer; }).map(function (zeile) {
+      if (!zeile.dataset.status) {
+        const badge = zeile.cells[5].querySelector(".badge");
+        const klasse = badge ? Array.from(badge.classList).find(function (k) { return k !== "badge"; }) : "";
+        const artikelnummer = zeile.cells[1].textContent.trim().split(" ")[0];
+        zeile.dataset.status = (klasse || "").replace("-", "_");
+        zeile.dataset.art = arten[artikelnummer] || (artikelnummer.startsWith("V-") ? "Verkleidungsteil" : "Zerspanteil");
+        zeile.dataset.verzug = zeile.querySelector(".badge.verzug") ? "1" : "";
+        zeile.dataset.suchtext = normal(Array.from(zeile.cells).slice(0, 3).map(function (z) { return z.textContent; }).join(" "));
+      }
+      return zeile;
+    });
+  }
+
+  function passt(zeile, auswahl) {
+    const status = zeile.dataset.status;
+    if (auswahl.suche && !zeile.dataset.suchtext.includes(auswahl.suche)) {
+      return false;
+    }
+    if (auswahl.status === "offen" ? ["fertig", "storniert", "nachkalkuliert"].includes(status) : auswahl.status && status !== auswahl.status) {
+      return false;
+    }
+    if (auswahl.art && zeile.dataset.art !== auswahl.art) {
+      return false;
+    }
+    return !(auswahl.verzug && !zeile.dataset.verzug);
+  }
+
+  function anwenden() {
+    const auswahl = {
+      suche: normal(formular.suche.value),
+      status: statusFeld.value,
+      art: formular.art.value,
+      verzug: formular.verzug.checked,
+    };
+    const alle = zeilen();
+    let sichtbar = 0;
+    alle.forEach(function (zeile) {
+      const zeigen = passt(zeile, auswahl);
+      zeile.hidden = !zeigen;
+      sichtbar += zeigen ? 1 : 0;
+    });
+
+    // Anzahl je Status im Auswahlfeld, gezählt über alle Aufträge
+    Array.from(statusFeld.options).forEach(function (option) {
+      if (!option.dataset.text) {
+        option.dataset.text = option.textContent;
+      }
+      const anzahl = alle.filter(function (zeile) {
+        return passt(zeile, { status: option.value, suche: "", art: "", verzug: false });
+      }).length;
+      option.textContent = option.dataset.text + " (" + anzahl + ")";
+    });
+
+    let leer = tabelle.querySelector("[data-leer]");
+    if (sichtbar === 0 && !leer) {
+      leer = document.createElement("tr");
+      leer.dataset.leer = "1";
+      leer.innerHTML = '<td colspan="10" class="leise">Kein Auftrag passt zum Filter.</td>';
+      tabelle.append(leer);
+    } else if (sichtbar > 0 && leer) {
+      leer.remove();
+    }
+
+    const gefiltert = auswahl.suche || auswahl.status || auswahl.art || auswahl.verzug;
+    ergebnis.textContent = gefiltert ? sichtbar + " von " + alle.length + " Aufträgen" : "Alle " + alle.length + " Aufträge";
+    zuruecksetzen.hidden = !gefiltert;
+
+    // Auswahl in die Adresse schreiben, damit Zurück, Neuladen und Links den Filter behalten
+    try {
+      const adresse = new URL(window.location.href);
+      ["suche", "status", "art", "verzug"].forEach(function (name) { adresse.searchParams.delete(name); });
+      if (formular.suche.value.trim()) { adresse.searchParams.set("suche", formular.suche.value.trim()); }
+      if (auswahl.status) { adresse.searchParams.set("status", auswahl.status); }
+      if (auswahl.art) { adresse.searchParams.set("art", auswahl.art); }
+      if (auswahl.verzug) { adresse.searchParams.set("verzug", "1"); }
+      history.replaceState(null, "", adresse);
+    } catch (fehler) {
+      // auf file:// nicht möglich, der Filter wirkt trotzdem
+    }
+  }
+
+  // Startwerte aus der Adresse
+  const parameter = new URLSearchParams(window.location.search);
+  formular.suche.value = parameter.get("suche") || "";
+  statusFeld.value = parameter.get("status") || "";
+  formular.art.value = parameter.get("art") || "";
+  formular.verzug.checked = parameter.get("verzug") === "1";
+
+  formular.addEventListener("input", anwenden);
+  formular.addEventListener("change", anwenden);
+  formular.addEventListener("submit", function (ereignis) {
+    ereignis.preventDefault();
+    anwenden();
+  });
+  formular.addEventListener("reset", function () {
+    setTimeout(anwenden, 0);
+  });
+
+  anwenden();
+  return { anwenden: anwenden };
 }
 
 // ---------- Start ----------

@@ -17,13 +17,23 @@
         <div class="feld">
             <label for="status">Status</label>
             <select id="status" wire:model.live="status">
-                <option value="">alle</option>
+                <option value="">alle ({{ $gesamt }})</option>
+                <option value="offen">alle offenen, nicht fertig ({{ $offen }})</option>
                 @foreach (['angelegt', 'freigegeben', 'in_arbeit', 'messen', 'fertig', 'storniert'] as $wert)
-                    <option value="{{ $wert }}">{{ status_text($wert) }}</option>
+                    <option value="{{ $wert }}">{{ status_text($wert) }} ({{ $anzahl->get($wert, 0) }})</option>
                 @endforeach
             </select>
         </div>
+        <div class="feld feld-knopf">
+            <label class="auswahl"><input type="checkbox" wire:model.live="verzug"> nur mit Verzug</label>
+        </div>
     </div>
+    <p class="knopfleiste" role="status">
+        <span class="leise klein">{{ $gefiltert ? $auftraege->count().' von '.$gesamt.' Aufträgen' : 'Alle '.$gesamt.' Aufträge' }}</span>
+        @if ($gefiltert)
+            <button type="button" wire:click="zuruecksetzen" class="btn btn-klein btn-sekundaer">Filter zurücksetzen</button>
+        @endif
+    </p>
 
     <section class="karte">
         <div class="tabelle-scroll">
@@ -52,7 +62,7 @@
                             <td>{{ $auftrag->zertifikate ?? '–' }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="10">Keine Aufträge gefunden.</td></tr>
+                        <tr><td colspan="10">Kein Auftrag passt zum Filter.</td></tr>
                     @endforelse
                 </tbody>
             </table>

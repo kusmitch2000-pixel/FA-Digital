@@ -51,17 +51,19 @@
         <a class="btn btn-primaer" href="auftrag-anlegen.html">+ Neuer Auftrag</a>
       </div>
 
-      <!-- Filter: wird später per GET an PHP übergeben -->
-      <form class="karte" action="auftraege.html" method="get">
+      <!-- Filter: wirkt sofort beim Tippen und Auswählen (stammdaten.js). Die Auswahl steht
+           auch in der Adresse, z. B. auftraege.html?status=in_arbeit&verzug=1 -->
+      <form class="karte" id="auftrag-filter" action="auftraege.html" method="get">
         <div class="formular-raster">
           <div class="feld">
             <label for="suche">Suche</label>
-            <input type="text" id="suche" name="suche" placeholder="Auftrag oder Artikel">
+            <input type="search" id="suche" name="suche" placeholder="Auftrag, Artikel oder Kunde" autocomplete="off">
           </div>
           <div class="feld">
             <label for="status">Status</label>
             <select id="status" name="status">
               <option value="">alle</option>
+              <option value="offen">alle offenen (nicht fertig, nicht storniert)</option>
               <option value="angelegt">angelegt</option>
               <option value="freigegeben">freigegeben</option>
               <option value="in_arbeit">in Arbeit</option>
@@ -70,9 +72,21 @@
               <option value="storniert">storniert</option>
             </select>
           </div>
-          <div class="feld feld-knopf">
-            <button type="submit" class="btn btn-sekundaer">Filtern</button>
+          <div class="feld">
+            <label for="art">Art</label>
+            <select id="art" name="art">
+              <option value="">alle</option>
+              <option value="Verkleidungsteil">Verkleidungsteile</option>
+              <option value="Zerspanteil">Zerspanteile</option>
+            </select>
           </div>
+          <div class="feld feld-knopf">
+            <label class="auswahl"><input type="checkbox" id="verzug" name="verzug" value="1"> nur mit Verzug</label>
+          </div>
+        </div>
+        <div class="knopfleiste" style="margin: 0.25rem 0 0; align-items: center;">
+          <span class="leise klein" id="filter-ergebnis" role="status"></span>
+          <button type="reset" class="btn btn-klein btn-sekundaer" id="filter-zuruecksetzen" hidden>Filter zurücksetzen</button>
         </div>
       </form>
 
@@ -85,6 +99,7 @@
               <tr>
                 <th>Auftrag</th>
                 <th>Artikel</th>
+                <th>Kunde</th>
                 <th class="zahl">Menge</th>
                 <th>Liefertermin</th>
                 <th>Status</th>
@@ -98,6 +113,7 @@
               <tr>
                 <td><a href="auftrag-detail.html"><strong>FA-1000</strong></a></td>
                 <td>V-420 Späneschutzwanne</td>
+                <td>Baltic Werkzeugmaschinen GmbH</td>
                 <td class="zahl">10</td>
                 <td>25.09.2026 <span class="badge verzug">Verzug</span></td>
                 <td><span class="badge in-arbeit">in Arbeit</span></td>
@@ -112,6 +128,7 @@
               <tr>
                 <td><a href="nachkalkulation.html"><strong>FA-1001</strong></a></td>
                 <td>V-410 Seitenverkleidung Fräszentrum</td>
+                <td>Nordwerk Maschinenbau GmbH</td>
                 <td class="zahl">50</td>
                 <td>02.10.2026</td>
                 <td><span class="badge fertig">fertig</span></td>
@@ -126,6 +143,7 @@
               <tr>
                 <td><a href="auftrag-detail.html"><strong>FA-1002</strong></a></td>
                 <td>F-310 Flansch DN80</td>
+                <td>Hansa Pumpen AG</td>
                 <td class="zahl">30</td>
                 <td>06.10.2026</td>
                 <td><span class="badge in-arbeit">in Arbeit</span></td>
@@ -140,6 +158,7 @@
               <tr>
                 <td><a href="auftrag-detail.html"><strong>FA-1003</strong></a></td>
                 <td>V-430 Schutztür mit Sichtfenster</td>
+                <td>Kieler Werft Service</td>
                 <td class="zahl">12</td>
                 <td>09.10.2026</td>
                 <td><span class="badge in-arbeit">in Arbeit</span></td>
@@ -154,6 +173,7 @@
               <tr>
                 <td><a href="auftrag-detail.html"><strong>FA-1004</strong></a></td>
                 <td>F-310 Flansch DN80</td>
+                <td>Hansa Pumpen AG</td>
                 <td class="zahl">40</td>
                 <td>14.10.2026</td>
                 <td><span class="badge in-arbeit">in Arbeit</span></td>
@@ -168,6 +188,7 @@
               <tr>
                 <td><a href="auftrag-detail.html"><strong>FA-1005</strong></a></td>
                 <td>V-420 Späneschutzwanne</td>
+                <td>Baltic Werkzeugmaschinen GmbH</td>
                 <td class="zahl">8</td>
                 <td>16.10.2026</td>
                 <td><span class="badge freigegeben">freigegeben</span></td>
@@ -182,6 +203,7 @@
               <tr>
                 <td><a href="auftrag-detail.html"><strong>FA-1006</strong></a></td>
                 <td>W-200 Antriebswelle Ø40</td>
+                <td>Kieler Werft Service</td>
                 <td class="zahl">120</td>
                 <td>21.10.2026</td>
                 <td><span class="badge angelegt">angelegt</span></td>
@@ -196,6 +218,7 @@
               <tr>
                 <td><a href="auftrag-detail.html"><strong>FA-0997</strong></a></td>
                 <td>F-310 Flansch DN80</td>
+                <td>Hansa Pumpen AG</td>
                 <td class="zahl">16</td>
                 <td>07.10.2026</td>
                 <td><span class="badge storniert">storniert</span></td>
@@ -209,7 +232,7 @@
         </div>
         <p class="leise klein" style="margin: 0.75rem 0 0;">
           Löschen geht nur, solange noch kein Arbeitsgang gestartet wurde. Danach lässt sich ein Auftrag nur noch stornieren, damit die gebuchten Zeiten erhalten bleiben.
-          Prototyp: Alle „Details“-Links führen zu FA-1002. Im fertigen System lassen sich die Spalten per Klick sortieren.
+          Prototyp: Alle „Details“-Links führen zu FA-1002. 
         </p>
       </section>
     </main>
