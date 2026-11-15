@@ -30,12 +30,13 @@ Jede Rolle sieht nur ihre Bereiche (Rückmeldung vom 01.10.2026). Nach der Anmel
 | `/werker` | Werker-Terminal: Arbeitsvorrat, Rüsten/Bearbeiten, Unterbrechung mit Grund, Checkliste, Fertigmeldung | 1 bis 5 | Werker (Start), Meister, Admin |
 | `/halle` | Hallenansicht mit Ampel, Handlungsbedarf, Aufträge in der Werkstatt (Meister-Ansicht), letzte Buchungen. Lädt sich alle 30 s neu | 7 | Meister (Start), AV, Controlling, Admin |
 | `/auftraege` | Auftragsübersicht mit Suche und Statusfilter | 8 | Meister, AV, Controlling, Admin |
-| `/auftraege/FA-1002` | Auftragsdetail: Arbeitsgänge, Zuordnungen, Checkliste, Zertifikate und Buchungen | 6, 8 | Meister, AV, Controlling, Admin; Aktionen je Rolle |
+| `/auftraege/FA-1002` | Auftragsdetail: Arbeitsgänge, Zuordnungen, Checkliste, Zertifikate und Buchungen. AV bearbeitet Menge, Termin, Kunde und Zertifikate, solange niemand daran gearbeitet hat | 6, 8 | Meister, AV, Controlling, Admin; Aktionen je Rolle |
 | `/auftraege/neu` | Auftrag anlegen mit geforderten Werkszertifikaten und Vorschau der Checkliste | Rückmeldung | AV (Start: Aufträge), Admin |
-| `/zertifikate` | Werkszertifikate prüfen, freigeben, als Werkszeugnis drucken | 9 | Meister, AV, Admin |
+| `/zertifikate` | Zertifikatsfreigabe: Werkszertifikate prüfen, freigeben, als Werkszeugnis drucken | 9 | Meister, AV, Admin |
+| `/zertifikatsvorlagen` | Zertifikatsvorlagen: eigene Zertifikate anlegen, ändern, löschen. Gilt für die Artikel, in deren Arbeitsplan es Prüfmerkmale hat | Rückmeldung | AV, Admin (Meister liest) |
 | `/nachkalkulation` | Soll-Ist-Vergleich je Arbeitsgang und Auftrag, Nachkalkulation abschließen | 10 | Controlling (Start), Meister, Admin |
 | `/auswertung` | abgeschlossene Aufträge, Abweichung je Arbeitsplatz, Unterbrechungen nach Grund, CSV-Export | 11 | Controlling, Meister, Admin |
-| `/artikel` | Arbeitspläne mit Prüfmerkmalen, Soll-Zeit-Vorschläge übernehmen oder Soll-Zeiten von Hand ändern (mit Pflicht-Begründung, beides in der Historie) | Rückmeldung | AV, Admin |
+| `/artikel` | Arbeitspläne: Prüfmerkmale je Arbeitsgang pflegen (immer oder nur bei einem Zertifikat), Soll-Zeit-Vorschläge übernehmen oder Soll-Zeiten von Hand ändern (mit Pflicht-Begründung, beides in der Historie) | Rückmeldung | AV, Admin |
 | `/arbeitsplaetze` | Arbeitsplätze und Stundensätze | – | AV, Controlling, Admin |
 | `/benutzer` | Benutzer anlegen, sperren, Passwort setzen, Rechte-Übersicht | 12 | Admin |
 

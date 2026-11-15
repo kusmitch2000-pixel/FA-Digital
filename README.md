@@ -67,13 +67,13 @@ Der statische Prototyp und die Laravel-App können sich bei Rollen und Funktione
 | `dashboard.html` | Hallenansicht: eine Karte je Arbeitsplatz mit Ampel | 12 |
 | `auftraege.html` | Auftragsübersicht | 13 |
 | `auftrag-anlegen.html` | Neuer Fertigungsauftrag: Artikel, Menge und Liefertermin wählen, Vorschau der Arbeitsgänge und Soll-Kosten rechnet live | 4, 5 |
-| `auftrag-detail.html` | Auftragsdetail FA-1002 | 5, 11, 14 |
+| `auftrag-detail.html` | Auftragsdetail FA-1002. Neu angelegte Aufträge haben eine eigene Detailseite (`?nr=FA-1007`): freigeben, vor dem Start bearbeiten, Werker zuordnen, Checkliste | 5, 11, 14 |
 | `werker.html` | Werker-Terminal mit Unterbrechungsgrund und Notizen | 6, 7, 8, 10 |
 | `messung.html` | Messung für das Werkszertifikat nach „Arbeit beenden und messen“ | 9, 15 |
 | `nachkalkulation.html` | Nachkalkulation FA-1001 | 16 |
 | `auswertung.html` | Auswertung, Unterbrechungen nach Grund, CSV-Export | 17 |
-| `artikel.html` | Artikel anlegen und jedem Artikel seine Arbeitsschritte zuordnen (Station, Arbeitsplatz, Rüst- und Stückzeit), Soll-Zeit-Vorschläge | 1, 2 |
-| `zertifikate.html` | Zertifikate nach DIN EN 10204 und eigene Prüfprotokolle der Arbeitsvorbereitung für bestimmte Artikel, mit Prüfmerkmalen je Arbeitsgang | Rückmeldung |
+| `artikel.html` | Artikel anlegen und jedem Artikel seine Arbeitsschritte zuordnen (Station, Arbeitsplatz, Rüst- und Stückzeit, Prüfmerkmale), Soll-Zeit-Vorschläge | 1, 2 |
+| `zertifikate.html` | Zertifikatsvorlagen: nach DIN EN 10204 und eigene Prüfprotokolle der Arbeitsvorbereitung für bestimmte Artikel, mit Prüfmerkmalen je Arbeitsgang | Rückmeldung |
 | `arbeitsplaetze.html` | Arbeitsplätze mit Station und Stundensatz | 3 |
 | `benutzer.html` | Benutzerverwaltung | 18 |
 

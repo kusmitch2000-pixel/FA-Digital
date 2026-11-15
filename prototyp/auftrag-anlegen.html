@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Auftrag anlegen – FA-Digital</title>
-  <link rel="stylesheet" href="style.css?v=2026-11-15-2">
-  <script src="prototyp.js?v=2026-11-15-2" defer></script>
-  <script src="stammdaten.js?v=2026-11-15-2" defer></script>
+  <link rel="stylesheet" href="style.css?v=2026-11-15-3">
+  <script src="prototyp.js?v=2026-11-15-3" defer></script>
+  <script src="stammdaten.js?v=2026-11-15-3" defer></script>
 </head>
 <body>
 
@@ -28,7 +28,7 @@
       <p class="menue-titel">Arbeitsvorbereitung</p>
       <a href="auftrag-anlegen.html" class="aktiv">Auftrag anlegen</a>
       <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
-      <a href="zertifikate.html">Zertifikate</a>
+      <a href="zertifikate.html">Zertifikatsvorlagen</a>
       <a href="arbeitsplaetze.html">Arbeitsplätze</a>
 
       <p class="menue-titel">Werkstatt</p>
@@ -81,7 +81,7 @@
              Angeboten werden nur Zertifikate, die für den gewählten Artikel gelten. -->
         <section class="karte">
           <h2>Geforderte Zertifikate</h2>
-          <p class="leise klein">Die Prüfmerkmale eines Zertifikats kommen zusätzlich in die Checkliste der Werker. Eigene Zertifikate pflegt die Arbeitsvorbereitung unter <a href="zertifikate.html">Zertifikate</a>.</p>
+          <p class="leise klein">Die Prüfmerkmale eines Zertifikats kommen zusätzlich in die Checkliste der Werker. Eigene Zertifikate pflegt die Arbeitsvorbereitung unter <a href="zertifikate.html">Zertifikatsvorlagen</a>.</p>
           <div class="auswahl-gruppe" id="zertifikat-auswahl"></div>
         </section>
 
@@ -103,6 +103,7 @@
                   <th class="zahl">Soll-Zeit</th>
                   <th class="zahl">Stundensatz</th>
                   <th class="zahl">Soll-Kosten</th>
+                  <th>Prüfpunkte für den Werker</th>
                 </tr>
               </thead>
               <tbody id="vorschau-zeilen"></tbody>
@@ -112,10 +113,12 @@
                   <td class="zahl" id="vorschau-zeit"></td>
                   <td></td>
                   <td class="zahl" id="vorschau-kosten"></td>
+                  <td></td>
                 </tr>
                 <tr>
                   <td colspan="8">Soll-Kosten pro Stück</td>
                   <td class="zahl" id="vorschau-stueck"></td>
+                  <td></td>
                 </tr>
               </tfoot>
             </table>
