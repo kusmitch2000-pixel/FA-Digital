@@ -35,7 +35,7 @@ Jede Rolle sieht nur ihre Bereiche (Rückmeldung vom 01.10.2026). Nach der Anmel
 | `/zertifikate` | Werkszertifikate prüfen, freigeben, als Werkszeugnis drucken | 9 | Meister, AV, Admin |
 | `/nachkalkulation` | Soll-Ist-Vergleich je Arbeitsgang und Auftrag, Nachkalkulation abschließen | 10 | Controlling (Start), Meister, Admin |
 | `/auswertung` | abgeschlossene Aufträge, Abweichung je Arbeitsplatz, Unterbrechungen nach Grund, CSV-Export | 11 | Controlling, Meister, Admin |
-| `/artikel` | Arbeitspläne mit Prüfmerkmalen, Soll-Zeit-Vorschläge übernehmen | Rückmeldung | AV, Admin |
+| `/artikel` | Arbeitspläne mit Prüfmerkmalen, Soll-Zeit-Vorschläge übernehmen oder Soll-Zeiten von Hand ändern (mit Pflicht-Begründung, beides in der Historie) | Rückmeldung | AV, Admin |
 | `/arbeitsplaetze` | Arbeitsplätze und Stundensätze | – | AV, Controlling, Admin |
 | `/benutzer` | Benutzer anlegen, sperren, Passwort setzen, Rechte-Übersicht | 12 | Admin |
 

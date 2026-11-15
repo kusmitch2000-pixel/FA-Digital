@@ -28,6 +28,7 @@ return [
     'unique' => ':Attribute ist schon vergeben.',
 
     'attributes' => [
+        'aenderungBegruendung' => 'die Begründung',
         'agBezeichnung' => 'die Bezeichnung',
         'agNummer' => 'die AG-Nummer',
         'arbeitsplatzId' => 'der Arbeitsplatz',
@@ -41,6 +42,8 @@ return [
         'liefertermin' => 'der Liefertermin',
         'menge' => 'die Menge',
         'nachname' => 'der Nachname',
+        'neueRuestzeit' => 'die Rüstzeit',
+        'neueStueckzeit' => 'die Stückzeit',
         'neuesPasswort' => 'das neue Passwort',
         'nummer' => 'die Nummer',
         'passwort' => 'das Passwort',

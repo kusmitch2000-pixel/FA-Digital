@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Actions\Fertigung\ArbeitsgangAendern;
 use App\Actions\Fertigung\SollzeitUebernehmen;
 use App\Livewire\Concerns\BrauchtRecht;
 use App\Models\ArbeitsplanPosition;
@@ -15,7 +16,8 @@ use Livewire\Component;
 
 /**
  * Artikel und Arbeitspläne mit Prüfmerkmalen. Hier übernimmt die Arbeitsvorbereitung Abweichungen
- * aus abgeschlossenen Aufträgen in die Kalkulation (Rückmeldung vom 01.10.2026).
+ * aus abgeschlossenen Aufträgen in die Kalkulation (Rückmeldung vom 01.10.2026) oder ändert
+ * Soll-Zeiten von Hand. Beides landet mit Begründung in der Historie.
  */
 class Arbeitsplaene extends Component
 {
@@ -41,6 +43,18 @@ class Arbeitsplaene extends Component
 
     public ?float $stueckzeit = null;
 
+    /** Rückmeldung nach dem Speichern, z. B. welche Soll-Zeit sich geändert hat */
+    public string $meldung = '';
+
+    /** Arbeitsgang, dessen Soll-Zeiten gerade bearbeitet werden */
+    public ?int $bearbeitetId = null;
+
+    public ?float $neueRuestzeit = null;
+
+    public ?float $neueStueckzeit = null;
+
+    public string $aenderungBegruendung = '';
+
     public function mount(): void
     {
         if ($this->artikel === '') {
@@ -55,7 +69,43 @@ class Arbeitsplaene extends Component
     {
         $this->artikel = $artikelnummer;
         $this->resetValidation();
+        $this->bearbeitenAbbrechen();
         $this->naechsteAgNummer();
+    }
+
+    public function bearbeitenBeginnen(int $positionId): void
+    {
+        $this->resetErrorBag();
+        $this->meldung = '';
+        $position = $this->position($positionId);
+        $this->bearbeitetId = $position->id;
+        $this->neueRuestzeit = (float) $position->ruestzeit_min;
+        $this->neueStueckzeit = (float) $position->stueckzeit_min;
+        $this->aenderungBegruendung = '';
+    }
+
+    public function bearbeitenAbbrechen(): void
+    {
+        $this->reset('bearbeitetId', 'neueRuestzeit', 'neueStueckzeit', 'aenderungBegruendung');
+    }
+
+    public function aenderungSpeichern(): void
+    {
+        $this->resetErrorBag();
+        $position = $this->position((int) $this->bearbeitetId);
+        $daten = $this->validate([
+            'neueRuestzeit' => ['required', 'numeric', 'min:0', 'max:99999'],
+            'neueStueckzeit' => ['required', 'numeric', 'min:0', 'max:99999'],
+            'aenderungBegruendung' => ['required', 'string', 'max:255'],
+        ]);
+
+        $aenderungen = app(ArbeitsgangAendern::class)(auth()->user(), $position->id,
+            (float) $daten['neueRuestzeit'], (float) $daten['neueStueckzeit'], $daten['aenderungBegruendung']);
+
+        $text = collect($aenderungen)->map(fn ($a) => ($a->feld === 'ruestzeit' ? 'Rüstzeit' : 'Stückzeit')
+            .' von '.zahl($a->alter_wert, 2).' auf '.zahl($a->neuer_wert, 2).' min')->join(', ');
+        $this->meldung = "AG {$position->ag_nummer} {$position->bezeichnung}: {$text} geändert. Neue Aufträge rechnen mit dem neuen Wert.";
+        $this->bearbeitenAbbrechen();
     }
 
     public function uebernehmen(int $positionId, string $feld): void
@@ -63,7 +113,7 @@ class Arbeitsplaene extends Component
         $this->resetErrorBag();
         $aenderung = app(SollzeitUebernehmen::class)(auth()->user(), $positionId, $feld);
 
-        session()->flash('status', ($feld === 'ruestzeit' ? 'Rüstzeit' : 'Stückzeit').' von '.zahl($aenderung->alter_wert, 2)
+        $this->meldung = (($feld === 'ruestzeit' ? 'Rüstzeit' : 'Stückzeit').' von '.zahl($aenderung->alter_wert, 2)
             .' auf '.zahl($aenderung->neuer_wert, 2).' min geändert. Neue Aufträge rechnen mit dem neuen Wert.');
     }
 
@@ -109,7 +159,7 @@ class Arbeitsplaene extends Component
     public function positionEntfernen(int $positionId): void
     {
         $this->resetErrorBag();
-        $position = ArbeitsplanPosition::whereHas('artikel', fn ($a) => $a->where('artikelnummer', $this->artikel))->findOrFail($positionId);
+        $position = $this->position($positionId);
 
         if (DB::table('arbeitsgang')->where('arbeitsplan_position_id', $position->id)->exists()) {
             $this->addError('aktion', "AG {$position->ag_nummer} steckt schon in Aufträgen und bleibt deshalb im Arbeitsplan.");
@@ -119,6 +169,12 @@ class Arbeitsplaene extends Component
 
         $position->delete();
         $this->naechsteAgNummer();
+    }
+
+    /** Nur Arbeitsgänge des gewählten Artikels */
+    private function position(int $positionId): ArbeitsplanPosition
+    {
+        return ArbeitsplanPosition::whereHas('artikel', fn ($a) => $a->where('artikelnummer', $this->artikel))->findOrFail($positionId);
     }
 
     private function naechsteAgNummer(): void

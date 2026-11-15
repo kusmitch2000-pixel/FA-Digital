@@ -7,6 +7,7 @@
     </div>
 
     @error('aktion')<div class="hinweis fehler" role="alert">{{ $message }}</div>@enderror
+    @if ($meldung !== '')<div class="hinweis" role="status">{{ $meldung }}</div>@endif
 
     <section class="karte">
         <h2>Artikel</h2>
@@ -67,15 +68,52 @@
                                         <span class="leise">keine</span>
                                     @endforelse
                                 </td>
-                                <td><button wire:click="positionEntfernen({{ $position->id }})" wire:confirm="AG {{ $position->ag_nummer }} aus dem Arbeitsplan entfernen?" class="btn btn-klein btn-sekundaer">Entfernen</button></td>
+                                <td>
+                                    <div class="knopfleiste ohne-abstand">
+                                        <button wire:click="bearbeitenBeginnen({{ $position->id }})" class="btn btn-klein btn-sekundaer">Bearbeiten</button>
+                                        <button wire:click="positionEntfernen({{ $position->id }})" wire:confirm="AG {{ $position->ag_nummer }} aus dem Arbeitsplan entfernen?" class="btn btn-klein btn-sekundaer">Entfernen</button>
+                                    </div>
+                                </td>
                             </tr>
+                            {{-- Soll-Zeiten von Hand ändern: nur mit Begründung, landet in der Historie --}}
+                            @if ($bearbeitetId === $position->id)
+                                <tr wire:key="bearbeiten-{{ $position->id }}" class="hervorgehoben">
+                                    <td colspan="7">
+                                        <form wire:submit="aenderungSpeichern">
+                                            <p class="klein ohne-abstand"><strong>Soll-Zeiten von AG {{ $position->ag_nummer }} {{ $position->bezeichnung }} ändern.</strong>
+                                                Bestehende Aufträge behalten ihre Soll-Zeit, neue Aufträge rechnen mit dem neuen Wert.</p>
+                                            <div class="formular-raster">
+                                                <div class="feld">
+                                                    <label for="neue-ruestzeit">Rüstzeit (min), bisher {{ zahl($position->ruestzeit_min, 2) }}</label>
+                                                    <input id="neue-ruestzeit" type="number" min="0" step="0.01" wire:model="neueRuestzeit">
+                                                    @error('neueRuestzeit')<small class="ueber">{{ $message }}</small>@enderror
+                                                </div>
+                                                <div class="feld">
+                                                    <label for="neue-stueckzeit">Stückzeit (min), bisher {{ zahl($position->stueckzeit_min, 2) }}</label>
+                                                    <input id="neue-stueckzeit" type="number" min="0" step="0.01" wire:model="neueStueckzeit">
+                                                    @error('neueStueckzeit')<small class="ueber">{{ $message }}</small>@enderror
+                                                </div>
+                                            </div>
+                                            <div class="feld">
+                                                <label for="aenderung-begruendung">Begründung (Pflicht)</label>
+                                                <input id="aenderung-begruendung" wire:model="aenderungBegruendung" maxlength="255" placeholder="z. B. neues Werkzeug, Rüstzeit im Versuch gemessen">
+                                                @error('aenderungBegruendung')<small class="ueber">{{ $message }}</small>@enderror
+                                            </div>
+                                            <div class="knopfleiste ohne-abstand">
+                                                <button type="submit" class="btn btn-primaer">Änderung speichern</button>
+                                                <button type="button" wire:click="bearbeitenAbbrechen" class="btn btn-sekundaer">Abbrechen</button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endif
                         @empty
                             <tr><td colspan="7">Noch keine Arbeitsgänge.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-            <p class="leise klein">Prüfmerkmale mit Kürzel prüft der Werker nur, wenn der Kunde dieses Werkszertifikat fordert.</p>
+            <p class="leise klein">Prüfmerkmale mit Kürzel prüft der Werker nur, wenn der Kunde dieses Werkszertifikat fordert. Geänderte Soll-Zeiten stehen mit Begründung unten unter „Bisherige Änderungen“.</p>
         </section>
 
         {{-- Rückmeldung vom 01.10.2026: Abweichungen in die neue Kalkulation übernehmen --}}
