@@ -207,5 +207,383 @@
     Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
   </footer>
 
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Benutzer – FA-Digital</title>
+  <link rel="stylesheet" href="style.css?v=2026-11-15-3">
+  <script src="prototyp.js?v=2026-11-15-3" defer></script>
+</head>
+<body>
+
+  <header class="kopf">
+    <a class="logo" href="dashboard.html">FA-Digital</a>
+    <span class="untertitel">Digitaler Fertigungsauftrag</span>
+    <div class="benutzer">
+      Sven Petersen · Admin
+      <a href="index.html">Abmelden</a>
+    </div>
+  </header>
+
+  <div class="rahmen">
+    <nav class="menue">
+      <p class="menue-titel">Übersicht</p>
+      <a href="dashboard.html">Hallenansicht</a>
+      <a href="auftraege.html">Aufträge</a>
+
+      <p class="menue-titel">Arbeitsvorbereitung</p>
+      <a href="auftrag-anlegen.html">Auftrag anlegen</a>
+      <a href="artikel.html">Artikel &amp; Arbeitspläne</a>
+      <a href="zertifikate.html">Zertifikatsvorlagen</a>
+      <a href="arbeitsplaetze.html">Arbeitsplätze</a>
+
+      <p class="menue-titel">Werkstatt</p>
+      <a href="werker.html">Werker-Terminal</a>
+
+      <p class="menue-titel">Controlling</p>
+      <a href="nachkalkulation.html">Nachkalkulation</a>
+      <a href="auswertung.html">Auswertung</a>
+
+      <p class="menue-titel">Verwaltung</p>
+      <a href="benutzer.html" class="aktiv">Benutzer</a>
+    </nav>
+
+    <main class="inhalt">
+      <div class="seitenkopf">
+        <div>
+          <h1>Benutzer</h1>
+          <p class="leise">Nur für Admins. Die Rolle bestimmt, welche Seiten jemand sieht.</p>
+        </div>
+      </div>
+
+      <section class="karte">
+        <h2>Alle Benutzer</h2>
+        <div class="tabelle-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th class="zahl">Pers.-Nr.</th>
+                <th>E-Mail</th>
+                <th>Rolle</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="benutzer-tbody">
+              <!-- wird per Skript gefüllt -->
+            </tbody>
+          </table>
+        </div>
+        <p class="leise klein" style="margin: 0.75rem 0 0;">
+          Änderungen werden nur in diesem Browser gespeichert (Prototyp ohne Datenbank).
+          <button type="button" id="btn-reset" class="btn btn-klein btn-sekundaer">Beispieldaten zurücksetzen</button>
+        </p>
+      </section>
+
+      <div class="spalten-gleich">
+        <form class="karte" id="benutzer-form" action="benutzer.html" method="post">
+          <h2 id="form-titel">Neuen Benutzer anlegen</h2>
+          <div class="formular-raster">
+            <div class="feld">
+              <label for="vorname">Vorname</label>
+              <input type="text" id="vorname" name="vorname" required>
+            </div>
+            <div class="feld">
+              <label for="nachname">Nachname</label>
+              <input type="text" id="nachname" name="nachname" required>
+            </div>
+            <div class="feld">
+              <label for="persnr">Personalnummer</label>
+              <input type="number" id="persnr" name="persnr" min="1000" required>
+            </div>
+            <div class="feld">
+              <label for="rolle">Rolle</label>
+              <select id="rolle" name="rolle" required>
+                <option value="werker">Werker</option>
+                <option value="meister">Meister</option>
+                <option value="av">Arbeitsvorbereitung</option>
+                <option value="controlling">Controlling</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+          <div class="feld">
+            <label for="email">E-Mail</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="feld">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+              <option value="aktiv">aktiv</option>
+              <option value="inaktiv">inaktiv</option>
+            </select>
+          </div>
+          <div class="feld">
+            <label for="passwort" id="passwort-label">Startpasswort</label>
+            <input type="password" id="passwort" name="passwort" minlength="8" required autocomplete="new-password">
+          </div>
+          <p class="leise klein" id="form-meldung" role="status" aria-live="polite" style="min-height: 1.2em;"></p>
+          <div class="knopfleiste">
+            <button type="submit" class="btn btn-primaer" id="btn-speichern">Benutzer anlegen</button>
+            <button type="button" class="btn btn-sekundaer" id="btn-abbrechen" hidden>Abbrechen</button>
+          </div>
+        </form>
+
+        <section class="karte">
+          <h2>Welche Rolle darf was?</h2>
+          <div class="tabelle-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Bereich</th>
+                  <th>AV</th>
+                  <th>Werker</th>
+                  <th>Meister</th>
+                  <th>Contr.</th>
+                  <th>Admin</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Hallenansicht, Aufträge ansehen</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+                <tr><td>Auftrag anlegen, freigeben, stornieren</td><td>✓</td><td></td><td></td><td></td><td>✓</td></tr>
+                <tr><td>Artikel, Arbeitspläne, Soll-Zeit-Vorschläge</td><td>✓</td><td></td><td></td><td></td><td>✓</td></tr>
+                <tr><td>Arbeitsplätze und Stundensätze</td><td>✓</td><td></td><td></td><td>✓</td><td>✓</td></tr>
+                <tr><td>Werker-Terminal: stempeln, unterbrechen, fertig melden</td><td></td><td>✓</td><td>✓</td><td></td><td>✓</td></tr>
+                <tr><td>Buchungen korrigieren, Auftrag abschließen</td><td></td><td></td><td>✓</td><td></td><td>✓</td></tr>
+                <tr><td>Nachkalkulation und Auswertung</td><td></td><td></td><td>lesen</td><td>✓</td><td>✓</td></tr>
+                <tr><td>Benutzer verwalten</td><td></td><td></td><td></td><td></td><td>✓</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="leise klein" style="margin: 0.75rem 0 0;">AV = Arbeitsvorbereitung, Contr. = Controlling</p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer class="fuss">
+    Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
+  </footer>
+
+  <script>
+    (function () {
+      var SPEICHER_KEY = "fa-digital-benutzer";
+      var ROLLEN = {
+        werker: "Werker",
+        meister: "Meister",
+        av: "Arbeitsvorbereitung",
+        controlling: "Controlling",
+        admin: "Admin"
+      };
+      var ANGEMELDET = 1000; // Sven Petersen: darf sich nicht selbst deaktivieren
+
+      function beispieldaten() {
+        return [
+          { vorname: "Sven",    nachname: "Petersen",  persnr: 1000, email: "sven.petersen@fa-digital.de",  rolle: "admin",       status: "aktiv" },
+          { vorname: "Anna",    nachname: "Becker",    persnr: 1001, email: "anna.becker@fa-digital.de",    rolle: "av",          status: "aktiv" },
+          { vorname: "Lena",    nachname: "Hoffmann",  persnr: 1002, email: "lena.hoffmann@fa-digital.de",  rolle: "meister",     status: "aktiv" },
+          { vorname: "Tobias",  nachname: "Krüger",    persnr: 1010, email: "tobias.krueger@fa-digital.de", rolle: "controlling", status: "aktiv" },
+          { vorname: "Jonas",   nachname: "Wolff",     persnr: 1042, email: "jonas.wolff@fa-digital.de",    rolle: "werker",      status: "aktiv" },
+          { vorname: "Mehmet",  nachname: "Yilmaz",    persnr: 1043, email: "mehmet.yilmaz@fa-digital.de",  rolle: "werker",      status: "aktiv" },
+          { vorname: "Paul",    nachname: "Schneider", persnr: 1045, email: "paul.schneider@fa-digital.de", rolle: "werker",      status: "aktiv" },
+          { vorname: "Katrin",  nachname: "Wagner",    persnr: 1044, email: "katrin.wagner@fa-digital.de",  rolle: "werker",      status: "inaktiv" }
+        ];
+      }
+
+      function laden() {
+        try {
+          var roh = localStorage.getItem(SPEICHER_KEY);
+          if (roh) {
+            var daten = JSON.parse(roh);
+            if (Array.isArray(daten) && daten.length) return daten;
+          }
+        } catch (e) {}
+        return beispieldaten();
+      }
+
+      function speichern() {
+        try { localStorage.setItem(SPEICHER_KEY, JSON.stringify(benutzer)); } catch (e) {}
+      }
+
+      var benutzer = laden();
+      var bearbeiteNr = null; // Personalnummer des Benutzers, der gerade bearbeitet wird
+
+      var tbody = document.getElementById("benutzer-tbody");
+      var form = document.getElementById("benutzer-form");
+      var titel = document.getElementById("form-titel");
+      var meldung = document.getElementById("form-meldung");
+      var btnSpeichern = document.getElementById("btn-speichern");
+      var btnAbbrechen = document.getElementById("btn-abbrechen");
+      var passwort = document.getElementById("passwort");
+      var passwortLabel = document.getElementById("passwort-label");
+
+      var feld = {
+        vorname: document.getElementById("vorname"),
+        nachname: document.getElementById("nachname"),
+        persnr: document.getElementById("persnr"),
+        rolle: document.getElementById("rolle"),
+        email: document.getElementById("email"),
+        status: document.getElementById("status")
+      };
+
+      function esc(text) {
+        return String(text).replace(/[&<>"']/g, function (z) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[z];
+        });
+      }
+
+      function zeigeMeldung(text, fehler) {
+        meldung.textContent = text || "";
+        meldung.style.color = fehler ? "#b42318" : "";
+      }
+
+      function zeichneTabelle() {
+        tbody.innerHTML = benutzer.map(function (b) {
+          var istIch = b.persnr === ANGEMELDET;
+          return '<tr' + (bearbeiteNr === b.persnr ? ' style="background: rgba(0,0,0,0.05);"' : '') + '>' +
+            '<td>' + esc(b.vorname) + ' ' + esc(b.nachname) + '</td>' +
+            '<td class="zahl">' + esc(b.persnr) + '</td>' +
+            '<td>' + esc(b.email) + '</td>' +
+            '<td>' + esc(ROLLEN[b.rolle] || b.rolle) + '</td>' +
+            '<td><span class="badge ' + (b.status === "aktiv" ? "aktiv" : "inaktiv") + '">' + esc(b.status) + '</span></td>' +
+            '<td class="knopfleiste">' +
+              '<button type="button" class="btn btn-klein btn-sekundaer" data-aktion="bearbeiten" data-nr="' + b.persnr + '">Bearbeiten</button> ' +
+              '<button type="button" class="btn btn-klein btn-sekundaer" data-aktion="status" data-nr="' + b.persnr + '"' +
+                (istIch ? ' disabled title="Du kannst dich nicht selbst deaktivieren"' : '') + '>' +
+                (b.status === "aktiv" ? "Deaktivieren" : "Aktivieren") + '</button>' +
+            '</td>' +
+            '</tr>';
+        }).join("");
+      }
+
+      function findeBenutzer(nr) {
+        for (var i = 0; i < benutzer.length; i++) {
+          if (benutzer[i].persnr === nr) return benutzer[i];
+        }
+        return null;
+      }
+
+      function startBearbeiten(nr) {
+        var b = findeBenutzer(nr);
+        if (!b) return;
+        bearbeiteNr = nr;
+        feld.vorname.value = b.vorname;
+        feld.nachname.value = b.nachname;
+        feld.persnr.value = b.persnr;
+        feld.rolle.value = b.rolle;
+        feld.email.value = b.email;
+        feld.status.value = b.status;
+        feld.status.disabled = (nr === ANGEMELDET);
+        passwort.value = "";
+        passwort.required = false;
+        passwortLabel.textContent = "Neues Passwort (leer lassen = unverändert)";
+        titel.textContent = "Benutzer bearbeiten: " + b.vorname + " " + b.nachname;
+        btnSpeichern.textContent = "Änderungen speichern";
+        btnAbbrechen.hidden = false;
+        zeigeMeldung("");
+        zeichneTabelle();
+        form.scrollIntoView({ behavior: "smooth", block: "start" });
+        feld.vorname.focus();
+      }
+
+      function zurueckZumAnlegen() {
+        bearbeiteNr = null;
+        form.reset();
+        feld.status.disabled = false;
+        passwort.required = true;
+        passwortLabel.textContent = "Startpasswort";
+        titel.textContent = "Neuen Benutzer anlegen";
+        btnSpeichern.textContent = "Benutzer anlegen";
+        btnAbbrechen.hidden = true;
+        zeichneTabelle();
+      }
+
+      // Klicks in der Tabelle (Bearbeiten / Aktivieren / Deaktivieren)
+      tbody.addEventListener("click", function (e) {
+        var knopf = e.target.closest("button[data-aktion]");
+        if (!knopf || knopf.disabled) return;
+        var nr = parseInt(knopf.getAttribute("data-nr"), 10);
+
+        if (knopf.getAttribute("data-aktion") === "bearbeiten") {
+          startBearbeiten(nr);
+        } else {
+          var b = findeBenutzer(nr);
+          if (!b || nr === ANGEMELDET) return;
+          b.status = (b.status === "aktiv") ? "inaktiv" : "aktiv";
+          speichern();
+          if (bearbeiteNr === nr) feld.status.value = b.status;
+          zeichneTabelle();
+          zeigeMeldung(b.vorname + " " + b.nachname + " ist jetzt " + b.status + ".");
+        }
+      });
+
+      // Formular: Anlegen oder Speichern
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        var nr = parseInt(feld.persnr.value, 10);
+        var daten = {
+          vorname: feld.vorname.value.trim(),
+          nachname: feld.nachname.value.trim(),
+          persnr: nr,
+          email: feld.email.value.trim(),
+          rolle: feld.rolle.value,
+          status: feld.status.disabled ? "aktiv" : feld.status.value
+        };
+
+        if (!daten.vorname || !daten.nachname) {
+          zeigeMeldung("Bitte Vor- und Nachname eingeben.", true);
+          return;
+        }
+
+        // Personalnummer muss eindeutig sein
+        var doppelt = findeBenutzer(nr);
+        if (doppelt && doppelt.persnr !== bearbeiteNr) {
+          zeigeMeldung("Die Personalnummer " + nr + " ist schon vergeben.", true);
+          return;
+        }
+
+        if (bearbeiteNr === null) {
+          benutzer.push(daten);
+          zeigeMeldung(daten.vorname + " " + daten.nachname + " wurde angelegt.");
+        } else {
+          var b = findeBenutzer(bearbeiteNr);
+          // Das Passwort wird im Prototyp bewusst nirgends gespeichert.
+          b.vorname = daten.vorname;
+          b.nachname = daten.nachname;
+          b.persnr = daten.persnr;
+          b.email = daten.email;
+          b.rolle = daten.rolle;
+          b.status = daten.status;
+          zeigeMeldung("Änderungen an " + b.vorname + " " + b.nachname + " gespeichert.");
+        }
+
+        benutzer.sort(function (a, b) { return a.persnr - b.persnr; });
+        speichern();
+        var text = meldung.textContent;
+        zurueckZumAnlegen();
+        zeigeMeldung(text);
+      });
+
+      btnAbbrechen.addEventListener("click", function () {
+        zurueckZumAnlegen();
+        zeigeMeldung("");
+      });
+
+      document.getElementById("btn-reset").addEventListener("click", function () {
+        if (!confirm("Alle Änderungen verwerfen und die Beispieldaten wiederherstellen?")) return;
+        benutzer = beispieldaten();
+        speichern();
+        zurueckZumAnlegen();
+        zeigeMeldung("Beispieldaten wiederhergestellt.");
+      });
+
+      zeichneTabelle();
+    })();
+  </script>
 </body>
 </html>
