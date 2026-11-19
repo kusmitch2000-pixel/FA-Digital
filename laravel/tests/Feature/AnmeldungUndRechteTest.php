@@ -32,9 +32,9 @@ class AnmeldungUndRechteTest extends TestCase
             $this->get('/login')->assertOk()
                 ->assertSee('Administration')->assertSee('Arbeitsvorbereitung')->assertSee('Meister')->assertSee('Controlling')->assertSee('Werker')
                 ->assertSee('sven.petersen@fa-digital.de')->assertSee('fa-digital')
-                ->assertSee('demo.werker@fa-digital.local')->assertSee('WerkerDemo123!')
-                ->assertSee('demo.messung@fa-digital.local')->assertSee('MessungDemo123!')
-                ->assertSee('mehmet.yilmaz@fa-digital.de')->assertSee('paul.schneider@fa-digital.de');
+                ->assertDontSee('demo.werker@fa-digital.local')->assertDontSee('WerkerDemo123!')
+                ->assertDontSee('demo.messung@fa-digital.local')->assertDontSee('MessungDemo123!')
+                ->assertDontSee('mehmet.yilmaz@fa-digital.de')->assertDontSee('paul.schneider@fa-digital.de')->assertSee('drehen@fa-digital.de');
             $this->app['env'] = 'production';
             $this->get('/login')->assertOk()->assertDontSee('Anmeldedaten für die Entwicklung')
                 ->assertDontSee('WerkerDemo123!')->assertDontSee('MessungDemo123!');
@@ -46,8 +46,8 @@ class AnmeldungUndRechteTest extends TestCase
     public static function startseiten(): array
     {
         return [
-            'Werker' => ['jonas.wolff@fa-digital.de', '/werker'],
-            'Meister' => ['lena.hoffmann@fa-digital.de', '/halle'],
+            'Werker' => ['drehen@fa-digital.de', '/werker'],
+            'Meister' => ['lena.hoffmann@fa-digital.de', '/meister'],
             'Arbeitsvorbereitung' => ['anna.becker@fa-digital.de', '/auftraege'],
             'Controlling' => ['tobias.krueger@fa-digital.de', '/nachkalkulation'],
             'Admin' => ['sven.petersen@fa-digital.de', '/halle'],
@@ -66,7 +66,7 @@ class AnmeldungUndRechteTest extends TestCase
 
     public function test_falsches_passwort_und_gesperrtes_konto_kommen_nicht_hinein(): void
     {
-        $this->post('/login', ['email' => 'jonas.wolff@fa-digital.de', 'password' => 'falsch'])
+        $this->post('/login', ['email' => 'drehen@fa-digital.de', 'password' => 'falsch'])
             ->assertSessionHasErrors(['email' => 'E-Mail oder Passwort stimmen nicht, oder das Konto ist gesperrt.']);
 
         // Katrin Wagner ist in den Testdaten gesperrt (aktiv = 0)
@@ -79,7 +79,7 @@ class AnmeldungUndRechteTest extends TestCase
     public static function rollen(): array
     {
         return [
-            'Werker' => ['1042'],
+            'Werker' => ['2004'],
             'Meister' => ['1002'],
             'Arbeitsvorbereitung' => ['1001'],
             'Controlling' => ['1010'],
@@ -101,7 +101,7 @@ class AnmeldungUndRechteTest extends TestCase
 
     public function test_beispiele_fuer_die_rechte(): void
     {
-        $this->alsBenutzer('1042');
+        $this->alsBenutzer('2004');
         $this->get('/werker')->assertOk()->assertSee('Werker-Terminal')->assertDontSee('Hallenansicht');
         $this->get('/halle')->assertForbidden();
         $this->get('/auftraege/FA-1002')->assertForbidden();
@@ -115,7 +115,7 @@ class AnmeldungUndRechteTest extends TestCase
     /** Klicks laufen über /livewire/update. Auch dort prüft die Seite das Recht. */
     public function test_aktionen_sind_auch_ohne_menuepunkt_geschuetzt(): void
     {
-        $this->alsBenutzer('1042');
+        $this->alsBenutzer('2004');
         Livewire::test(Benutzerverwaltung::class)->assertForbidden();
 
         $this->alsBenutzer('1001');

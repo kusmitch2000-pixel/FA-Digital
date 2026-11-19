@@ -1,10 +1,10 @@
 <div wire:poll.30s>
     <div class="seitenkopf">
         <div>
-            <h1>Werker-Terminal</h1>
+            <h1>{{ $aktiveAnsicht ? 'Aktiver Arbeitsauftrag' : 'Werker-Terminal' }}</h1>
             <p class="leise">{{ $benutzer->name }} · Personalnummer {{ $benutzer->personalnummer }}</p>
         </div>
-        @if ($benutzer->rolle !== 'werker')
+        @if (! $aktiveAnsicht && $benutzer->rolle !== 'werker')
         <div class="knopfleiste">
             <label for="arbeitsplatz" class="leise ohne-abstand">Arbeitsplatz</label>
             <select id="arbeitsplatz" wire:model.live="arbeitsplatz" class="schmal">
@@ -18,6 +18,7 @@
 
     @error('aktion')<div class="hinweis fehler" role="alert">{{ $message }}</div>@enderror
 
+    @if ($aktiveAnsicht)
     @if ($aktuell)
         @php($ampel = $zeit->ist_zeit_min <= 0.8 * $zeit->soll_zeit_min ? 'gruen' : ($zeit->ist_zeit_min <= $zeit->soll_zeit_min ? 'gelb' : 'rot'))
         @php($prozent = $zeit->soll_zeit_min > 0 ? round(100 * $zeit->ist_zeit_min / $zeit->soll_zeit_min) : 0)
@@ -169,6 +170,17 @@
                 </div>
             </section>
         @endif
+    @else
+        <section class="karte">
+            <p>Sie haben momentan keinen aktiven Arbeitsauftrag.</p>
+            <a class="btn btn-primaer" href="{{ route('terminal') }}">Zum Arbeitsauftragsvorlauf</a>
+        </section>
+    @endif
+    @else
+    @if ($aktuell)
+        <div class="hinweis" role="status">Sie haben einen laufenden oder unterbrochenen Arbeitsauftrag.
+            <a href="{{ route('terminal.aktiv') }}">Aktiven Arbeitsauftrag öffnen</a>
+        </div>
     @endif
 
     @if ($messungen->isNotEmpty())
@@ -182,7 +194,7 @@
     @endif
 
     <section class="karte">
-        <h2>{{ $benutzer->rolle === 'werker' ? 'Meine zugeordneten Arbeitsgänge' : 'Arbeitsvorrat an '.($plaetze->firstWhere('nummer', $arbeitsplatz)?->bezeichnung ?? 'diesem Arbeitsplatz') }}</h2>
+        <h2>{{ $benutzer->rolle === 'werker' ? 'Meine Arbeitsauftragsvorlauf' : 'Arbeitsvorrat an '.($plaetze->firstWhere('nummer', $arbeitsplatz)?->bezeichnung ?? 'diesem Arbeitsplatz') }}</h2>
         <div class="tabelle-scroll">
             <table>
                 <thead>
@@ -222,4 +234,5 @@
             </table>
         </div>
     </section>
+    @endif
 </div>

@@ -59,11 +59,11 @@ class MeisterUndControllingTest extends TestCase
     {
         $this->alsBenutzer('1002');
         $auftrag = $this->auftrag('FA-1003');
-        $jonas = $this->benutzer('1042');
+        $werker = $this->benutzer('2004');
 
         Livewire::test(AuftragDetail::class, ['auftrag' => $auftrag])
             ->set('arbeitsgangId', $auftrag->arbeitsgaenge()->where('ag_nummer', 10)->value('id'))
-            ->set('werkerId', $jonas->id)
+            ->set('werkerId', $werker->id)
             ->set('taetigkeit', 'bearbeiten')
             ->set('beginn', now()->subHours(3)->format('Y-m-d\TH:i'))
             ->set('ende', now()->subHours(2)->format('Y-m-d\TH:i'))
@@ -72,7 +72,7 @@ class MeisterUndControllingTest extends TestCase
             ->assertHasNoErrors();
 
         $nachtrag = Zeitbuchung::where('quelle', 'nachtrag')->where('begruendung', 'Terminal war ausgefallen')->firstOrFail();
-        $this->assertSame($jonas->id, $nachtrag->benutzer_id);
+        $this->assertSame($werker->id, $nachtrag->benutzer_id);
         $this->assertEquals(60, $nachtrag->beginn->diffInMinutes($nachtrag->ende));
     }
 
@@ -82,7 +82,7 @@ class MeisterUndControllingTest extends TestCase
         $this->expectException(QueryException::class);
 
         DB::table('zeitbuchung')->insert([
-            'arbeitsgang_id' => Arbeitsgang::value('id'), 'benutzer_id' => $this->benutzer('1042')->id, 'taetigkeit' => 'ruesten',
+            'arbeitsgang_id' => Arbeitsgang::value('id'), 'benutzer_id' => $this->benutzer('2004')->id, 'taetigkeit' => 'ruesten',
             'beginn' => now()->subHour(), 'ende' => now(), 'quelle' => 'korrektur', 'begruendung' => null,
             'erfasst_von' => $this->benutzer('1002')->id,
         ]);

@@ -12,8 +12,10 @@ USE fa_digital;
 SET NAMES utf8mb4;
 SET @anna   = (SELECT id FROM benutzer WHERE personalnummer = '1001');
 SET @lena   = (SELECT id FROM benutzer WHERE personalnummer = '1002');
-SET @jonas  = (SELECT id FROM benutzer WHERE personalnummer = '1042');
-SET @paul   = (SELECT id FROM benutzer WHERE personalnummer = '1045');
+SET @drehen = (SELECT id FROM benutzer WHERE personalnummer = '2004');
+SET @kanten = (SELECT id FROM benutzer WHERE personalnummer = '2002');
+SET @fraesen = (SELECT id FROM benutzer WHERE personalnummer = '2005');
+SET @lasern = (SELECT id FROM benutzer WHERE personalnummer = '2001');
 
 -- ---------------------------------------------------------------------
 -- Ablauf 1: Fertigungsauftrag anlegen, mit gefordertem Werkszertifikat 2.2
@@ -54,7 +56,7 @@ SELECT ag_nummer, pruefpunkt, art FROM v_checkliste WHERE auftragsnummer = 'FA-1
 ROLLBACK;
 
 -- ---------------------------------------------------------------------
--- Ablauf 2: Werker Jonas misst den letzten Prüfpunkt, meldet FA-1002 · AG 20 Drehen fertig
+-- Ablauf 2: Die Fachkraft Drehen misst den letzten Prüfpunkt, meldet FA-1002 · AG 20 Drehen fertig
 -- und startet danach FA-1002 · AG 30 Lochkreis fräsen
 -- ---------------------------------------------------------------------
 START TRANSACTION;
@@ -68,12 +70,12 @@ UPDATE zeitbuchung SET ende = NOW() WHERE arbeitsgang_id = @ag AND ende IS NULL 
 -- letzten offenen Prüfpunkt messen (Planlauf Dichtfläche, gefordert wegen Werkszeugnis 2.2)
 UPDATE pruefpunkt
 SET istwert = 0.020, ergebnis = IF(0.020 BETWEEN untere_grenze AND obere_grenze, 'in_ordnung', 'nicht_in_ordnung'),
-    geprueft_von = @jonas, geprueft_am = NOW()
+    geprueft_von = @drehen, geprueft_am = NOW()
 WHERE arbeitsgang_id = @ag AND ergebnis = 'offen';
 
 -- fertig melden, aber nur wenn kein Prüfpunkt mehr offen ist
 UPDATE arbeitsgang
-SET status = 'erledigt', gutmenge = 30, ausschuss = 0, fertig_gemeldet_von = @jonas, fertig_gemeldet_am = NOW()
+SET status = 'erledigt', gutmenge = 30, ausschuss = 0, fertig_gemeldet_von = @drehen, fertig_gemeldet_am = NOW()
 WHERE id = @ag
   AND NOT EXISTS (SELECT 1 FROM pruefpunkt WHERE arbeitsgang_id = @ag AND ergebnis = 'offen');
 SELECT ROW_COUNT() AS fertig_gemeldet;   -- 1 = erfolgreich, 0 = es waren noch Prüfpunkte offen
@@ -82,7 +84,7 @@ SELECT ROW_COUNT() AS fertig_gemeldet;   -- 1 = erfolgreich, 0 = es waren noch P
 SET @neu = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id
             WHERE fa.auftragsnummer = 'FA-1002' AND ag.ag_nummer = 30);
 INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, erfasst_von)
-VALUES (@neu, @jonas, 'ruesten', NOW(), @jonas);
+VALUES (@neu, @fraesen, 'ruesten', NOW(), @fraesen);
 UPDATE arbeitsgang SET status = 'laeuft' WHERE id = @neu;
 
 -- Die Hallenansicht zeigt jetzt FA-1002 an der CNC-Fräsmaschine
@@ -92,7 +94,7 @@ FROM v_hallenansicht WHERE arbeitsplatz_nummer = 'AP-50';
 ROLLBACK;
 
 -- ---------------------------------------------------------------------
--- Ablauf 3: Paul hat FA-1004 · AG 10 vor 20 min unterbrochen (Material fehlt)
+-- Ablauf 3: Die Fachkraft Lasern hat FA-1004 · AG 10 vor 20 min unterbrochen (Material fehlt)
 -- und vor 5 min fortgesetzt
 -- ---------------------------------------------------------------------
 START TRANSACTION;
@@ -104,7 +106,7 @@ SET @t2  = NOW() - INTERVAL 5 MINUTE;
 
 UPDATE zeitbuchung SET ende = @t1 WHERE arbeitsgang_id = @ag AND ende IS NULL AND gueltig = 1;
 INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn)
-VALUES (@ag, @paul, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Material fehlt'), @t1);
+VALUES (@ag, @lasern, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Material fehlt'), @t1);
 UPDATE arbeitsgang SET status = 'unterbrochen' WHERE id = @ag;
 
 SELECT arbeitsplatz, zustand, unterbrechungsgrund FROM v_hallenansicht WHERE arbeitsplatz_nummer = 'AP-10';
@@ -112,7 +114,7 @@ SELECT arbeitsplatz, zustand, unterbrechungsgrund FROM v_hallenansicht WHERE arb
 -- fortsetzen
 UPDATE unterbrechung SET ende = @t2 WHERE arbeitsgang_id = @ag AND ende IS NULL;
 INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, erfasst_von, erfasst_am)
-VALUES (@ag, @paul, 'bearbeiten', @t2, @paul, @t2);
+VALUES (@ag, @lasern, 'bearbeiten', @t2, @lasern, @t2);
 UPDATE arbeitsgang SET status = 'laeuft' WHERE id = @ag;
 
 -- Die 15 min Unterbrechung zählen nicht zur Ist-Zeit: Sie ist 15 min kleiner als ohne Unterbrechung
@@ -134,7 +136,7 @@ SET @pp = (SELECT pp.id FROM pruefpunkt pp
 UPDATE pruefpunkt
 SET istwert = 91.500,
     ergebnis = IF(91.500 BETWEEN untere_grenze AND obere_grenze, 'in_ordnung', 'nicht_in_ordnung'),
-    bemerkung = 'Winkel zu groß, wird nachgekantet', geprueft_von = @jonas, geprueft_am = NOW()
+    bemerkung = 'Winkel zu groß, wird nachgekantet', geprueft_von = @kanten, geprueft_am = NOW()
 WHERE id = @pp;
 SELECT pruefpunkt, istwert, in_toleranz, ergebnis FROM v_checkliste WHERE pruefpunkt_id = @pp;
 

@@ -19,17 +19,31 @@ INSERT INTO benutzer (personalnummer, vorname, nachname, email, passwort_hash, r
   ('1001', 'Anna', 'Becker', 'anna.becker@fa-digital.de', @hash, 'arbeitsvorbereitung', 1),
   ('1002', 'Lena', 'Hoffmann', 'lena.hoffmann@fa-digital.de', @hash, 'meister', 1),
   ('1010', 'Tobias', 'Krüger', 'tobias.krueger@fa-digital.de', @hash, 'controlling', 1),
-  ('1042', 'Jonas', 'Wolff', 'jonas.wolff@fa-digital.de', @hash, 'werker', 1),
-  ('1043', 'Mehmet', 'Yilmaz', 'mehmet.yilmaz@fa-digital.de', @hash, 'werker', 1),
-  ('1045', 'Paul', 'Schneider', 'paul.schneider@fa-digital.de', @hash, 'werker', 1),
+  ('2001', 'Fachkraft', 'Lasern', 'lasern@fa-digital.de', @hash, 'werker', 1),
+  ('2002', 'Fachkraft', 'Kanten', 'kanten@fa-digital.de', @hash, 'werker', 1),
+  ('2003', 'Fachkraft', 'Schweißen', 'schweissen@fa-digital.de', @hash, 'werker', 1),
+  ('2004', 'Fachkraft', 'Drehen', 'drehen@fa-digital.de', @hash, 'werker', 1),
+  ('2005', 'Fachkraft', 'Fräsen', 'fraesen@fa-digital.de', @hash, 'werker', 1),
+  ('2006', 'Fachkraft', 'Lackieren', 'lackieren@fa-digital.de', @hash, 'werker', 1),
+  ('2007', 'Fachkraft', 'Versand', 'versand@fa-digital.de', @hash, 'werker', 1),
+  ('2008', 'Fachkraft', 'Prüfen', 'pruefen@fa-digital.de', @hash, 'werker', 1),
+  ('2009', 'Fachkraft', 'Sägen', 'saegen@fa-digital.de', @hash, 'werker', 1),
+  ('2010', 'Fachkraft', 'Montage', 'montage@fa-digital.de', @hash, 'werker', 1),
   ('1044', 'Katrin', 'Wagner', 'katrin.wagner@fa-digital.de', @hash, 'werker', 0);
 SET @sven = (SELECT id FROM benutzer WHERE personalnummer = '1000');
 SET @anna = (SELECT id FROM benutzer WHERE personalnummer = '1001');
 SET @lena = (SELECT id FROM benutzer WHERE personalnummer = '1002');
 SET @tobias = (SELECT id FROM benutzer WHERE personalnummer = '1010');
-SET @jonas = (SELECT id FROM benutzer WHERE personalnummer = '1042');
-SET @mehmet = (SELECT id FROM benutzer WHERE personalnummer = '1043');
-SET @paul = (SELECT id FROM benutzer WHERE personalnummer = '1045');
+SET @lasern = (SELECT id FROM benutzer WHERE personalnummer = '2001');
+SET @kanten = (SELECT id FROM benutzer WHERE personalnummer = '2002');
+SET @schweissen = (SELECT id FROM benutzer WHERE personalnummer = '2003');
+SET @drehen = (SELECT id FROM benutzer WHERE personalnummer = '2004');
+SET @fraesen = (SELECT id FROM benutzer WHERE personalnummer = '2005');
+SET @lackieren = (SELECT id FROM benutzer WHERE personalnummer = '2006');
+SET @versand = (SELECT id FROM benutzer WHERE personalnummer = '2007');
+SET @pruefen = (SELECT id FROM benutzer WHERE personalnummer = '2008');
+SET @saegen = (SELECT id FROM benutzer WHERE personalnummer = '2009');
+SET @montage = (SELECT id FROM benutzer WHERE personalnummer = '2010');
 SET @katrin = (SELECT id FROM benutzer WHERE personalnummer = '1044');
 
 -- Arbeitsplätze: Stationen vom Blech-Rohteil bis zum Versand
@@ -172,130 +186,130 @@ ORDER BY ag.id, pm.reihenfolge;
 
 -- FA-0998 · AG 10
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-0998' AND ag.ag_nummer = 10);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'ruesten', @jetzt - INTERVAL 19120 MINUTE, @jetzt - INTERVAL 19105 MINUTE, @mehmet, @jetzt - INTERVAL 19120 MINUTE);
-INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @mehmet, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Material fehlt'), @jetzt - INTERVAL 19105 MINUTE, @jetzt - INTERVAL 19050 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'bearbeiten', @jetzt - INTERVAL 19050 MINUTE, @jetzt - INTERVAL 18910 MINUTE, @mehmet, @jetzt - INTERVAL 19050 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 60, ausschuss = 0, fertig_gemeldet_von = @mehmet, fertig_gemeldet_am = @jetzt - INTERVAL 18910 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'ruesten', @jetzt - INTERVAL 19120 MINUTE, @jetzt - INTERVAL 19105 MINUTE, @lasern, @jetzt - INTERVAL 19120 MINUTE);
+INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @lasern, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Material fehlt'), @jetzt - INTERVAL 19105 MINUTE, @jetzt - INTERVAL 19050 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'bearbeiten', @jetzt - INTERVAL 19050 MINUTE, @jetzt - INTERVAL 18910 MINUTE, @lasern, @jetzt - INTERVAL 19050 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 60, ausschuss = 0, fertig_gemeldet_von = @lasern, fertig_gemeldet_am = @jetzt - INTERVAL 18910 MINUTE WHERE id = @ag;
 
 -- FA-0998 · AG 20
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-0998' AND ag.ag_nummer = 20);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @jonas, 'ruesten', @jetzt - INTERVAL 17700 MINUTE, @jetzt - INTERVAL 17674 MINUTE, @jonas, @jetzt - INTERVAL 17700 MINUTE);
-INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @jonas, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Werkzeug fehlt'), @jetzt - INTERVAL 17674 MINUTE, @jetzt - INTERVAL 17644 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @jonas, 'bearbeiten', @jetzt - INTERVAL 17644 MINUTE, @jetzt - INTERVAL 17544 MINUTE, @jonas, @jetzt - INTERVAL 17644 MINUTE);
-INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @jonas, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Maschinenstörung'), @jetzt - INTERVAL 17544 MINUTE, @jetzt - INTERVAL 17519 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @jonas, 'bearbeiten', @jetzt - INTERVAL 17519 MINUTE, @jetzt - INTERVAL 17424 MINUTE, @jonas, @jetzt - INTERVAL 17519 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 60, ausschuss = 0, fertig_gemeldet_von = @jonas, fertig_gemeldet_am = @jetzt - INTERVAL 17424 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @kanten, 'ruesten', @jetzt - INTERVAL 17700 MINUTE, @jetzt - INTERVAL 17674 MINUTE, @kanten, @jetzt - INTERVAL 17700 MINUTE);
+INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @kanten, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Werkzeug fehlt'), @jetzt - INTERVAL 17674 MINUTE, @jetzt - INTERVAL 17644 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @kanten, 'bearbeiten', @jetzt - INTERVAL 17644 MINUTE, @jetzt - INTERVAL 17544 MINUTE, @kanten, @jetzt - INTERVAL 17644 MINUTE);
+INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @kanten, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Maschinenstörung'), @jetzt - INTERVAL 17544 MINUTE, @jetzt - INTERVAL 17519 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @kanten, 'bearbeiten', @jetzt - INTERVAL 17519 MINUTE, @jetzt - INTERVAL 17424 MINUTE, @kanten, @jetzt - INTERVAL 17519 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 60, ausschuss = 0, fertig_gemeldet_von = @kanten, fertig_gemeldet_am = @jetzt - INTERVAL 17424 MINUTE WHERE id = @ag;
 
 -- FA-0998 · AG 30
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-0998' AND ag.ag_nummer = 30);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @paul, 'ruesten', @jetzt - INTERVAL 16240 MINUTE, @jetzt - INTERVAL 16216 MINUTE, @paul, @jetzt - INTERVAL 16240 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @paul, 'bearbeiten', @jetzt - INTERVAL 16216 MINUTE, @jetzt - INTERVAL 16096 MINUTE, @paul, @jetzt - INTERVAL 16216 MINUTE);
-INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @paul, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Pause'), @jetzt - INTERVAL 16096 MINUTE, @jetzt - INTERVAL 16066 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @paul, 'bearbeiten', @jetzt - INTERVAL 16066 MINUTE, @jetzt - INTERVAL 15936 MINUTE, @paul, @jetzt - INTERVAL 16066 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 60, ausschuss = 0, fertig_gemeldet_von = @paul, fertig_gemeldet_am = @jetzt - INTERVAL 15936 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lackieren, 'ruesten', @jetzt - INTERVAL 16240 MINUTE, @jetzt - INTERVAL 16216 MINUTE, @lackieren, @jetzt - INTERVAL 16240 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lackieren, 'bearbeiten', @jetzt - INTERVAL 16216 MINUTE, @jetzt - INTERVAL 16096 MINUTE, @lackieren, @jetzt - INTERVAL 16216 MINUTE);
+INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @lackieren, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Pause'), @jetzt - INTERVAL 16096 MINUTE, @jetzt - INTERVAL 16066 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lackieren, 'bearbeiten', @jetzt - INTERVAL 16066 MINUTE, @jetzt - INTERVAL 15936 MINUTE, @lackieren, @jetzt - INTERVAL 16066 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 60, ausschuss = 0, fertig_gemeldet_von = @lackieren, fertig_gemeldet_am = @jetzt - INTERVAL 15936 MINUTE WHERE id = @ag;
 
 -- FA-0998 · AG 40
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-0998' AND ag.ag_nummer = 40);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @paul, 'ruesten', @jetzt - INTERVAL 15000 MINUTE, @jetzt - INTERVAL 14990 MINUTE, @paul, @jetzt - INTERVAL 15000 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @paul, 'bearbeiten', @jetzt - INTERVAL 14990 MINUTE, @jetzt - INTERVAL 14962 MINUTE, @paul, @jetzt - INTERVAL 14990 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 60, ausschuss = 0, fertig_gemeldet_von = @paul, fertig_gemeldet_am = @jetzt - INTERVAL 14962 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @versand, 'ruesten', @jetzt - INTERVAL 15000 MINUTE, @jetzt - INTERVAL 14990 MINUTE, @versand, @jetzt - INTERVAL 15000 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @versand, 'bearbeiten', @jetzt - INTERVAL 14990 MINUTE, @jetzt - INTERVAL 14962 MINUTE, @versand, @jetzt - INTERVAL 14990 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 60, ausschuss = 0, fertig_gemeldet_von = @versand, fertig_gemeldet_am = @jetzt - INTERVAL 14962 MINUTE WHERE id = @ag;
 
 -- FA-0999 · AG 10
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-0999' AND ag.ag_nummer = 10);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'ruesten', @jetzt - INTERVAL 13360 MINUTE, @jetzt - INTERVAL 13351 MINUTE, @mehmet, @jetzt - INTERVAL 13360 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'bearbeiten', @jetzt - INTERVAL 13351 MINUTE, @jetzt - INTERVAL 13313 MINUTE, @mehmet, @jetzt - INTERVAL 13351 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 20, ausschuss = 0, fertig_gemeldet_von = @mehmet, fertig_gemeldet_am = @jetzt - INTERVAL 13313 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'ruesten', @jetzt - INTERVAL 13360 MINUTE, @jetzt - INTERVAL 13351 MINUTE, @lasern, @jetzt - INTERVAL 13360 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'bearbeiten', @jetzt - INTERVAL 13351 MINUTE, @jetzt - INTERVAL 13313 MINUTE, @lasern, @jetzt - INTERVAL 13351 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 20, ausschuss = 0, fertig_gemeldet_von = @lasern, fertig_gemeldet_am = @jetzt - INTERVAL 13313 MINUTE WHERE id = @ag;
 
 -- FA-0999 · AG 20
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-0999' AND ag.ag_nummer = 20);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @jonas, 'ruesten', @jetzt - INTERVAL 11940 MINUTE, @jetzt - INTERVAL 11913 MINUTE, @jonas, @jetzt - INTERVAL 11940 MINUTE);
-INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @jonas, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Werkzeug fehlt'), @jetzt - INTERVAL 11913 MINUTE, @jetzt - INTERVAL 11895 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @jonas, 'bearbeiten', @jetzt - INTERVAL 11895 MINUTE, @jetzt - INTERVAL 11830 MINUTE, @jonas, @jetzt - INTERVAL 11895 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 20, ausschuss = 0, fertig_gemeldet_von = @jonas, fertig_gemeldet_am = @jetzt - INTERVAL 11830 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @drehen, 'ruesten', @jetzt - INTERVAL 11940 MINUTE, @jetzt - INTERVAL 11913 MINUTE, @drehen, @jetzt - INTERVAL 11940 MINUTE);
+INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @drehen, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Werkzeug fehlt'), @jetzt - INTERVAL 11913 MINUTE, @jetzt - INTERVAL 11895 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @drehen, 'bearbeiten', @jetzt - INTERVAL 11895 MINUTE, @jetzt - INTERVAL 11830 MINUTE, @drehen, @jetzt - INTERVAL 11895 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 20, ausschuss = 0, fertig_gemeldet_von = @drehen, fertig_gemeldet_am = @jetzt - INTERVAL 11830 MINUTE WHERE id = @ag;
 
 -- FA-0999 · AG 30
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-0999' AND ag.ag_nummer = 30);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'ruesten', @jetzt - INTERVAL 10480 MINUTE, @jetzt - INTERVAL 10440 MINUTE, @mehmet, @jetzt - INTERVAL 10480 MINUTE);
-INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @mehmet, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Maschinenstörung'), @jetzt - INTERVAL 10440 MINUTE, @jetzt - INTERVAL 10370 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'bearbeiten', @jetzt - INTERVAL 10370 MINUTE, @jetzt - INTERVAL 10320 MINUTE, @mehmet, @jetzt - INTERVAL 10370 MINUTE);
-INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @mehmet, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Pause'), @jetzt - INTERVAL 10320 MINUTE, @jetzt - INTERVAL 10290 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'bearbeiten', @jetzt - INTERVAL 10290 MINUTE, @jetzt - INTERVAL 10260 MINUTE, @mehmet, @jetzt - INTERVAL 10290 MINUTE);
-INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @mehmet, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Maschinenstörung'), @jetzt - INTERVAL 10260 MINUTE, @jetzt - INTERVAL 10210 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'bearbeiten', @jetzt - INTERVAL 10210 MINUTE, @jetzt - INTERVAL 10190 MINUTE, @mehmet, @jetzt - INTERVAL 10210 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 19, ausschuss = 1, fertig_gemeldet_von = @mehmet, fertig_gemeldet_am = @jetzt - INTERVAL 10190 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @fraesen, 'ruesten', @jetzt - INTERVAL 10480 MINUTE, @jetzt - INTERVAL 10440 MINUTE, @fraesen, @jetzt - INTERVAL 10480 MINUTE);
+INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @fraesen, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Maschinenstörung'), @jetzt - INTERVAL 10440 MINUTE, @jetzt - INTERVAL 10370 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @fraesen, 'bearbeiten', @jetzt - INTERVAL 10370 MINUTE, @jetzt - INTERVAL 10320 MINUTE, @fraesen, @jetzt - INTERVAL 10370 MINUTE);
+INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @fraesen, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Pause'), @jetzt - INTERVAL 10320 MINUTE, @jetzt - INTERVAL 10290 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @fraesen, 'bearbeiten', @jetzt - INTERVAL 10290 MINUTE, @jetzt - INTERVAL 10260 MINUTE, @fraesen, @jetzt - INTERVAL 10290 MINUTE);
+INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @fraesen, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Maschinenstörung'), @jetzt - INTERVAL 10260 MINUTE, @jetzt - INTERVAL 10210 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @fraesen, 'bearbeiten', @jetzt - INTERVAL 10210 MINUTE, @jetzt - INTERVAL 10190 MINUTE, @fraesen, @jetzt - INTERVAL 10210 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 19, ausschuss = 1, fertig_gemeldet_von = @fraesen, fertig_gemeldet_am = @jetzt - INTERVAL 10190 MINUTE WHERE id = @ag;
 
 -- FA-0999 · AG 40
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-0999' AND ag.ag_nummer = 40);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @paul, 'ruesten', @jetzt - INTERVAL 9040 MINUTE, @jetzt - INTERVAL 9030 MINUTE, @paul, @jetzt - INTERVAL 9040 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @paul, 'bearbeiten', @jetzt - INTERVAL 9030 MINUTE, @jetzt - INTERVAL 9021 MINUTE, @paul, @jetzt - INTERVAL 9030 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 19, ausschuss = 0, fertig_gemeldet_von = @paul, fertig_gemeldet_am = @jetzt - INTERVAL 9021 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @versand, 'ruesten', @jetzt - INTERVAL 9040 MINUTE, @jetzt - INTERVAL 9030 MINUTE, @versand, @jetzt - INTERVAL 9040 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @versand, 'bearbeiten', @jetzt - INTERVAL 9030 MINUTE, @jetzt - INTERVAL 9021 MINUTE, @versand, @jetzt - INTERVAL 9030 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 19, ausschuss = 0, fertig_gemeldet_von = @versand, fertig_gemeldet_am = @jetzt - INTERVAL 9021 MINUTE WHERE id = @ag;
 
 -- FA-1001 · AG 10
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-1001' AND ag.ag_nummer = 10);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'ruesten', @jetzt - INTERVAL 7600 MINUTE, @jetzt - INTERVAL 7586 MINUTE, @mehmet, @jetzt - INTERVAL 7600 MINUTE);
-INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @mehmet, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Pause'), @jetzt - INTERVAL 7586 MINUTE, @jetzt - INTERVAL 7556 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'bearbeiten', @jetzt - INTERVAL 7556 MINUTE, @jetzt - INTERVAL 7430 MINUTE, @mehmet, @jetzt - INTERVAL 7556 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 50, ausschuss = 0, fertig_gemeldet_von = @mehmet, fertig_gemeldet_am = @jetzt - INTERVAL 7430 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'ruesten', @jetzt - INTERVAL 7600 MINUTE, @jetzt - INTERVAL 7586 MINUTE, @lasern, @jetzt - INTERVAL 7600 MINUTE);
+INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @lasern, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Pause'), @jetzt - INTERVAL 7586 MINUTE, @jetzt - INTERVAL 7556 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'bearbeiten', @jetzt - INTERVAL 7556 MINUTE, @jetzt - INTERVAL 7430 MINUTE, @lasern, @jetzt - INTERVAL 7556 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 50, ausschuss = 0, fertig_gemeldet_von = @lasern, fertig_gemeldet_am = @jetzt - INTERVAL 7430 MINUTE WHERE id = @ag;
 
 -- FA-1001 · AG 20
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-1001' AND ag.ag_nummer = 20);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, quelle, begruendung, erfasst_von, erfasst_am) VALUES (@ag, @jonas, 'ruesten', @jetzt - INTERVAL 6180 MINUTE, @jetzt - INTERVAL 6148 MINUTE, 'nachtrag', 'Stempeln vergessen', @lena, @jetzt - INTERVAL 100 MINUTE);
-INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @jonas, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Werkzeug fehlt'), @jetzt - INTERVAL 6148 MINUTE, @jetzt - INTERVAL 6136 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @jonas, 'bearbeiten', @jetzt - INTERVAL 6136 MINUTE, @jetzt - INTERVAL 6066 MINUTE, @jonas, @jetzt - INTERVAL 6136 MINUTE);
-INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @jonas, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Pause'), @jetzt - INTERVAL 6066 MINUTE, @jetzt - INTERVAL 6036 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @jonas, 'bearbeiten', @jetzt - INTERVAL 6036 MINUTE, @jetzt - INTERVAL 5956 MINUTE, @jonas, @jetzt - INTERVAL 6036 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 49, ausschuss = 1, fertig_gemeldet_von = @jonas, fertig_gemeldet_am = @jetzt - INTERVAL 5956 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, quelle, begruendung, erfasst_von, erfasst_am) VALUES (@ag, @kanten, 'ruesten', @jetzt - INTERVAL 6180 MINUTE, @jetzt - INTERVAL 6148 MINUTE, 'nachtrag', 'Stempeln vergessen', @lena, @jetzt - INTERVAL 100 MINUTE);
+INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @kanten, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Werkzeug fehlt'), @jetzt - INTERVAL 6148 MINUTE, @jetzt - INTERVAL 6136 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @kanten, 'bearbeiten', @jetzt - INTERVAL 6136 MINUTE, @jetzt - INTERVAL 6066 MINUTE, @kanten, @jetzt - INTERVAL 6136 MINUTE);
+INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @kanten, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Pause'), @jetzt - INTERVAL 6066 MINUTE, @jetzt - INTERVAL 6036 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @kanten, 'bearbeiten', @jetzt - INTERVAL 6036 MINUTE, @jetzt - INTERVAL 5956 MINUTE, @kanten, @jetzt - INTERVAL 6036 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 49, ausschuss = 1, fertig_gemeldet_von = @kanten, fertig_gemeldet_am = @jetzt - INTERVAL 5956 MINUTE WHERE id = @ag;
 
 -- FA-1001 · AG 30
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-1001' AND ag.ag_nummer = 30);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @paul, 'ruesten', @jetzt - INTERVAL 3280 MINUTE, @jetzt - INTERVAL 3254 MINUTE, @paul, @jetzt - INTERVAL 3280 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @paul, 'bearbeiten', @jetzt - INTERVAL 3254 MINUTE, @jetzt - INTERVAL 3029 MINUTE, @paul, @jetzt - INTERVAL 3254 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 48, ausschuss = 1, fertig_gemeldet_von = @paul, fertig_gemeldet_am = @jetzt - INTERVAL 3029 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lackieren, 'ruesten', @jetzt - INTERVAL 3280 MINUTE, @jetzt - INTERVAL 3254 MINUTE, @lackieren, @jetzt - INTERVAL 3280 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lackieren, 'bearbeiten', @jetzt - INTERVAL 3254 MINUTE, @jetzt - INTERVAL 3029 MINUTE, @lackieren, @jetzt - INTERVAL 3254 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 48, ausschuss = 1, fertig_gemeldet_von = @lackieren, fertig_gemeldet_am = @jetzt - INTERVAL 3029 MINUTE WHERE id = @ag;
 
 -- FA-1001 · AG 40
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-1001' AND ag.ag_nummer = 40);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @paul, 'ruesten', @jetzt - INTERVAL 1840 MINUTE, @jetzt - INTERVAL 1831 MINUTE, @paul, @jetzt - INTERVAL 1840 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @paul, 'bearbeiten', @jetzt - INTERVAL 1831 MINUTE, @jetzt - INTERVAL 1806 MINUTE, @paul, @jetzt - INTERVAL 1831 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 48, ausschuss = 0, fertig_gemeldet_von = @paul, fertig_gemeldet_am = @jetzt - INTERVAL 1806 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @versand, 'ruesten', @jetzt - INTERVAL 1840 MINUTE, @jetzt - INTERVAL 1831 MINUTE, @versand, @jetzt - INTERVAL 1840 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @versand, 'bearbeiten', @jetzt - INTERVAL 1831 MINUTE, @jetzt - INTERVAL 1806 MINUTE, @versand, @jetzt - INTERVAL 1831 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 48, ausschuss = 0, fertig_gemeldet_von = @versand, fertig_gemeldet_am = @jetzt - INTERVAL 1806 MINUTE WHERE id = @ag;
 
 -- FA-1002 · AG 10
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-1002' AND ag.ag_nummer = 10);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'ruesten', @jetzt - INTERVAL 4620 MINUTE, @jetzt - INTERVAL 4611 MINUTE, @mehmet, @jetzt - INTERVAL 4620 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, quelle, gueltig, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'bearbeiten', @jetzt - INTERVAL 4611 MINUTE, @jetzt - INTERVAL 4536 MINUTE, 'terminal', 0, @mehmet, @jetzt - INTERVAL 4611 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'ruesten', @jetzt - INTERVAL 4620 MINUTE, @jetzt - INTERVAL 4611 MINUTE, @lasern, @jetzt - INTERVAL 4620 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, quelle, gueltig, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'bearbeiten', @jetzt - INTERVAL 4611 MINUTE, @jetzt - INTERVAL 4536 MINUTE, 'terminal', 0, @lasern, @jetzt - INTERVAL 4611 MINUTE);
 SET @alt = LAST_INSERT_ID();
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, quelle, ersetzt_buchung_id, begruendung, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'bearbeiten', @jetzt - INTERVAL 4611 MINUTE, @jetzt - INTERVAL 4552 MINUTE, 'korrektur', @alt, 'Ausstempeln vergessen, Ende laut Werker nach 59 min', @lena, @jetzt - INTERVAL 4476 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 30, ausschuss = 0, fertig_gemeldet_von = @mehmet, fertig_gemeldet_am = @jetzt - INTERVAL 4552 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, quelle, ersetzt_buchung_id, begruendung, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'bearbeiten', @jetzt - INTERVAL 4611 MINUTE, @jetzt - INTERVAL 4552 MINUTE, 'korrektur', @alt, 'Ausstempeln vergessen, Ende laut Werker nach 59 min', @lena, @jetzt - INTERVAL 4476 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 30, ausschuss = 0, fertig_gemeldet_von = @lasern, fertig_gemeldet_am = @jetzt - INTERVAL 4552 MINUTE WHERE id = @ag;
 
 -- FA-1002 · AG 20
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-1002' AND ag.ag_nummer = 20);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @jonas, 'ruesten', @jetzt - INTERVAL 120 MINUTE, @jetzt - INTERVAL 92 MINUTE, @jonas, @jetzt - INTERVAL 120 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @jonas, 'bearbeiten', @jetzt - INTERVAL 92 MINUTE, NULL, @jonas, @jetzt - INTERVAL 92 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @drehen, 'ruesten', @jetzt - INTERVAL 120 MINUTE, @jetzt - INTERVAL 92 MINUTE, @drehen, @jetzt - INTERVAL 120 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @drehen, 'bearbeiten', @jetzt - INTERVAL 92 MINUTE, NULL, @drehen, @jetzt - INTERVAL 92 MINUTE);
 UPDATE arbeitsgang SET status = 'laeuft' WHERE id = @ag;
 
 -- FA-1003 · AG 10
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-1003' AND ag.ag_nummer = 10);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'ruesten', @jetzt - INTERVAL 1740 MINUTE, @jetzt - INTERVAL 1726 MINUTE, @mehmet, @jetzt - INTERVAL 1740 MINUTE);
-INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @mehmet, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Material fehlt'), @jetzt - INTERVAL 1726 MINUTE, @jetzt - INTERVAL 1686 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'bearbeiten', @jetzt - INTERVAL 1686 MINUTE, @jetzt - INTERVAL 1641 MINUTE, @mehmet, @jetzt - INTERVAL 1686 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 12, ausschuss = 0, fertig_gemeldet_von = @mehmet, fertig_gemeldet_am = @jetzt - INTERVAL 1641 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'ruesten', @jetzt - INTERVAL 1740 MINUTE, @jetzt - INTERVAL 1726 MINUTE, @lasern, @jetzt - INTERVAL 1740 MINUTE);
+INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @lasern, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Material fehlt'), @jetzt - INTERVAL 1726 MINUTE, @jetzt - INTERVAL 1686 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'bearbeiten', @jetzt - INTERVAL 1686 MINUTE, @jetzt - INTERVAL 1641 MINUTE, @lasern, @jetzt - INTERVAL 1686 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 12, ausschuss = 0, fertig_gemeldet_von = @lasern, fertig_gemeldet_am = @jetzt - INTERVAL 1641 MINUTE WHERE id = @ag;
 
 -- FA-1000 · AG 10
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-1000' AND ag.ag_nummer = 10);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'ruesten', @jetzt - INTERVAL 3180 MINUTE, @jetzt - INTERVAL 3167 MINUTE, @mehmet, @jetzt - INTERVAL 3180 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'bearbeiten', @jetzt - INTERVAL 3167 MINUTE, @jetzt - INTERVAL 3136 MINUTE, @mehmet, @jetzt - INTERVAL 3167 MINUTE);
-UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 10, ausschuss = 0, fertig_gemeldet_von = @mehmet, fertig_gemeldet_am = @jetzt - INTERVAL 3136 MINUTE WHERE id = @ag;
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'ruesten', @jetzt - INTERVAL 3180 MINUTE, @jetzt - INTERVAL 3167 MINUTE, @lasern, @jetzt - INTERVAL 3180 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'bearbeiten', @jetzt - INTERVAL 3167 MINUTE, @jetzt - INTERVAL 3136 MINUTE, @lasern, @jetzt - INTERVAL 3167 MINUTE);
+UPDATE arbeitsgang SET status = 'erledigt', gutmenge = 10, ausschuss = 0, fertig_gemeldet_von = @lasern, fertig_gemeldet_am = @jetzt - INTERVAL 3136 MINUTE WHERE id = @ag;
 
 -- FA-1004 · AG 10
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-1004' AND ag.ag_nummer = 10);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @paul, 'ruesten', @jetzt - INTERVAL 42 MINUTE, @jetzt - INTERVAL 32 MINUTE, @paul, @jetzt - INTERVAL 42 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @paul, 'bearbeiten', @jetzt - INTERVAL 32 MINUTE, NULL, @paul, @jetzt - INTERVAL 32 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'ruesten', @jetzt - INTERVAL 42 MINUTE, @jetzt - INTERVAL 32 MINUTE, @lasern, @jetzt - INTERVAL 42 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @lasern, 'bearbeiten', @jetzt - INTERVAL 32 MINUTE, NULL, @lasern, @jetzt - INTERVAL 32 MINUTE);
 UPDATE arbeitsgang SET status = 'laeuft' WHERE id = @ag;
 
 -- FA-1000 · AG 20
 SET @ag = (SELECT ag.id FROM arbeitsgang ag JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id WHERE fa.auftragsnummer = 'FA-1000' AND ag.ag_nummer = 20);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'ruesten', @jetzt - INTERVAL 85 MINUTE, @jetzt - INTERVAL 37 MINUTE, @mehmet, @jetzt - INTERVAL 85 MINUTE);
-INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @mehmet, 'bearbeiten', @jetzt - INTERVAL 37 MINUTE, @jetzt - INTERVAL 22 MINUTE, @mehmet, @jetzt - INTERVAL 37 MINUTE);
-INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @mehmet, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Maschinenstörung'), @jetzt - INTERVAL 22 MINUTE, NULL);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @kanten, 'ruesten', @jetzt - INTERVAL 85 MINUTE, @jetzt - INTERVAL 37 MINUTE, @kanten, @jetzt - INTERVAL 85 MINUTE);
+INSERT INTO zeitbuchung (arbeitsgang_id, benutzer_id, taetigkeit, beginn, ende, erfasst_von, erfasst_am) VALUES (@ag, @kanten, 'bearbeiten', @jetzt - INTERVAL 37 MINUTE, @jetzt - INTERVAL 22 MINUTE, @kanten, @jetzt - INTERVAL 37 MINUTE);
+INSERT INTO unterbrechung (arbeitsgang_id, benutzer_id, unterbrechungsgrund_id, beginn, ende) VALUES (@ag, @kanten, (SELECT id FROM unterbrechungsgrund WHERE bezeichnung = 'Maschinenstörung'), @jetzt - INTERVAL 22 MINUTE, NULL);
 UPDATE arbeitsgang SET status = 'unterbrochen' WHERE id = @ag;
 
 -- Prüfergebnisse: Bei erledigten Arbeitsgängen sind alle Prüfpunkte in Ordnung
@@ -319,7 +333,7 @@ WHERE fa.auftragsnummer = 'FA-0999' AND ag.ag_nummer = 30 AND pp.reihenfolge = 1
 UPDATE pruefpunkt pp
 JOIN arbeitsgang ag       ON ag.id = pp.arbeitsgang_id
 JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id
-SET pp.istwert = 200.040, pp.ergebnis = 'in_ordnung', pp.geprueft_von = @jonas, pp.geprueft_am = @jetzt - INTERVAL 30 MINUTE
+SET pp.istwert = 200.040, pp.ergebnis = 'in_ordnung', pp.geprueft_von = @drehen, pp.geprueft_am = @jetzt - INTERVAL 30 MINUTE
 WHERE fa.auftragsnummer = 'FA-1002' AND ag.ag_nummer = 20 AND pp.reihenfolge = 1;
 
 -- Historie: Die Rüstzeit für das Lackieren der V-410 wurde schon einmal aus Ist-Werten angepasst

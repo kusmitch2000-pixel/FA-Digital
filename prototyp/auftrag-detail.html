@@ -109,7 +109,7 @@
                 <td>CNC-Drehmaschine (AP-40)</td>
                 <td class="zahl">115 min</td>
                 <td class="zahl ueber">120 min</td>
-                <td><span class="badge laeuft">läuft · Jonas Wolff</span></td>
+                <td><span class="badge laeuft">läuft · Fachkraft Drehen</span></td>
                 <td class="zahl">–</td>
               </tr>
               <tr>
@@ -147,9 +147,9 @@
       <section class="karte">
         <h2>Werker zuordnen</h2>
         <p class="leise klein">Zugeordnete Arbeitsgänge erscheinen im persönlichen Werker-Terminal, sobald der Auftrag freigegeben ist.</p>
-        <p><strong>AG 10 Ronde auslasern:</strong> Mehmet Yilmaz</p>
-        <p><strong>AG 20 Drehen:</strong> Jonas Wolff</p>
-        <p><strong>AG 30 Lochkreis fräsen:</strong> Mehmet Yilmaz
+        <p><strong>AG 10 Ronde auslasern:</strong> Fachkraft Lasern</p>
+        <p><strong>AG 20 Drehen:</strong> Fachkraft Drehen</p>
+        <p><strong>AG 30 Lochkreis fräsen:</strong> Fachkraft Fräsen
           <button type="button" class="btn btn-klein btn-sekundaer" data-recht="auftrag.zuordnen">Entfernen</button></p>
         <p><strong>AG 40 Verpacken und versenden:</strong> <span class="leise">Noch niemand zugeordnet</span></p>
         <form action="auftrag-detail.html" method="post" class="knopfleiste" data-recht="auftrag.zuordnen">
@@ -163,9 +163,9 @@
           <label for="zuordnung-werker" class="leise" style="margin: 0; align-self: center;">Werker</label>
           <select id="zuordnung-werker" name="werker" style="width: auto;" required>
             <option value="">Bitte wählen</option>
-            <option>Jonas Wolff</option>
-            <option>Mehmet Yilmaz</option>
-            <option>Paul Schneider</option>
+            <option>Fachkraft Drehen</option>
+            <option>Fachkraft Lasern</option>
+            <option>Fachkraft Versand</option>
           </select>
           <button type="submit" class="btn btn-primaer">Zuordnen</button>
         </form>
@@ -173,7 +173,7 @@
 
       <section class="karte">
         <h2>Notizen aus der Werkstatt</h2>
-        <p style="margin: 0;"><strong>AG 20 · Jonas Wolff</strong> · 28.09.2026, 08:15<br>
+        <p style="margin: 0;"><strong>AG 20 · Fachkraft Drehen</strong> · 28.09.2026, 08:15<br>
           Drehmeißel gewechselt, die Schneide war ausgebrochen. Deshalb hat das Rüsten länger gedauert.</p>
       </section>
 
@@ -195,7 +195,7 @@
             <tbody>
               <tr>
                 <td>25.09.2026</td>
-                <td>Mehmet Yilmaz</td>
+                <td>Fachkraft Lasern</td>
                 <td>10 Ronde auslasern</td>
                 <td>Rüsten</td>
                 <td class="zahl">13:02</td>
@@ -204,7 +204,7 @@
               </tr>
               <tr>
                 <td>25.09.2026</td>
-                <td>Mehmet Yilmaz</td>
+                <td>Fachkraft Lasern</td>
                 <td>10 Ronde auslasern</td>
                 <td>Bearbeiten</td>
                 <td class="zahl">13:11</td>
@@ -213,7 +213,7 @@
               </tr>
               <tr>
                 <td>28.09.2026</td>
-                <td>Jonas Wolff</td>
+                <td>Fachkraft Drehen</td>
                 <td>20 Drehen</td>
                 <td>Rüsten</td>
                 <td class="zahl">07:30</td>
@@ -222,7 +222,7 @@
               </tr>
               <tr class="hervorgehoben">
                 <td>28.09.2026</td>
-                <td>Jonas Wolff</td>
+                <td>Fachkraft Drehen</td>
                 <td>20 Drehen</td>
                 <td>Bearbeiten</td>
                 <td class="zahl">07:58</td>
@@ -252,8 +252,8 @@
             <div class="feld">
               <label for="mitarbeiter">Mitarbeiter</label>
               <select id="mitarbeiter" name="mitarbeiter">
-                <option>Jonas Wolff</option>
-                <option>Mehmet Yilmaz</option>
+                <option>Fachkraft Drehen</option>
+                <option>Fachkraft Lasern</option>
               </select>
             </div>
             <div class="feld">

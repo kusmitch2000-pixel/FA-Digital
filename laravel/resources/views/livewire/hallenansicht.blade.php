@@ -1,8 +1,8 @@
-<div wire:poll.30s>
+<div wire:poll.keep-alive.30s>
     <div class="seitenkopf">
         <div>
             <h1>Hallenansicht</h1>
-            <p class="leise">Was gerade an jedem Arbeitsplatz passiert · Stand: {{ now()->format('d.m.Y, H:i') }} Uhr</p>
+            <p class="leise">Was gerade an jedem Arbeitsplatz passiert · Aktualisierung alle 30 Sekunden · Stand: {{ now()->format('d.m.Y, H:i') }} Uhr</p>
         </div>
         @if (auth()->user()->darf('auftrag.anlegen'))
             <a class="btn btn-primaer" href="{{ route('auftrag.anlegen') }}">+ Neuer Auftrag</a>
