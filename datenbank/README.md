@@ -36,4 +36,4 @@ Alle haben das Passwort `fa-digital` (nur für die Entwicklung).
 | anna.becker@fa-digital.de | Arbeitsvorbereitung |
 | lena.hoffmann@fa-digital.de | Meister |
 | tobias.krueger@fa-digital.de | Controlling |
-| jonas.wolff@fa-digital.de, mehmet.yilmaz@fa-digital.de, paul.schneider@fa-digital.de | Werker |
+| Tätigkeitskonten wie drehen@fa-digital.de und lasern@fa-digital.de | Werker |

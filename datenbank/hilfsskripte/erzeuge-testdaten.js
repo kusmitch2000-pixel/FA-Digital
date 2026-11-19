@@ -45,15 +45,22 @@ const benutzer = [
   ["1001", "Anna", "Becker", "arbeitsvorbereitung", 1, "anna"],
   ["1002", "Lena", "Hoffmann", "meister", 1, "lena"],
   ["1010", "Tobias", "Krüger", "controlling", 1, "tobias"],
-  ["1042", "Jonas", "Wolff", "werker", 1, "jonas"],
-  ["1043", "Mehmet", "Yilmaz", "werker", 1, "mehmet"],
-  ["1045", "Paul", "Schneider", "werker", 1, "paul"],
+  ["2001", "Fachkraft", "Lasern", "werker", 1, "lasern", "lasern@fa-digital.de"],
+  ["2002", "Fachkraft", "Kanten", "werker", 1, "kanten", "kanten@fa-digital.de"],
+  ["2003", "Fachkraft", "Schweißen", "werker", 1, "schweissen", "schweissen@fa-digital.de"],
+  ["2004", "Fachkraft", "Drehen", "werker", 1, "drehen", "drehen@fa-digital.de"],
+  ["2005", "Fachkraft", "Fräsen", "werker", 1, "fraesen", "fraesen@fa-digital.de"],
+  ["2006", "Fachkraft", "Lackieren", "werker", 1, "lackieren", "lackieren@fa-digital.de"],
+  ["2007", "Fachkraft", "Versand", "werker", 1, "versand", "versand@fa-digital.de"],
+  ["2008", "Fachkraft", "Prüfen", "werker", 1, "pruefen", "pruefen@fa-digital.de"],
+  ["2009", "Fachkraft", "Sägen", "werker", 1, "saegen", "saegen@fa-digital.de"],
+  ["2010", "Fachkraft", "Montage", "werker", 1, "montage", "montage@fa-digital.de"],
   ["1044", "Katrin", "Wagner", "werker", 0, "katrin"],
 ];
 const mail = (v, n) => `${v}.${n}`.toLowerCase().replace(/ü/g, "ue").replace(/ä/g, "ae").replace(/ö/g, "oe") + "@fa-digital.de";
 sql("-- Benutzer");
 sql("INSERT INTO benutzer (personalnummer, vorname, nachname, email, passwort_hash, rolle, aktiv) VALUES");
-sql(benutzer.map(([nr, v, n, rolle, aktiv]) => `  (${text(nr)}, ${text(v)}, ${text(n)}, ${text(mail(v, n))}, @hash, ${text(rolle)}, ${aktiv})`).join(",\n") + ";");
+sql(benutzer.map(([nr, v, n, rolle, aktiv, , email]) => `  (${text(nr)}, ${text(v)}, ${text(n)}, ${text(email ?? mail(v, n))}, @hash, ${text(rolle)}, ${aktiv})`).join(",\n") + ";");
 for (const [nr, , , , , kurz] of benutzer) sql(`SET @${kurz} = (SELECT id FROM benutzer WHERE personalnummer = '${nr}');`);
 sql("");
 
@@ -229,24 +236,24 @@ ORDER BY ag.id, pm.reihenfolge;
 // Abschluss: { gut, ausschuss } oder "laeuft" oder "unterbrochen"
 // ---------------------------------------------------------------------
 const ablaeufe = [
-  ["FA-0998", 10, "mehmet", 13 * TAG + 400, [["R", 15], ["U", "Material fehlt", 55], ["B", 140]], { gut: 60, ausschuss: 0 }],
-  ["FA-0998", 20, "jonas", 12 * TAG + 420, [["R", 26], ["U", "Werkzeug fehlt", 30], ["B", 100], ["U", "Maschinenstörung", 25], ["B", 95]], { gut: 60, ausschuss: 0 }],
-  ["FA-0998", 30, "paul", 11 * TAG + 400, [["R", 24], ["B", 120], ["U", "Pause", 30], ["B", 130]], { gut: 60, ausschuss: 0 }],
-  ["FA-0998", 40, "paul", 10 * TAG + 600, [["R", 10], ["B", 28]], { gut: 60, ausschuss: 0 }],
-  ["FA-0999", 10, "mehmet", 9 * TAG + 400, [["R", 9], ["B", 38]], { gut: 20, ausschuss: 0 }],
-  ["FA-0999", 20, "jonas", 8 * TAG + 420, [["R", 27], ["U", "Werkzeug fehlt", 18], ["B", 65]], { gut: 20, ausschuss: 0 }],
-  ["FA-0999", 30, "mehmet", 7 * TAG + 400, [["R", 40], ["U", "Maschinenstörung", 70], ["B", 50], ["U", "Pause", 30], ["B", 30], ["U", "Maschinenstörung", 50], ["B", 20]], { gut: 19, ausschuss: 1 }],
-  ["FA-0999", 40, "paul", 6 * TAG + 400, [["R", 10], ["B", 9]], { gut: 19, ausschuss: 0 }],
-  ["FA-1001", 10, "mehmet", 5 * TAG + 400, [["R", 14], ["U", "Pause", 30], ["B", 126]], { gut: 50, ausschuss: 0 }],
-  ["FA-1001", 20, "jonas", 4 * TAG + 420, [["R", 32, { nachtrag: "lena", begruendung: "Stempeln vergessen", erfasstVorMin: 100 }], ["U", "Werkzeug fehlt", 12], ["B", 70], ["U", "Pause", 30], ["B", 80]], { gut: 49, ausschuss: 1 }],
-  ["FA-1001", 30, "paul", 2 * TAG + 400, [["R", 26], ["B", 225]], { gut: 48, ausschuss: 1 }],
-  ["FA-1001", 40, "paul", 1 * TAG + 400, [["R", 9], ["B", 25]], { gut: 48, ausschuss: 0 }],
-  ["FA-1002", 10, "mehmet", 3 * TAG + 300, [["R", 9], ["B", 59, { korrigiert: 75, begruendung: "Ausstempeln vergessen, Ende laut Werker nach 59 min" }]], { gut: 30, ausschuss: 0 }],
-  ["FA-1002", 20, "jonas", 120, [["R", 28], ["B", 92]], "laeuft"],
-  ["FA-1003", 10, "mehmet", 1 * TAG + 300, [["R", 14], ["U", "Material fehlt", 40], ["B", 45]], { gut: 12, ausschuss: 0 }],
-  ["FA-1000", 10, "mehmet", 2 * TAG + 300, [["R", 13], ["B", 31]], { gut: 10, ausschuss: 0 }],
-  ["FA-1004", 10, "paul", 42, [["R", 10], ["B", 32]], "laeuft"],
-  ["FA-1000", 20, "mehmet", 85, [["R", 48], ["B", 15], ["U", "Maschinenstörung", 22]], "unterbrochen"],
+  ["FA-0998", 10, "lasern", 13 * TAG + 400, [["R", 15], ["U", "Material fehlt", 55], ["B", 140]], { gut: 60, ausschuss: 0 }],
+  ["FA-0998", 20, "kanten", 12 * TAG + 420, [["R", 26], ["U", "Werkzeug fehlt", 30], ["B", 100], ["U", "Maschinenstörung", 25], ["B", 95]], { gut: 60, ausschuss: 0 }],
+  ["FA-0998", 30, "lackieren", 11 * TAG + 400, [["R", 24], ["B", 120], ["U", "Pause", 30], ["B", 130]], { gut: 60, ausschuss: 0 }],
+  ["FA-0998", 40, "versand", 10 * TAG + 600, [["R", 10], ["B", 28]], { gut: 60, ausschuss: 0 }],
+  ["FA-0999", 10, "lasern", 9 * TAG + 400, [["R", 9], ["B", 38]], { gut: 20, ausschuss: 0 }],
+  ["FA-0999", 20, "drehen", 8 * TAG + 420, [["R", 27], ["U", "Werkzeug fehlt", 18], ["B", 65]], { gut: 20, ausschuss: 0 }],
+  ["FA-0999", 30, "fraesen", 7 * TAG + 400, [["R", 40], ["U", "Maschinenstörung", 70], ["B", 50], ["U", "Pause", 30], ["B", 30], ["U", "Maschinenstörung", 50], ["B", 20]], { gut: 19, ausschuss: 1 }],
+  ["FA-0999", 40, "versand", 6 * TAG + 400, [["R", 10], ["B", 9]], { gut: 19, ausschuss: 0 }],
+  ["FA-1001", 10, "lasern", 5 * TAG + 400, [["R", 14], ["U", "Pause", 30], ["B", 126]], { gut: 50, ausschuss: 0 }],
+  ["FA-1001", 20, "kanten", 4 * TAG + 420, [["R", 32, { nachtrag: "lena", begruendung: "Stempeln vergessen", erfasstVorMin: 100 }], ["U", "Werkzeug fehlt", 12], ["B", 70], ["U", "Pause", 30], ["B", 80]], { gut: 49, ausschuss: 1 }],
+  ["FA-1001", 30, "lackieren", 2 * TAG + 400, [["R", 26], ["B", 225]], { gut: 48, ausschuss: 1 }],
+  ["FA-1001", 40, "versand", 1 * TAG + 400, [["R", 9], ["B", 25]], { gut: 48, ausschuss: 0 }],
+  ["FA-1002", 10, "lasern", 3 * TAG + 300, [["R", 9], ["B", 59, { korrigiert: 75, begruendung: "Ausstempeln vergessen, Ende laut Werker nach 59 min" }]], { gut: 30, ausschuss: 0 }],
+  ["FA-1002", 20, "drehen", 120, [["R", 28], ["B", 92]], "laeuft"],
+  ["FA-1003", 10, "lasern", 1 * TAG + 300, [["R", 14], ["U", "Material fehlt", 40], ["B", 45]], { gut: 12, ausschuss: 0 }],
+  ["FA-1000", 10, "lasern", 2 * TAG + 300, [["R", 13], ["B", 31]], { gut: 10, ausschuss: 0 }],
+  ["FA-1004", 10, "lasern", 42, [["R", 10], ["B", 32]], "laeuft"],
+  ["FA-1000", 20, "kanten", 85, [["R", 48], ["B", 15], ["U", "Maschinenstörung", 22]], "unterbrochen"],
 ];
 
 sql("-- Zeitbuchungen und Unterbrechungen je Arbeitsgang");
@@ -308,7 +315,7 @@ WHERE fa.auftragsnummer = 'FA-0999' AND ag.ag_nummer = 30 AND pp.reihenfolge = 1
 UPDATE pruefpunkt pp
 JOIN arbeitsgang ag       ON ag.id = pp.arbeitsgang_id
 JOIN fertigungsauftrag fa ON fa.id = ag.fertigungsauftrag_id
-SET pp.istwert = 200.040, pp.ergebnis = 'in_ordnung', pp.geprueft_von = @jonas, pp.geprueft_am = @jetzt - INTERVAL 30 MINUTE
+SET pp.istwert = 200.040, pp.ergebnis = 'in_ordnung', pp.geprueft_von = @drehen, pp.geprueft_am = @jetzt - INTERVAL 30 MINUTE
 WHERE fa.auftragsnummer = 'FA-1002' AND ag.ag_nummer = 20 AND pp.reihenfolge = 1;
 
 -- Historie: Die Rüstzeit für das Lackieren der V-410 wurde schon einmal aus Ist-Werten angepasst

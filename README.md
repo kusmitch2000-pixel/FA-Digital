@@ -47,8 +47,8 @@ Anschließend <http://localhost:8000> öffnen. Der Seeder lädt optionale Entwic
 
 | Rolle | Test-Benutzer | Startseite | Menü |
 |---|---|---|---|
-| Werker | Jonas Wolff | Werker-Terminal | nur Werker-Terminal mit den zugeordneten Arbeitsgängen, Notizen und Messseite |
-| Meister | Lena Hoffmann | Hallenansicht | Hallenansicht, Aufträge, Zertifikate (nur ansehen), Werker-Terminal, Nachkalkulation, Auswertung. Im Auftragsdetail Werker zuordnen und Buchungen nachtragen |
+| Werker | Fachkraft Drehen | Werker-Terminal | nur Werker-Terminal mit den zugeordneten Arbeitsgängen, Notizen und Messseite |
+| Meister | Lena Hoffmann | Startseite | Menü mit Arbeitsaufkommen, Hallenansicht und Zertifikatsfreigaben. Im verlinkten Auftragsdetail Werker zuordnen und Buchungen nachtragen; bestehende Rollenrechte bleiben erhalten |
 | Arbeitsvorbereitung | Anna Becker | Aufträge | Hallenansicht, Aufträge, Auftrag anlegen, Artikel & Arbeitspläne, Zertifikate (eigene anlegen), Arbeitsplätze. Im Auftragsdetail Werker zuordnen |
 | Controlling | Tobias Krüger | Nachkalkulation | Hallenansicht, Aufträge, Nachkalkulation (abschließen), Auswertung, Arbeitsplätze |
 | Admin | Sven Petersen | Hallenansicht | alles |

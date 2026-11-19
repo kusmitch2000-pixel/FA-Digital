@@ -27,8 +27,10 @@ Jede Rolle sieht nur ihre Bereiche (Rückmeldung vom 01.10.2026). Nach der Anmel
 
 | Adresse | Seite | Anwendungsfall | Rollen |
 |---|---|---|---|
-| `/werker` | Werker-Terminal: Arbeitsvorrat, Rüsten/Bearbeiten, Unterbrechung mit Grund, Checkliste, Fertigmeldung | 1 bis 5 | Werker (Start), Meister, Admin |
-| `/halle` | Hallenansicht mit Ampel, Handlungsbedarf, Aufträge in der Werkstatt (Meister-Ansicht), letzte Buchungen. Lädt sich alle 30 s neu | 7 | Meister (Start), AV, Controlling, Admin |
+| `/meister` | Startseite mit überfälligen offenen Aufträgen und freigabebereiten Zertifikaten | – | Meister (Start) |
+| `/werker` | Arbeitsauftragsvorlauf mit zugeordneten Arbeitsgängen | 1 bis 5 | Werker (Start), Meister, Admin |
+| `/werker/aktiv` | Aktiver Arbeitsauftrag: Zeit, Unterbrechung, Notizen, Checkliste und Fertigmeldung | 1 bis 5 | Werker, Meister, Admin |
+| `/halle` | Hallenansicht mit Ampel, Handlungsbedarf, Aufträge in der Werkstatt (Meister-Ansicht), letzte Buchungen. Lädt sich alle 30 s neu | 7 | Meister, AV, Controlling, Admin |
 | `/auftraege` | Auftragsübersicht mit Suche und Statusfilter | 8 | Meister, AV, Controlling, Admin |
 | `/auftraege/FA-1002` | Auftragsdetail: Arbeitsgänge, Zuordnungen, Checkliste, Zertifikate und Buchungen. AV bearbeitet Menge, Termin, Kunde und Zertifikate, solange niemand daran gearbeitet hat | 6, 8 | Meister, AV, Controlling, Admin; Aktionen je Rolle |
 | `/auftraege/neu` | Auftrag anlegen mit geforderten Werkszertifikaten und Vorschau der Checkliste | Rückmeldung | AV (Start: Aufträge), Admin |
@@ -39,6 +41,8 @@ Jede Rolle sieht nur ihre Bereiche (Rückmeldung vom 01.10.2026). Nach der Anmel
 | `/artikel` | Arbeitspläne: Prüfmerkmale je Arbeitsgang pflegen (immer oder nur bei einem Zertifikat), Soll-Zeit-Vorschläge übernehmen oder Soll-Zeiten von Hand ändern (mit Pflicht-Begründung, beides in der Historie) | Rückmeldung | AV, Admin |
 | `/arbeitsplaetze` | Arbeitsplätze und Stundensätze | – | AV, Controlling, Admin |
 | `/benutzer` | Benutzer anlegen, sperren, Passwort setzen, Rechte-Übersicht | 12 | Admin |
+
+Das Meister-Menü enthält Startseite, Hallenansicht und Zertifikatsfreigaben. Links aus der Hallenansicht und der Startseite führen weiterhin zum Auftragsdetail; bestehende Berechtigungen werden durch die Menüauswahl nicht geändert. Auf der Startseite sind nur Zertifikate aufgeführt, deren Auftrag fertig ist und deren Prüfungen in Ordnung sind. Das gesamte Zertifikatsregister bleibt über „Zertifikatsfreigaben“ erreichbar.
 
 ## Entwicklung mit Docker
 
@@ -54,7 +58,7 @@ Aus `datenbank/02_testdaten.sql`, alle mit dem Passwort `fa-digital` (nur für d
 | anna.becker@fa-digital.de | Arbeitsvorbereitung |
 | lena.hoffmann@fa-digital.de | Meister |
 | tobias.krueger@fa-digital.de | Controlling |
-| jonas.wolff@fa-digital.de, mehmet.yilmaz@fa-digital.de, paul.schneider@fa-digital.de | Werker |
+| Tätigkeitskonten wie drehen@fa-digital.de und lasern@fa-digital.de | Werker |
 
 Ein eigenes Admin-Konto ohne Testdaten legt `php artisan fa:admin name@firma.de` an.
 

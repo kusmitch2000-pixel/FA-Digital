@@ -1446,7 +1446,7 @@ function datumText(iso) {
 
 function auftragDetailSeite(nummer) {
   const inhalt = document.querySelector("main.inhalt");
-  const WERKER = ["Jonas Wolff", "Mehmet Yilmaz", "Paul Schneider"];
+  const WERKER = ["Fachkraft Lasern", "Fachkraft Kanten", "Fachkraft Schweißen", "Fachkraft Drehen", "Fachkraft Fräsen", "Fachkraft Lackieren", "Fachkraft Versand", "Fachkraft Prüfen", "Fachkraft Sägen", "Fachkraft Montage"];
   let bearbeiten = false;
   let meldung = "";
 

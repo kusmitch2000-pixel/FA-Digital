@@ -11,7 +11,7 @@ USE fa_digital;
 -- Anmeldung: Benutzer zur E-Mail laden. Das Passwort prüft PHP mit password_verify().
 SELECT id, vorname, nachname, rolle, passwort_hash
 FROM benutzer
-WHERE email = 'jonas.wolff@fa-digital.de' AND aktiv = 1;
+WHERE email = 'drehen@fa-digital.de' AND aktiv = 1;
 
 -- AF 1: Arbeitsvorrat am Arbeitsplatz CNC-Drehmaschine
 SELECT auftragsnummer, ag_nummer, arbeitsgang, artikel, menge, soll_zeit_min, liefertermin, bereitschaft, wartet_auf_ag

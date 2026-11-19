@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Actions\Fertigung\AuftragAnlegen;
+use App\Livewire\AktiverArbeitsauftrag;
 use App\Livewire\AuftragDetail;
+use App\Livewire\Hallenansicht;
 use App\Livewire\Messung;
 use App\Livewire\Terminal;
 use App\Models\Arbeitsplatz;
@@ -67,7 +69,9 @@ class TerminalTest extends TestCase
         $this->travelTo(now()->startOfMinute());
 
         $terminal = Livewire::test(Terminal::class)->set('arbeitsplatz', 'AP-60');
-        $terminal->assertSee('T-100 Testteil')->call('starten', $messen->id, 'ruesten')->assertHasNoErrors();
+        $terminal->assertSee('Meine Arbeitsauftragsvorlauf')->assertSee('T-100 Testteil')
+            ->call('starten', $messen->id, 'ruesten')->assertHasNoErrors()->assertRedirect(route('terminal.aktiv'));
+        $terminal = Livewire::test(AktiverArbeitsauftrag::class);
 
         $this->assertSame('laeuft', $messen->fresh()->status);
         $this->assertSame('in_arbeit', $auftrag->fresh()->status);
@@ -111,7 +115,8 @@ class TerminalTest extends TestCase
 
         // AG 20 ist jetzt an der Reihe. Nach der letzten Fertigmeldung ist der Auftrag fertig.
         $this->assertSame('bereit', DB::table('v_arbeitsvorrat')->where('arbeitsgang_id', $montieren->id)->value('bereitschaft'));
-        $terminal->call('starten', $montieren->id, 'bearbeiten')->assertHasNoErrors()->assertSet('arbeitsplatz', 'AP-70');
+        Livewire::test(Terminal::class)->call('starten', $montieren->id, 'bearbeiten')->assertHasNoErrors()->assertRedirect(route('terminal.aktiv'));
+        $terminal = Livewire::test(AktiverArbeitsauftrag::class)->assertSet('arbeitsplatz', 'AP-70');
         $this->travel(10)->minutes();
         $terminal->set('gutmenge', 9)->set('ausschuss', 0)->call('fertigMelden')->assertHasNoErrors();
 
@@ -119,6 +124,45 @@ class TerminalTest extends TestCase
         $this->assertSame('fertig', $auftrag->status);
         $this->assertSame($werker->id, $auftrag->abgeschlossen_von);
         $this->assertSame('fertig', DB::table('v_nachkalkulation_auftrag')->where('auftragsnummer', $auftrag->auftragsnummer)->value('status'));
+    }
+
+    public function test_arbeitsvorrat_und_aktiver_auftrag_sind_getrennte_seiten(): void
+    {
+        $auftrag = $this->auftragAnFreienPlaetzen();
+        $ag = $auftrag->arbeitsgaenge[0];
+        $werker = $this->freierWerker();
+        DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $ag->id, 'benutzer_id' => $werker->id]);
+        $this->actingAs($werker);
+        $this->get(route('terminal'))->assertOk()->assertSee('Meine Arbeitsauftragsvorlauf')->assertDontSee('Notizen zum Arbeitsgang');
+        $this->get(route('terminal.aktiv'))->assertOk()->assertSee('keinen aktiven Arbeitsauftrag')->assertDontSee('Meine Arbeitsauftragsvorlauf');
+        Livewire::test(Terminal::class)->call('starten', $ag->id, 'bearbeiten')->assertRedirect(route('terminal.aktiv'));
+        $this->get(route('terminal'))->assertOk()->assertSee('Aktiven Arbeitsauftrag öffnen')->assertDontSee('Notizen zum Arbeitsgang');
+        $this->get(route('terminal.aktiv'))->assertOk()->assertSee('Aktiver Arbeitsauftrag')->assertSee('Notizen zum Arbeitsgang')->assertDontSee('Meine Arbeitsauftragsvorlauf');
+        $this->actingAs($this->freierWerker('1096'));
+        $this->get(route('terminal.aktiv'))->assertOk()->assertSee('keinen aktiven Arbeitsauftrag')->assertDontSee($auftrag->auftragsnummer);
+    }
+
+    public function test_meister_sieht_nach_aktualisierung_den_taetigkeitswechsel_des_werkers(): void
+    {
+        $auftrag = $this->auftragAnFreienPlaetzen();
+        $ag = $auftrag->arbeitsgaenge[0];
+        $werker = $this->freierWerker();
+        DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $ag->id, 'benutzer_id' => $werker->id]);
+        $meister = $this->benutzer('1002');
+
+        $this->actingAs($meister);
+        $halle = Livewire::test(Hallenansicht::class)->assertSee('wire:poll.keep-alive.30s', false);
+
+        $this->actingAs($werker);
+        Livewire::test(Terminal::class)->call('starten', $ag->id, 'ruesten')->assertHasNoErrors();
+        $this->actingAs($meister);
+        $halle->call('$refresh')->assertSee('belegt · Rüsten')->assertSee($auftrag->auftragsnummer);
+
+        $this->actingAs($werker);
+        Livewire::test(AktiverArbeitsauftrag::class)->call('wechseln', 'bearbeiten')->assertHasNoErrors();
+        $this->actingAs($meister);
+        $halle->call('$refresh')->assertSee('belegt · Bearbeiten')->assertDontSee('belegt · Rüsten');
+        $this->assertSame('bearbeiten', DB::table('v_hallenansicht')->where('arbeitsplatz_nummer', 'AP-60')->value('laufende_taetigkeit'));
     }
 
     public function test_reihenfolge_und_belegung_werden_eingehalten(): void
@@ -157,7 +201,8 @@ class TerminalTest extends TestCase
         DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $messen->id, 'benutzer_id' => $werker->id]);
         $this->actingAs($werker);
 
-        $terminal = Livewire::test(Terminal::class)->call('starten', $messen->id, 'bearbeiten');
+        Livewire::test(Terminal::class)->call('starten', $messen->id, 'bearbeiten')->assertRedirect(route('terminal.aktiv'));
+        $terminal = Livewire::test(AktiverArbeitsauftrag::class);
 
         // Sichtprüfung braucht i. O. oder n. i. O., Messwert eine Zahl
         [$laenge, $kanten] = $messen->pruefpunkte;
@@ -188,8 +233,9 @@ class TerminalTest extends TestCase
         Livewire::test(Terminal::class)->assertDontSee('T-100 Testteil')
             ->call('starten', $ag->id, 'bearbeiten')->assertHasErrors('aktion');
         $this->actingAs($werker);
-        $terminal = Livewire::test(Terminal::class)->assertSee('T-100 Testteil')
-            ->call('starten', $ag->id, 'bearbeiten')->assertHasNoErrors()
+        Livewire::test(Terminal::class)->assertSee('T-100 Testteil')
+            ->call('starten', $ag->id, 'bearbeiten')->assertHasNoErrors()->assertRedirect(route('terminal.aktiv'));
+        $terminal = Livewire::test(AktiverArbeitsauftrag::class)
             ->set('notiz', 'Material beschädigt')->call('notizSpeichern')->assertHasNoErrors();
         $terminal->set('grund', Unterbrechungsgrund::where('bezeichnung', 'Material fehlt')->value('id'))
             ->set('unterbrechungBemerkung', 'Warte auf Lieferung')->call('unterbrechen')->assertHasNoErrors();
@@ -211,7 +257,8 @@ class TerminalTest extends TestCase
             DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $ag->id, 'benutzer_id' => $werker->id]);
         }
         $this->actingAs($werker);
-        $terminal = Livewire::test(Terminal::class)->call('starten', $messen->id, 'bearbeiten')
+        Livewire::test(Terminal::class)->call('starten', $messen->id, 'bearbeiten')->assertRedirect(route('terminal.aktiv'));
+        Livewire::test(AktiverArbeitsauftrag::class)
             ->set('gutmenge', 10)->set('ausschuss', 0)->call('fertigMelden')->assertHasNoErrors()
             ->assertRedirect(route('terminal.messung', $messen->id));
         $this->assertSame('messen', $messen->fresh()->status);
@@ -233,8 +280,8 @@ class TerminalTest extends TestCase
             ->call('abschliessen')->assertHasNoErrors()->assertRedirect(route('terminal'));
         $this->assertSame('erledigt', $messen->fresh()->status);
         $this->assertSame('bereit', DB::table('v_arbeitsvorrat')->where('arbeitsgang_id', $montieren->id)->value('bereitschaft'));
-        Livewire::test(Terminal::class)->call('starten', $montieren->id, 'bearbeiten')
-            ->set('gutmenge', 10)->call('fertigMelden')->assertHasNoErrors();
+        Livewire::test(Terminal::class)->call('starten', $montieren->id, 'bearbeiten')->assertRedirect(route('terminal.aktiv'));
+        Livewire::test(AktiverArbeitsauftrag::class)->set('gutmenge', 10)->call('fertigMelden')->assertHasNoErrors();
         // Ein weiterer Arbeitsgang ohne Prüfpunkte ist fertig, wenn die übrigen Messungen vorliegen.
         $this->assertSame('fertig', $auftrag->fresh()->status);
         $this->assertSame(1, (int) DB::table('v_zertifikat_status')->where('auftragsnummer', $auftrag->auftragsnummer)->value('bereit_zur_freigabe'));
@@ -250,7 +297,8 @@ class TerminalTest extends TestCase
         $werker = $this->freierWerker();
         DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $ag->id, 'benutzer_id' => $werker->id]);
         $this->actingAs($werker);
-        Livewire::test(Terminal::class)->call('starten', $ag->id, 'bearbeiten')->set('gutmenge', 3)->call('fertigMelden')->assertHasNoErrors();
+        Livewire::test(Terminal::class)->call('starten', $ag->id, 'bearbeiten')->assertRedirect(route('terminal.aktiv'));
+        Livewire::test(AktiverArbeitsauftrag::class)->set('gutmenge', 3)->call('fertigMelden')->assertHasNoErrors();
         $this->assertSame('messen', $auftrag->fresh()->status);
         Livewire::test(Messung::class, ['arbeitsgang' => $ag->id])->call('abschliessen')->assertHasErrors('aktion');
         $this->assertSame('messen', $auftrag->fresh()->status);
@@ -265,7 +313,8 @@ class TerminalTest extends TestCase
         $werker = $this->freierWerker();
         DB::table('arbeitsgang_zuordnung')->insert(['arbeitsgang_id' => $ag->id, 'benutzer_id' => $werker->id]);
         $this->actingAs($werker);
-        Livewire::test(Terminal::class)->call('starten', $ag->id, 'bearbeiten')->set('gutmenge', 3)->call('fertigMelden')->assertHasNoErrors();
+        Livewire::test(Terminal::class)->call('starten', $ag->id, 'bearbeiten')->assertRedirect(route('terminal.aktiv'));
+        Livewire::test(AktiverArbeitsauftrag::class)->set('gutmenge', 3)->call('fertigMelden')->assertHasNoErrors();
         $this->assertSame('messen', $auftrag->fresh()->status);
         $this->assertSame(0, (int) DB::table('v_zertifikat_status')->where('auftragsnummer', $auftrag->auftragsnummer)->value('bereit_zur_freigabe'));
         Livewire::test(Messung::class, ['arbeitsgang' => $ag->id])

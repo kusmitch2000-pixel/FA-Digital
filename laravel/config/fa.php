@@ -21,11 +21,13 @@ return [
     // Menü in dieser Reihenfolge. Jede Rolle sieht nur die Seiten, für die sie ein Recht hat
     // (Rückmeldung vom 01.10.2026: Informationen gebündelt für den richtigen Benutzer).
     'menue' => [
-        'terminal' => 'Werker-Terminal',
+        'meister.startseite' => 'Startseite',
+        'terminal' => 'Arbeitsauftragsvorlauf',
+        'terminal.aktiv' => 'Aktiver Arbeitsauftrag',
         'halle' => 'Hallenansicht',
         'auftraege' => 'Aufträge',
         'auftrag.anlegen' => 'Auftrag anlegen',
-        'zertifikate' => 'Zertifikatsfreigabe',
+        'zertifikate' => 'Zertifikatsfreigaben',
         'nachkalkulation' => 'Nachkalkulation',
         'auswertung' => 'Auswertung',
         'arbeitsplaene' => 'Artikel & Arbeitspläne',
@@ -34,9 +36,16 @@ return [
         'benutzer' => 'Benutzer',
     ],
 
+    // Die Meister-Navigation zeigt nur die gewünschten Hauptseiten. Detail-Links und Rechte bleiben erhalten.
+    'menue_pro_rolle' => [
+        'meister' => ['meister.startseite', 'halle', 'zertifikate'],
+    ],
+
     // Wer was darf. Schlüssel sind Seiten (Routennamen) und Aktionen auf diesen Seiten.
     'rechte' => [
+        'meister.startseite' => ['meister'],
         'terminal' => ['werker', 'meister', 'admin'],
+        'terminal.aktiv' => ['werker', 'meister', 'admin'],
         'halle' => ['meister', 'arbeitsvorbereitung', 'controlling', 'admin'],
         'auftraege' => ['meister', 'arbeitsvorbereitung', 'controlling', 'admin'],
         'auftrag.anlegen' => ['arbeitsvorbereitung', 'admin'],
@@ -58,7 +67,7 @@ return [
     // Startseite nach der Anmeldung
     'startseite' => [
         'werker' => 'terminal',
-        'meister' => 'halle',
+        'meister' => 'meister.startseite',
         'arbeitsvorbereitung' => 'auftraege',
         'controlling' => 'nachkalkulation',
         'admin' => 'halle',

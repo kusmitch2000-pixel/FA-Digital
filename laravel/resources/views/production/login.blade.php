@@ -30,6 +30,7 @@
         <section class="testkonten" aria-labelledby="testkonten-titel">
             <h2 id="testkonten-titel">Anmeldedaten für die Entwicklung</h2>
             <p class="klein leise">Beispielkonten für die lokale Testumgebung. Als Benutzername dient die E-Mail-Adresse. Die Angaben gelten für die ursprünglichen Testdaten; geänderte Passwörter und selbst angelegte Konten werden hier nicht angezeigt.</p>
+            <p class="klein leise">Zwei Rollen in normalen Browserfenstern testen: Im ersten Fenster <a href="http://localhost:{{ request()->getPort() }}">localhost:{{ request()->getPort() }}</a> verwenden, im zweiten <a href="http://127.0.0.1:{{ request()->getPort() }}">127.0.0.1:{{ request()->getPort() }}</a>. Beide Adressen nutzen dieselben lokalen Daten. Je Adresse getrennt anmelden.</p>
 
             <h3>Administration</h3>
             <dl class="testkonto"><dt>Admin · Sven Petersen</dt><dd>E-Mail: <strong>sven.petersen@fa-digital.de</strong><br>Passwort: <strong>fa-digital</strong></dd></dl>
@@ -44,12 +45,12 @@
             <dl class="testkonto"><dt>Tobias Krüger</dt><dd>E-Mail: <strong>tobias.krueger@fa-digital.de</strong><br>Passwort: <strong>fa-digital</strong></dd></dl>
 
             <h3>Werker</h3>
-            <dl class="testkonto"><dt>Alex Beispiel · Auftrag ohne Zertifikat</dt><dd>E-Mail: <strong>demo.werker@fa-digital.local</strong><br>Passwort: <strong>WerkerDemo123!</strong></dd></dl>
-            <dl class="testkonto"><dt>Mia Messung · Auftrag mit Werkszertifikat</dt><dd>E-Mail: <strong>demo.messung@fa-digital.local</strong><br>Passwort: <strong>MessungDemo123!</strong></dd></dl>
-            <dl class="testkonto"><dt>Jonas Wolff</dt><dd>E-Mail: <strong>jonas.wolff@fa-digital.de</strong><br>Passwort: <strong>fa-digital</strong></dd></dl>
-            <dl class="testkonto"><dt>Mehmet Yilmaz</dt><dd>E-Mail: <strong>mehmet.yilmaz@fa-digital.de</strong><br>Passwort: <strong>fa-digital</strong></dd></dl>
-            <dl class="testkonto"><dt>Paul Schneider</dt><dd>E-Mail: <strong>paul.schneider@fa-digital.de</strong><br>Passwort: <strong>fa-digital</strong></dd></dl>
-            <p class="klein leise">Die beiden Demo-Werker stehen nur zur Verfügung, wenn ihre optionalen Seeder ausgeführt wurden. Katrin Wagner ist in den ursprünglichen Testdaten gesperrt und kann sich nicht anmelden.</p>
+            <h3>Werker nach Tätigkeit</h3>
+            <p class="klein leise">Diese lokalen Tätigkeitskonten stehen nach dem Ausführen des Standard-Seeders zur Verfügung. Das anfängliche Passwort ist jeweils <strong>fa-digital</strong>.</p>
+            @foreach (config('arbeitsgang_werker') as $gruppe)
+                <dl class="testkonto"><dt>{{ $gruppe['taetigkeit'] }}</dt><dd>E-Mail: <strong>{{ $gruppe['email'] }}</strong><br>Passwort: <strong>fa-digital</strong></dd></dl>
+            @endforeach
+            <p class="klein leise">Katrin Wagner ist in den ursprünglichen Testdaten gesperrt und kann sich nicht anmelden.</p>
         </section>
     @endif
 </main>

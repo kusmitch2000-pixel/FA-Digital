@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CsvExportController;
 use App\Http\Controllers\WerkszeugnisController;
+use App\Livewire\AktiverArbeitsauftrag;
 use App\Livewire\Arbeitsplaene;
 use App\Livewire\Arbeitsplaetze;
 use App\Livewire\Auftraege;
@@ -10,6 +11,7 @@ use App\Livewire\AuftragDetail;
 use App\Livewire\Auswertung;
 use App\Livewire\Benutzerverwaltung;
 use App\Livewire\Hallenansicht;
+use App\Livewire\MeisterStartseite;
 use App\Livewire\Messung;
 use App\Livewire\Nachkalkulation;
 use App\Livewire\Terminal;
@@ -22,8 +24,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', fn () => redirect(auth()->user()->startseite()))->name('home');
+    Route::livewire('meister', MeisterStartseite::class)->middleware('recht:meister.startseite')->name('meister.startseite');
 
     // Werkstatt
+    Route::livewire('werker/aktiv', AktiverArbeitsauftrag::class)->middleware('recht:terminal')->name('terminal.aktiv');
     Route::livewire('werker/messung/{arbeitsgang}', Messung::class)->middleware('recht:terminal')->name('terminal.messung');
     Route::livewire('werker', Terminal::class)->middleware('recht:terminal')->name('terminal');
     Route::livewire('halle', Hallenansicht::class)->middleware('recht:halle')->name('halle');

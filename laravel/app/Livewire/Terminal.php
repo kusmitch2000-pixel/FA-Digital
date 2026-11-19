@@ -25,6 +25,8 @@ class Terminal extends Component
 
     protected string $recht = 'terminal';
 
+    protected bool $aktiveAnsicht = false;
+
     /** Gewählter Arbeitsplatz, steht in der Adresse, z. B. /werker?arbeitsplatz=AP-40 */
     #[Url(as: 'arbeitsplatz')]
     public string $arbeitsplatz = '';
@@ -69,6 +71,7 @@ class Terminal extends Component
         $this->arbeitsplatz = $aktuell->arbeitsplatz->nummer;
         $this->gutmenge = $aktuell->auftrag->menge;
         $this->ausschuss = 0;
+        $this->redirectRoute('terminal.aktiv', navigate: false);
     }
 
     public function wechseln(string $taetigkeit): void
@@ -132,6 +135,7 @@ class Terminal extends Component
         }
         $this->reset('gutmenge', 'ausschuss', 'bemerkung', 'istwert', 'pruefBemerkung');
         session()->flash('status', 'Arbeitsgang fertig gemeldet.');
+        $this->redirectRoute('terminal', navigate: false);
     }
 
     private function werkstatt(): Werkstatt
@@ -147,6 +151,7 @@ class Terminal extends Component
 
         return view('livewire.terminal', [
             'benutzer' => $benutzer,
+            'aktiveAnsicht' => $this->aktiveAnsicht,
             'messungen' => Arbeitsgang::with('auftrag')->where('status', 'messen')->where('fertig_gemeldet_von', $benutzer->id)->get(),
             'mitZertifikat' => $aktuell ? $aktuell->auftrag->zertifikate()->exists() : false,
             'aktuell' => $aktuell,
@@ -163,6 +168,6 @@ class Terminal extends Component
                 ->orderBy('auftragsnummer')
                 ->get(),
             'gruende' => Unterbrechungsgrund::where('aktiv', true)->orderBy('id')->get(),
-        ])->layout('layouts::production', ['title' => 'Werker-Terminal']);
+        ])->layout('layouts::production', ['title' => $this->aktiveAnsicht ? 'Aktiver Arbeitsauftrag' : 'Werker-Terminal']);
     }
 }

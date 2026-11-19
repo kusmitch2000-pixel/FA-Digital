@@ -22,7 +22,7 @@
         {{-- Jede Rolle sieht nur ihre Bereiche (config/fa.php) --}}
         <nav class="menue" aria-label="Hauptnavigation">
             @foreach (config('fa.menue') as $route => $bezeichnung)
-                @if ($benutzer->darf($route))
+                @if ($benutzer->darf($route) && (! isset(config('fa.menue_pro_rolle')[$benutzer->rolle]) || in_array($route, config('fa.menue_pro_rolle')[$benutzer->rolle], true)))
                     <a href="{{ route($route) }}" @class(['aktiv' => request()->routeIs($route) || ($route === 'auftraege' && request()->routeIs('auftrag'))])>{{ $bezeichnung }}</a>
                 @endif
             @endforeach

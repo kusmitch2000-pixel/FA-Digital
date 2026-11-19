@@ -4,14 +4,15 @@ Dieses Dokument gibt Teammitgliedern und ihren Entwicklungswerkzeugen einen Eins
 
 ## Einstieg
 
-GitHub `main` bei `9445730a3a8c14d5bc9e42659d746db8acc4688d` ist die Grundlage dieses Branches. Der Branch enthält die Docker-Entwicklungsumgebung sowie die erweiterten Werker- und Zertifikatsabläufe. Das ursprüngliche Laravel-Projekt und seine SQL-Skripte bleiben die Grundlage. Git verwaltet Quellcode; jede Person hat eine eigene lokale Datenbank. Zugangsdaten in `.env`, Datenbankinhalte und lokale Volumes gehören nicht in Git.
+Das Projekt enthält die Docker-Entwicklungsumgebung sowie die erweiterten Werker-, Meister- und Zertifikatsabläufe. Das Laravel-Projekt und seine SQL-Skripte bilden die Grundlage. Git verwaltet Quellcode; jede Person hat eine eigene lokale Datenbank. Zugangsdaten in `.env`, Datenbankinhalte und lokale Volumes gehören nicht in Git.
 
 Die Anwendung liegt unter `laravel/`: Laravel 13, Livewire 4 und Fortify; Docker stellt PHP 8.4/Apache, MariaDB 11.8, Composer 2 und Node 22 bereit. Composer und npm installieren anhand der Lockfiles. Der Source-Mount macht PHP- und Blade-Änderungen unmittelbar sichtbar, Frontend-Dateien werden mit Node gebaut. Die Projektrolle `node` läuft nur bei Bedarf.
 
-Vor dem Merge: `git clone --branch chore/docker-development https://github.com/kusmitch2000-pixel/FA-Digital.git`. Danach im Ordner `laravel/` die Schritte in der Docker-Team-Anleitung ausführen. Standard-Testdaten und die beiden zusätzlichen Demo-Werker werden bewusst durch getrennte Seeder angelegt. Die Anmeldeseite zeigt Beispielpasswörter nur bei `APP_ENV=local`. Diese Beispiele sind nicht für einen öffentlichen oder produktiven Betrieb geeignet.
+Den gewünschten Branch aus GitHub auschecken und im Ordner `laravel/` die Schritte in der Docker-Team-Anleitung ausführen. Der Standard-Seeder legt in lokalen Entwicklungs- und Testumgebungen zusätzlich tätigkeitsbezogene Werker und Zuordnungen für bestehende offene Arbeitsgänge an; Zuordnungen und Passwörter werden nicht überschrieben. Die Zuordnungsliste steht in `laravel/config/arbeitsgang_werker.php`. Die Anmeldeseite zeigt Beispielpasswörter nur bei `APP_ENV=local`. Diese Beispiele sind nicht für einen öffentlichen oder produktiven Betrieb geeignet.
 
 ## Fachlicher Aufbau
 
+- `app/Livewire/MeisterStartseite.php`: Die Startseite des Meisters nutzt `v_auftragsuebersicht` für überfällige offene Aufträge und `v_zertifikat_status` für noch nicht freigegebene, tatsächlich freigabebereite Zertifikate. Das auf drei Hauptseiten reduzierte Menü steht in `config/fa.php`; es ändert keine bestehenden Zugriffsrechte oder Auftragsdetail-Links.
 - `app/Livewire/Terminal.php` und `resources/views/livewire/terminal.blade.php`: persönlicher Arbeitsvorrat, Zeitstempel, Unterbrechungen und Notizen. `app/Actions/Fertigung/Werkstatt.php` enthält die eigentlichen transaktionalen Abläufe und prüft die Zuordnung beim Start serverseitig.
 - `app/Livewire/AuftragDetail.php`: Berechtigte ordnen Werker je Arbeitsgang zu; Rollen und Rechte stehen in `config/fa.php`. Bestehende Werker haben nicht automatisch neue Zuordnungen.
 - `app/Livewire/Messung.php` und `resources/views/livewire/messung.blade.php`: Nach der Arbeit an einem Zertifikatsauftrag erfasst der ausführende Werker die hinterlegten Prüfpunkte auf einer eigenen Seite. Unvollständige Messungen bleiben im Status `messen`; der Werker kann sie aus dem Terminal wieder öffnen. Die Messzeit zählt derzeit nicht als Fertigungszeit.
@@ -20,7 +21,7 @@ Vor dem Merge: `git clone --branch chore/docker-development https://github.com/k
 
 ## Prüfen und weiterarbeiten
 
-Die Team-Anleitung beschreibt eine isolierte Testdatenbank. Die vorhandenen Feature-Tests decken Anmeldung, Rollenrechte, Fertigungsabläufe, Zuordnungen, Unterbrechungen und Messungen ab. Testdaten nur in der separaten Testumgebung zurücksetzen, niemals versehentlich in der Entwicklungsdatenbank. Der letzte Testlauf auf dem Apple-Silicon-Mac ergab 38 erfolgreiche Tests und 335 Assertions; Plattformen Windows/WSL2, Linux und Intel-Mac wurden dabei nicht geprüft.
+Die Team-Anleitung beschreibt eine isolierte Testdatenbank. Die vorhandenen Feature-Tests decken Anmeldung, Rollenrechte, Fertigungsabläufe, Zuordnungen, Unterbrechungen und Messungen ab. Testdaten nur in der separaten Testumgebung zurücksetzen, niemals versehentlich in der Entwicklungsdatenbank. Windows/WSL2, Linux und Intel-Mac wurden nicht persönlich geprüft.
 
 `npm ci` meldete beim damaligen Test 11 Sicherheitswarnungen in den vorhandenen Node-Abhängigkeiten; `npm audit` erneut ausführen und Updates separat bewerten. Der Frontend-Build meldete eine optionale Font-Fallback-Warnung, lief aber durch. Versions-Tags der Docker-Images sind nicht auf Digests festgeschrieben.
 
