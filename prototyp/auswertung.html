@@ -49,7 +49,7 @@
         </div>
       </div>
 
-      <form class="karte" action="auswertung.html" method="get">
+      <form class="karte" id="filter-form" action="auswertung.html" method="get">
         <div class="formular-raster">
           <div class="feld">
             <label for="von">Abgeschlossen von</label>
@@ -77,7 +77,7 @@
       </form>
 
       <section class="karte">
-        <h2>Aufträge im Zeitraum</h2>
+        <h2 id="auftraege-titel">Aufträge im Zeitraum</h2>
         <div class="tabelle-scroll">
           <table>
             <thead>
@@ -93,50 +93,8 @@
                 <th>Status</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td><a href="nachkalkulation.html?auftrag=FA-0998">FA-0998</a></td>
-                <td>V-410</td>
-                <td class="zahl">60 / 0</td>
-                <td>18.09.2026</td>
-                <td class="zahl">888,33 €</td>
-                <td class="zahl">905,42 €</td>
-                <td class="zahl"><span class="ampel gruen"></span><span class="ueber">+1,9 %</span></td>
-                <td class="zahl">14,81 € / 15,09 €</td>
-                <td><span class="badge nachkalkuliert">nachkalkuliert</span></td>
-              </tr>
-              <tr>
-                <td><a href="nachkalkulation.html?auftrag=FA-0999">FA-0999</a></td>
-                <td>F-310</td>
-                <td class="zahl">19 / 1</td>
-                <td>23.09.2026</td>
-                <td class="zahl">447,08 €</td>
-                <td class="zahl">450,83 €</td>
-                <td class="zahl"><span class="ampel gruen"></span><span class="ueber">+0,8 %</span></td>
-                <td class="zahl">22,35 € / 23,73 €</td>
-                <td><span class="badge nachkalkuliert">nachkalkuliert</span></td>
-              </tr>
-              <tr>
-                <td><a href="nachkalkulation.html?auftrag=FA-1001">FA-1001</a></td>
-                <td>V-410</td>
-                <td class="zahl">48 / 2</td>
-                <td>28.09.2026</td>
-                <td class="zahl">755,00 €</td>
-                <td class="zahl">799,67 €</td>
-                <td class="zahl"><span class="ampel gelb"></span><span class="ueber">+5,9 %</span></td>
-                <td class="zahl">15,10 € / 16,66 €</td>
-                <td><span class="badge fertig">fertig</span></td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="4">Summe</td>
-                <td class="zahl">2.090,41 €</td>
-                <td class="zahl">2.155,92 €</td>
-                <td class="zahl"><span class="ueber">+3,1 %</span></td>
-                <td colspan="2"></td>
-              </tr>
-            </tfoot>
+            <tbody id="auftrags-liste"></tbody>
+            <tfoot id="auftrags-summe"></tfoot>
           </table>
         </div>
       </section>
@@ -154,61 +112,19 @@
                 <th>Bewertung</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>Laserschneidanlage (AP-10)</td>
-                <td class="zahl">355 min</td>
-                <td class="zahl">342 min</td>
-                <td class="zahl unter">−3,7 %</td>
-                <td><span class="ampel gruen"></span>im Plan</td>
-              </tr>
-              <tr>
-                <td>Abkantpresse (AP-20)</td>
-                <td class="zahl">370 min</td>
-                <td class="zahl">403 min</td>
-                <td class="zahl ueber">+8,9 %</td>
-                <td><span class="ampel gelb"></span>leicht über Plan</td>
-              </tr>
-              <tr>
-                <td>CNC-Drehmaschine (AP-40)</td>
-                <td class="zahl">85 min</td>
-                <td class="zahl">92 min</td>
-                <td class="zahl ueber">+8,2 %</td>
-                <td><span class="ampel gelb"></span>leicht über Plan</td>
-              </tr>
-              <tr>
-                <td>CNC-Fräsmaschine (AP-50)</td>
-                <td class="zahl">140 min</td>
-                <td class="zahl">140 min</td>
-                <td class="zahl unter">±0,0 %</td>
-                <td><span class="ampel gruen"></span>im Plan</td>
-              </tr>
-              <tr>
-                <td>Lackieranlage (AP-60)</td>
-                <td class="zahl">490 min</td>
-                <td class="zahl">525 min</td>
-                <td class="zahl ueber">+7,1 %</td>
-                <td><span class="ampel gelb"></span>leicht über Plan</td>
-              </tr>
-              <tr>
-                <td>Versandplatz (AP-70)</td>
-                <td class="zahl">95 min</td>
-                <td class="zahl">91 min</td>
-                <td class="zahl unter">−4,2 %</td>
-                <td><span class="ampel gruen"></span>im Plan</td>
-              </tr>
-            </tbody>
+            <tbody id="ap-liste"></tbody>
           </table>
         </div>
-        <div class="hinweis warnung" style="margin: 1rem 0 0;">
-          <p>An der Abkantpresse liegt die Ist-Zeit 8,9 % über Plan, vor allem weil das Rüsten beim Kanten der V-410 länger dauert. Der <a href="artikel.html#abgleich">Arbeitsplan von V-410</a> schlägt deshalb eine neue Rüstzeit vor.</p>
-        </div>
+        <div class="hinweis warnung" id="ap-hinweis" style="margin: 1rem 0 0;" hidden></div>
       </section>
 
       <!-- Unterbrechungen nach Grund: Diese Zeit zählt nicht zur Ist-Zeit der Arbeitsgänge,
            sondern zeigt, wo in der Fertigung Zeit verloren geht -->
       <section class="karte">
         <h2>Wo geht Zeit verloren? Unterbrechungen nach Grund</h2>
+        <div class="hinweis" id="unterbrechung-hinweis" hidden>
+          <p>Die Unterbrechungen sind im Prototyp nicht nach Artikel aufgeteilt. Die Tabelle zeigt immer alle Artikel.</p>
+        </div>
         <div class="tabelle-scroll">
           <table>
             <thead>
@@ -271,10 +187,10 @@
         </div>
       </section>
 
-      <!-- Export: wird später von einer PHP-Seite als CSV-Datei erzeugt -->
-      <form class="karte" action="auswertung.html" method="get">
+      <!-- Export: erzeugt im Prototyp die CSV-Datei im Browser, später eine PHP-Seite -->
+      <form class="karte" id="export-form" action="auswertung.html" method="get">
         <h2>Exportieren</h2>
-        <p class="leise klein">Die Auswertung für den gewählten Zeitraum als CSV-Datei, direkt in Excel zu öffnen.</p>
+        <p class="leise klein">Die Auswertung für den gewählten Zeitraum und Artikel als CSV-Datei, direkt in Excel zu öffnen.</p>
         <input type="hidden" name="format" value="csv">
         <button type="submit" class="btn btn-primaer">Als CSV exportieren</button>
       </form>
@@ -285,5 +201,274 @@
     Prototyp ohne Datenbank · Projektseminar Softwareentwicklung · WiSe 2026/27
   </footer>
 
+  <script>
+    (function () {
+      var formular = document.getElementById("filter-form");
+      var selVon = document.getElementById("von");
+      var selBis = document.getElementById("bis");
+      var selArtikel = document.getElementById("artikel");
+      if (!formular) return;
+
+      // Abgeschlossene Aufträge. Die Zahlen sind dieselben wie in nachkalkulation.html.
+      // plaetze: Arbeitsplatz -> [Soll-Zeit, Ist-Zeit] in Minuten
+      var auftraege = [
+        { id: "FA-0998", artikel: "V-410", bestellt: 60, gut: 60, ausschuss: 0, abschluss: "2026-09-18", soll: 888.33, ist: 905.42, status: "nachkalkuliert",
+          plaetze: { "AP-10": [165, 155], "AP-20": [200, 221], "AP-60": [265, 274], "AP-70": [40, 38] } },
+        { id: "FA-0999", artikel: "F-310", bestellt: 20, gut: 19, ausschuss: 1, abschluss: "2026-09-23", soll: 447.08, ist: 450.83, status: "nachkalkuliert",
+          plaetze: { "AP-10": [50, 47], "AP-40": [85, 92], "AP-50": [140, 140], "AP-70": [20, 19] } },
+        { id: "FA-1001", artikel: "V-410", bestellt: 50, gut: 48, ausschuss: 2, abschluss: "2026-09-28", soll: 755.00, ist: 799.67, status: "fertig",
+          plaetze: { "AP-10": [140, 140], "AP-20": [170, 182], "AP-60": [225, 251], "AP-70": [35, 34] } }
+      ];
+
+      var plaetze = [
+        ["AP-10", "Laserschneidanlage"],
+        ["AP-20", "Abkantpresse"],
+        ["AP-40", "CNC-Drehmaschine"],
+        ["AP-50", "CNC-Fräsmaschine"],
+        ["AP-60", "Lackieranlage"],
+        ["AP-70", "Versandplatz"]
+      ];
+
+      var ARTIKEL_NAMEN = {
+        "V-410": "V-410 Seitenverkleidung Fräszentrum",
+        "V-420": "V-420 Späneschutzwanne",
+        "V-430": "V-430 Schutztür mit Sichtfenster",
+        "F-310": "F-310 Flansch DN80",
+        "W-200": "W-200 Antriebswelle Ø40"
+      };
+
+      // ---------- Hilfsfunktionen ----------
+
+      function euro(x) {
+        return x.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+      }
+
+      function prozent(x) {
+        var gerundet = Math.round(Math.abs(x) * 10) / 10;
+        var zahl = gerundet.toFixed(1).replace(".", ",");
+        if (gerundet === 0) return "±0,0 %";
+        return (x > 0 ? "+" : "−") + zahl + " %";
+      }
+
+      // Ampel: bis +5 % grün, bis +10 % gelb, darüber rot
+      function ampel(x) {
+        if (x <= 5) return "gruen";
+        if (x <= 10) return "gelb";
+        return "rot";
+      }
+
+      function bewertung(x) {
+        if (x <= 5) return "im Plan";
+        if (x <= 10) return "leicht über Plan";
+        return "deutlich über Plan";
+      }
+
+      function datum(iso) {
+        return iso.split("-").reverse().join(".");
+      }
+
+      function abweichungProzent(soll, ist) {
+        return soll === 0 ? 0 : (ist - soll) / soll * 100;
+      }
+
+      // Links zu Seiten, die die Rolle nicht sehen darf, werden zu normalem Text (Funktionen aus prototyp.js)
+      function filtereLinks(bereich) {
+        try {
+          if (typeof darfSeite !== "function" || typeof BENUTZER === "undefined") return;
+          var rolle = BENUTZER[angemeldeteEmail()].rolle;
+          bereich.querySelectorAll("a[href]").forEach(function (link) {
+            if (/^[a-z]+:/i.test(link.getAttribute("href"))) return;
+            if (!darfSeite(rolle, seiteVon(link.href))) {
+              link.replaceWith.apply(link, Array.prototype.slice.call(link.childNodes));
+            }
+          });
+        } catch (e) {}
+      }
+
+      // ---------- Auswahl ----------
+
+      function gefilterteAuftraege() {
+        var von = selVon.value;
+        var bis = selBis.value;
+        var artikel = selArtikel.value;
+        return auftraege.filter(function (a) {
+          if (artikel && a.artikel !== artikel) return false;
+          if (von && a.abschluss < von) return false;
+          if (bis && a.abschluss > bis) return false;
+          return true;
+        });
+      }
+
+      // ---------- Darstellung ----------
+
+      function zeichneAuftraege(liste) {
+        var tbody = document.getElementById("auftrags-liste");
+        var tfoot = document.getElementById("auftrags-summe");
+        var artikel = selArtikel.value;
+
+        document.getElementById("auftraege-titel").textContent =
+          artikel ? "Aufträge im Zeitraum: " + ARTIKEL_NAMEN[artikel] : "Aufträge im Zeitraum";
+
+        if (!liste.length) {
+          tbody.innerHTML = '<tr><td colspan="9" class="leise">Keine abgeschlossenen Aufträge für diese Auswahl.</td></tr>';
+          tfoot.innerHTML = "";
+          return;
+        }
+
+        var summeSoll = 0;
+        var summeIst = 0;
+
+        tbody.innerHTML = liste.map(function (a) {
+          var abw = abweichungProzent(a.soll, a.ist);
+          summeSoll += a.soll;
+          summeIst += a.ist;
+          return '<tr>' +
+            '<td><a href="nachkalkulation.html?auftrag=' + a.id + '">' + a.id + '</a></td>' +
+            '<td>' + a.artikel + '</td>' +
+            '<td class="zahl">' + a.gut + ' / ' + a.ausschuss + '</td>' +
+            '<td>' + datum(a.abschluss) + '</td>' +
+            '<td class="zahl">' + euro(a.soll) + '</td>' +
+            '<td class="zahl">' + euro(a.ist) + '</td>' +
+            '<td class="zahl"><span class="ampel ' + ampel(abw) + '"></span><span class="' + (abw > 0 ? "ueber" : "unter") + '">' + prozent(abw) + '</span></td>' +
+            '<td class="zahl">' + euro(a.soll / a.bestellt) + ' / ' + euro(a.ist / a.gut) + '</td>' +
+            '<td><span class="badge ' + a.status + '">' + a.status + '</span></td>' +
+            '</tr>';
+        }).join("");
+
+        var abwSumme = abweichungProzent(summeSoll, summeIst);
+        tfoot.innerHTML =
+          '<tr>' +
+          '<td colspan="4">Summe</td>' +
+          '<td class="zahl">' + euro(summeSoll) + '</td>' +
+          '<td class="zahl">' + euro(summeIst) + '</td>' +
+          '<td class="zahl"><span class="' + (abwSumme > 0 ? "ueber" : "unter") + '">' + prozent(abwSumme) + '</span></td>' +
+          '<td colspan="2"></td>' +
+          '</tr>';
+      }
+
+      function zeichnePlaetze(liste) {
+        var tbody = document.getElementById("ap-liste");
+        var hinweis = document.getElementById("ap-hinweis");
+        var summen = {};
+
+        liste.forEach(function (a) {
+          Object.keys(a.plaetze).forEach(function (ap) {
+            if (!summen[ap]) summen[ap] = [0, 0];
+            summen[ap][0] += a.plaetze[ap][0];
+            summen[ap][1] += a.plaetze[ap][1];
+          });
+        });
+
+        var zeilen = plaetze.filter(function (p) { return summen[p[0]]; });
+
+        if (!zeilen.length) {
+          tbody.innerHTML = '<tr><td colspan="5" class="leise">Keine Zeiten für diese Auswahl.</td></tr>';
+          hinweis.hidden = true;
+          return;
+        }
+
+        tbody.innerHTML = zeilen.map(function (p) {
+          var soll = summen[p[0]][0];
+          var ist = summen[p[0]][1];
+          var abw = abweichungProzent(soll, ist);
+          return '<tr>' +
+            '<td>' + p[1] + ' (' + p[0] + ')</td>' +
+            '<td class="zahl">' + soll + ' min</td>' +
+            '<td class="zahl">' + ist + ' min</td>' +
+            '<td class="zahl ' + (abw > 0 ? "ueber" : "unter") + '">' + prozent(abw) + '</td>' +
+            '<td><span class="ampel ' + ampel(abw) + '"></span>' + bewertung(abw) + '</td>' +
+            '</tr>';
+        }).join("");
+
+        // Hinweis zum größten Problem, falls ein Arbeitsplatz mehr als 5 % über Plan liegt
+        var text = "";
+        if (summen["AP-20"] && abweichungProzent(summen["AP-20"][0], summen["AP-20"][1]) > 5) {
+          text = "An der Abkantpresse liegt die Ist-Zeit " +
+            prozent(abweichungProzent(summen["AP-20"][0], summen["AP-20"][1])).replace("+", "") +
+            " über Plan, vor allem weil das Rüsten beim Kanten der V-410 länger dauert. Der " +
+            '<a href="artikel.html#abgleich">Arbeitsplan von V-410</a> schlägt deshalb eine neue Rüstzeit vor.';
+        } else if (summen["AP-40"] && abweichungProzent(summen["AP-40"][0], summen["AP-40"][1]) > 5) {
+          text = "An der CNC-Drehmaschine liegt die Ist-Zeit " +
+            prozent(abweichungProzent(summen["AP-40"][0], summen["AP-40"][1])).replace("+", "") +
+            " über Plan, vor allem weil das Rüsten beim Drehen des F-310 länger dauert (28 statt 25 min). Das Fräsen und der Versand liegen im Plan.";
+        }
+
+        if (text) {
+          hinweis.innerHTML = "<p>" + text + "</p>";
+          hinweis.hidden = false;
+        } else {
+          hinweis.hidden = true;
+        }
+      }
+
+      function aktualisieren() {
+        var liste = gefilterteAuftraege();
+        zeichneAuftraege(liste);
+        zeichnePlaetze(liste);
+        document.getElementById("unterbrechung-hinweis").hidden = !selArtikel.value;
+        filtereLinks(document.querySelector("main.inhalt"));
+
+        // Auswahl in der Adresse festhalten, damit Links auf eine Auswahl funktionieren
+        try {
+          var parameter = new URLSearchParams();
+          if (selArtikel.value) parameter.set("artikel", selArtikel.value);
+          if (selVon.value) parameter.set("von", selVon.value);
+          if (selBis.value) parameter.set("bis", selBis.value);
+          var abfrage = parameter.toString();
+          history.replaceState(null, "", abfrage ? "?" + abfrage : window.location.pathname);
+        } catch (e) {}
+      }
+
+      // ---------- Ereignisse ----------
+
+      // Sofort umschalten, ohne Seiten-Reload
+      [selArtikel, selVon, selBis].forEach(function (feld) {
+        feld.addEventListener("change", aktualisieren);
+      });
+
+      formular.addEventListener("submit", function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        aktualisieren();
+      });
+
+      // CSV-Export der aktuellen Auswahl (Semikolon, mit BOM für Excel)
+      document.getElementById("export-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        var liste = gefilterteAuftraege();
+        var zeilen = [["Auftrag", "Artikel", "Gut", "Ausschuss", "Abschluss", "Soll-Kosten", "Ist-Kosten", "Abweichung", "Soll je Gutstück", "Ist je Gutstück", "Status"]];
+        liste.forEach(function (a) {
+          zeilen.push([
+            a.id, a.artikel, a.gut, a.ausschuss, datum(a.abschluss),
+            euro(a.soll), euro(a.ist), prozent(abweichungProzent(a.soll, a.ist)),
+            euro(a.soll / a.bestellt), euro(a.ist / a.gut), a.status
+          ]);
+        });
+
+        var csv = zeilen.map(function (z) {
+          return z.map(function (w) { return '"' + String(w).replace(/"/g, '""') + '"'; }).join(";");
+        }).join("\r\n");
+
+        var blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+        var link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "Auswertung" + (selArtikel.value ? "_" + selArtikel.value : "") + ".csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+      });
+
+      // Start: Auswahl aus der Adresse übernehmen, z. B. ?artikel=F-310
+      var start = new URLSearchParams(window.location.search);
+      if (start.get("artikel") && ARTIKEL_NAMEN[start.get("artikel")]) selArtikel.value = start.get("artikel");
+      if (start.get("von")) selVon.value = start.get("von");
+      if (start.get("bis")) selBis.value = start.get("bis");
+
+      aktualisieren();
+    })();
+  </script>
 </body>
 </html>
